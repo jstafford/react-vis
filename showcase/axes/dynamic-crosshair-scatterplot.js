@@ -27,7 +27,7 @@ import {
   MarkSeries,
   VerticalGridLines,
   XAxis,
-  XYPlot,
+  FlexibleWidthXYPlot,
   YAxis,
   Voronoi
 } from 'index';
@@ -69,15 +69,25 @@ const x = scaleLinear().domain(getDomain(DATA, 'x')).range([0, width]);
 const y = scaleLinear().domain(getDomain(DATA, 'y')).range([height, 0]);
 
 export default class Example extends React.Component {
+  constructor(props) {
+    super(props);
+    this._handleGetColor = this._handleGetColor.bind(this);
+  }
+
   state = {
     selectedPointId: null,
-    showVoronoi: true
+    showVoronoi: false
+  }
+
+  _handleGetColor(params) {
+    const {selectedPointId} = this.state;
+    const {id} = params;
+    return selectedPointId === id ? '#FF9833' : '#12939A';
   }
 
   render() {
     const {
       crosshairValues,
-      selectedPointId,
       showVoronoi
     } = this.state;
 
@@ -90,9 +100,8 @@ export default class Example extends React.Component {
           />
           Show Voronoi
         </label>
-        <XYPlot
+        <FlexibleWidthXYPlot
           onMouseLeave={() => this.setState({selectedPointId: null, crosshairValues: null})}
-          width={width}
           height={height}>
           <VerticalGridLines />
           <HorizontalGridLines />
@@ -106,7 +115,7 @@ export default class Example extends React.Component {
               selectedPointId: index,
               crosshairValues: [value]
             })}
-            getColor={({id}) => selectedPointId === id ? '#FF9833' : '#12939A'}
+            getColor={this._handleGetColor}
             sizeRange={sizeRange} />
           {crosshairValues && <Crosshair values={crosshairValues}/>}
           {showVoronoi && <Voronoi
@@ -119,7 +128,7 @@ export default class Example extends React.Component {
             x={d => x(d.x)}
             y={d => y(d.y)}
           />}
-        </XYPlot>
+        </FlexibleWidthXYPlot>
       </div>
     );
   }

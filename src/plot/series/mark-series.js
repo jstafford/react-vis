@@ -64,6 +64,8 @@ class MarkSeries extends AbstractSeries {
   }
 
   render() {
+    /* eslint-disable no-console */
+    console.log('render MarkSeries');
     const {
       animation,
       className,

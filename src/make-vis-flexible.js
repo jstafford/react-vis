@@ -152,6 +152,8 @@ function makeFlexible(Component, isWidthFlexible, isHeightFlexible) {
     }
 
     render() {
+      /* eslint-disable no-console */
+      console.log('render makeFlexible');
       const {height, width} = this.state;
       const props = {...this.props, animation: height === 0 && width === 0 ? null : this.props.animation};
 

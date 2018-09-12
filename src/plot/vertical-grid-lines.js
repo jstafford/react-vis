@@ -38,6 +38,8 @@ const defaultProps = {
 };
 
 function VerticalGridLines(props) {
+  /* eslint-disable no-console */
+  console.log('render VerticalGridLines');
   return (
     <GridLines {...props} />
   );

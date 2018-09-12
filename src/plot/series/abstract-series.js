@@ -31,6 +31,8 @@ import {
   getScalePropTypesByAttribute
 } from 'utils/scales-utils';
 
+import {equivalent} from '../../utils/equivalent';
+
 const propTypes = {
   ...getScalePropTypesByAttribute('x'),
   ...getScalePropTypesByAttribute('y'),
@@ -91,6 +93,32 @@ class AbstractSeries extends PureComponent {
     this._valueClickHandler = this._valueClickHandler.bind(this);
     this._seriesRightClickHandler = this._seriesRightClickHandler.bind(this);
     this._valueRightClickHandler = this._valueRightClickHandler.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    /* eslint-disable no-console */
+    console.log('call to AbstractSeries componentWillReceiveProps.');
+    Object.keys(nextProps).forEach(
+      (key, index) => {
+        if (!equivalent(nextProps[key], this.props[key])) {
+          /* eslint-disable no-console */
+          console.log(`Change in AbstractSeries Prop: ${key} 'from`, this.props[key], 'to', nextProps[key]);
+        }
+      }
+    );
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const propKeys = Object.keys(this.props);
+    let shouldUpdate = propKeys.length !== Object.keys(nextProps).length;
+    if (!shouldUpdate) {
+      shouldUpdate = propKeys.some((key) => (!equivalent(this.props[key], nextProps[key])));
+    }
+    if (!shouldUpdate && nextState) {
+      const stateKeys = Object.keys(nextState);
+      shouldUpdate = stateKeys.some((key) => (!equivalent(this.state[key], nextState[key])));
+    }
+    return shouldUpdate;
   }
 
   /**

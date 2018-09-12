@@ -94,7 +94,7 @@ function checkIfMixinsAreEqual(nextScaleMixins, scaleMixins, hasTreeStructure) {
   return equal(newMixins, oldMixins);
 }
 
-class XYPlot extends React.Component {
+class XYPlot extends React.PureComponent {
 
   static get propTypes() {
     return {
@@ -151,6 +151,16 @@ class XYPlot extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // /* eslint-disable no-console */
+    // console.log('call to XYPlot componentWillReceiveProps.');
+    // Object.keys(nextProps).forEach(
+    //   (key, index) => {
+    //     if (nextProps[key] !== this.props[key]) {
+    //       /* eslint-disable no-console */
+    //       console.log(`Change in XYPlot Prop: ${key} 'from`, this.props[key], 'to', nextProps[key]);
+    //     }
+    //   }
+    // );
     const children = getSeriesChildren(nextProps.children);
     const nextData = getStackedData(children, nextProps.stackBy);
     const {scaleMixins} = this.state;
@@ -517,6 +527,8 @@ class XYPlot extends React.Component {
   }
 
   render() {
+    /* eslint-disable no-console */
+    console.log('render XYPlot');
     const {
       className,
       dontCheckIfEmpty,

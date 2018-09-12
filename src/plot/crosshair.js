@@ -138,6 +138,8 @@ class Crosshair extends PureComponent {
   }
 
   render() {
+    /* eslint-disable no-console */
+    console.log('render Crosshair');
     const {
       children,
       className,

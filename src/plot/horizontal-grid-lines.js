@@ -38,6 +38,8 @@ const defaultProps = {
 };
 
 function HorizontalGridLines(props) {
+  /* eslint-disable no-console */
+  console.log('render HorizontalGridLines');
   return (
     <GridLines {...props} />
   );

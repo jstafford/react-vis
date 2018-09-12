@@ -24,6 +24,7 @@ import PropTypes from 'prop-types';
 
 import {ORIENTATION, getTickValues} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
+import {equivalent} from '../../utils/equivalent';
 
 const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
 
@@ -47,6 +48,11 @@ function _getTickFormatFn(scale, tickTotal, tickFormat) {
 }
 
 class AxisTicks extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const keys = Object.keys(this.props);
+    return keys.some((key) => (!equivalent(this.props[key], nextProps[key])));
+  }
 
   /**
    * Gets if the axis is vertical.
@@ -151,6 +157,8 @@ class AxisTicks extends React.Component {
   }
 
   render() {
+    /* eslint-disable no-console */
+    console.log('render AxisTicks');
     const {
       attr,
       orientation,

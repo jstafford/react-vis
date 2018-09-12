@@ -31,6 +31,8 @@ import {
   DIRECTION
 } from '../utils/axis-utils';
 
+import {equivalent} from '../utils/equivalent';
+
 const {VERTICAL, HORIZONTAL} = DIRECTION;
 
 const propTypes = {
@@ -71,6 +73,27 @@ const animatedProps = [
 
 class GridLines extends PureComponent {
 
+  componentWillReceiveProps(nextProps) {
+    /* eslint-disable no-console */
+    console.log('call to GridLines componentWillReceiveProps.');
+    Object.keys(nextProps).forEach(
+      (key, index) => {
+        if (!equivalent(nextProps[key], this.props[key])) {
+          /* eslint-disable no-console */
+          console.log(`Change in GridLines Prop: ${key} 'from`, this.props[key], 'to', nextProps[key]);
+        }
+      }
+    );
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const keys = Object.keys(this.props);
+    const shouldUpdate = keys.some((key) => (!equivalent(this.props[key], nextProps[key])));
+    /* eslint-disable no-console */
+    console.log(`shouldUpdate ${shouldUpdate}`);
+    return shouldUpdate;
+  }
+
   _getDefaultProps() {
     const {
       innerWidth,
@@ -93,6 +116,8 @@ class GridLines extends PureComponent {
   }
 
   render() {
+    /* eslint-disable no-console */
+    console.log('render GridLines');
     const {animation} = this.props;
     if (animation) {
       return (
