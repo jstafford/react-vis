@@ -78,7 +78,6 @@
     "sass": "^1.98.0",
     "prettier": "^1.14.2",
     "react": "^17.0.2",
-    "react-addons-test-utils": ">=15.4.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
     "react-vis-showcase": "^0.1.0",
