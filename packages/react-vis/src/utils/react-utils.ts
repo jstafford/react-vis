@@ -73,7 +73,7 @@ export function warning(
 }
 
 /**
- * Convience wrapper for warning
+ * Convenience wrapper for warning
  * @param {String} message - the message to be shown
  */
 export function warnOnce(message: string): void {

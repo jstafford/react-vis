@@ -192,7 +192,7 @@ export function generatePoints({
  * the start position of the decorative axis
  * @param {Object} axisEnd Object of format {x, y} describing in coordinates
  * the start position of the decorative axis
- * @returns {Number} Angle in radials
+ * @returns {Number} Angle in radians
  */
 export function getAxisAngle(axisStart: AxisPoint, axisEnd: AxisPoint): number {
   if (axisStart.x === axisEnd.x) {

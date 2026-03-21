@@ -47,9 +47,11 @@ interface AnimationState {}
  * @param {Object|String} animationStyle - The animation style property, either the name of a
  * presets are one of noWobble, gentle, wobbly, stiff
  */
+const VALID_PRESETS: {[key: string]: AnimationStyle} = presets as {[key: string]: AnimationStyle};
+
 function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): AnimationStyle {
   if (typeof animationStyle === 'string') {
-    return presets[animationStyle] || presets.noWobble;
+    return VALID_PRESETS[animationStyle] || presets.noWobble;
   }
   if (typeof animationStyle === 'boolean') {
     return presets.noWobble;
@@ -111,8 +113,8 @@ class Animation extends PureComponent<AnimationProps, AnimationState> {
     const child = React.Children.only(children) as React.ReactElement;
     const interpolatedProps = interpolator ? interpolator(i) : interpolator;
 
-    // interpolator doesnt play nice with deeply nested objected
-    // so we expose an additional prop for situations like these, soit _data,
+    // interpolator doesn't play nice with deeply nested objects
+    // so we expose an additional prop for situations like these, so it _data,
     // which stores the full tree and can be recombined with the sanitized version
     // after interpolation
     let data = (interpolatedProps && interpolatedProps.data) || null;
