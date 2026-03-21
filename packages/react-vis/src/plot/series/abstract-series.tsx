@@ -21,8 +21,9 @@
 import PropTypes from 'prop-types';
 import {voronoi} from 'd3-voronoi';
 import {PureComponent} from 'react';
+import React from 'react';
 
-import {AnimationPropType} from 'animation';
+import {AnimationPropType, AnimationParam} from 'animation';
 import {
   getAttributeFunctor,
   getAttr0Functor,
@@ -30,6 +31,48 @@ import {
   getScaleObjectFromProps,
   getScalePropTypesByAttribute
 } from 'utils/scales-utils';
+
+export type RVDatum = {[key: string]: any};
+
+export type RVEventHandler<T = RVDatum> = (
+  value: T,
+  info: {event: Event}
+) => void;
+
+export type RVSeriesEventHandler = (info: {event: Event}) => void;
+
+export type RVNearestXHandler<T = RVDatum> = (
+  value: T,
+  info: {innerX: number; index: number; event: Event}
+) => void;
+
+export type RVNearestXYHandler<T = RVDatum> = (
+  value: T,
+  info: {innerX: number; innerY: number; index: number; event: Event}
+) => void;
+
+export interface AbstractSeriesProps<T extends RVDatum = RVDatum> {
+  width?: number;
+  height?: number;
+  data?: T[];
+  onValueMouseOver?: RVEventHandler<T>;
+  onValueMouseOut?: RVEventHandler<T>;
+  onValueClick?: RVEventHandler<T>;
+  onValueRightClick?: RVEventHandler<T>;
+  onSeriesMouseOver?: RVSeriesEventHandler;
+  onSeriesMouseOut?: RVSeriesEventHandler;
+  onSeriesClick?: RVSeriesEventHandler;
+  onSeriesRightClick?: RVSeriesEventHandler;
+  onNearestX?: RVNearestXHandler<T>;
+  onNearestXY?: RVNearestXYHandler<T>;
+  style?: React.CSSProperties;
+  animation?: AnimationParam;
+  stack?: boolean;
+  className?: string;
+  marginTop?: number;
+  marginLeft?: number;
+  [key: string]: any;
+}
 
 const propTypes = {
   ...getScalePropTypesByAttribute('x'),
@@ -63,12 +106,14 @@ const defaultProps = {
   style: {}
 };
 
-class AbstractSeries extends PureComponent {
+class AbstractSeries<
+  T extends RVDatum = RVDatum
+> extends PureComponent<AbstractSeriesProps<T>> {
   /**
    * Get a default config for the parent.
    * @returns {Object} Empty config.
    */
-  static getParentConfig() {
+  static getParentConfig(): Record<string, unknown> {
     return {};
   }
 
@@ -76,11 +121,11 @@ class AbstractSeries extends PureComponent {
    * Tells the rest of the world that it requires SVG to work.
    * @returns {boolean} Result.
    */
-  static get requiresSVG() {
+  static get requiresSVG(): boolean {
     return true;
   }
 
-  onParentMouseMove(event) {
+  onParentMouseMove(event: React.SyntheticEvent<SVGElement>): void {
     const {onNearestX, onNearestXY, data} = this.props;
     if ((!onNearestX && !onNearestXY) || !data) {
       return;
@@ -92,12 +137,12 @@ class AbstractSeries extends PureComponent {
     }
   }
 
-  onParentTouchMove(e) {
+  onParentTouchMove(e: React.TouchEvent<SVGElement>): void {
     e.preventDefault();
-    this.onParentMouseMove(e);
+    this.onParentMouseMove(e as any);
   }
 
-  onParentTouchStart(e) {
+  onParentTouchStart(e: React.TouchEvent<SVGElement>): void {
     // prevent mouse event emulation
     e.preventDefault();
   }
@@ -108,7 +153,7 @@ class AbstractSeries extends PureComponent {
    * @returns {*} Functor.
    * @private
    */
-  _getAttr0Functor(attr) {
+  _getAttr0Functor(attr: string): ((d: T) => any) | null {
     return getAttr0Functor(this.props, attr);
   }
 
@@ -118,7 +163,7 @@ class AbstractSeries extends PureComponent {
    * @returns {*} Functor.
    * @protected
    */
-  _getAttributeFunctor(attr) {
+  _getAttributeFunctor(attr: string): ((d: T) => any) | null {
     return getAttributeFunctor(this.props, attr);
   }
 
@@ -129,7 +174,7 @@ class AbstractSeries extends PureComponent {
    * otherwise.
    * @protected
    */
-  _getAttributeValue(attr) {
+  _getAttributeValue(attr: string): any {
     return getAttributeValue(this.props, attr);
   }
 
@@ -139,15 +184,17 @@ class AbstractSeries extends PureComponent {
    * @returns {number} Scale distance.
    * @protected
    */
-  _getScaleDistance(attr) {
+  _getScaleDistance(attr: string): number {
     const scaleObject = getScaleObjectFromProps(this.props, attr);
     return scaleObject ? scaleObject.distance : 0;
   }
 
-  _getXYCoordinateInContainer(event) {
+  _getXYCoordinateInContainer(
+    event: React.SyntheticEvent<SVGElement>
+  ): {x: number; y: number} {
     const {marginTop = 0, marginLeft = 0} = this.props;
-    const {nativeEvent: evt, currentTarget} = event;
-    const rect = currentTarget.getBoundingClientRect();
+    const {nativeEvent: evt, currentTarget} = event as any;
+    const rect = (currentTarget as Element).getBoundingClientRect();
     let x = evt.clientX;
     let y = evt.clientY;
     if (evt.type === 'touchmove') {
@@ -155,19 +202,23 @@ class AbstractSeries extends PureComponent {
       y = evt.touches[0].pageY;
     }
     return {
-      x: x - rect.left - currentTarget.clientLeft - marginLeft,
-      y: y - rect.top - currentTarget.clientTop - marginTop
+      x: x - rect.left - (currentTarget as Element).clientLeft - marginLeft,
+      y: y - rect.top - (currentTarget as Element).clientTop - marginTop
     };
   }
 
-  _handleNearestX(event) {
+  _handleNearestX(event: React.SyntheticEvent<SVGElement>): void {
     const {onNearestX, data} = this.props;
     let minDistance = Number.POSITIVE_INFINITY;
-    let value = null;
-    let valueIndex = null;
+    let value: T | null = null;
+    let valueIndex: number | null = null;
 
     const coordinate = this._getXYCoordinateInContainer(event);
     const xScaleFn = this._getAttributeFunctor('x');
+
+    if (!xScaleFn || !data) {
+      return;
+    }
 
     data.forEach((item, i) => {
       const currentCoordinate = xScaleFn(item);
@@ -181,36 +232,47 @@ class AbstractSeries extends PureComponent {
     if (!value) {
       return;
     }
-    onNearestX(value, {
+    onNearestX!(value, {
       innerX: xScaleFn(value),
-      index: valueIndex,
-      event: event.nativeEvent
+      index: valueIndex!,
+      event: (event as any).nativeEvent
     });
   }
 
-  _handleNearestXY(event) {
+  _handleNearestXY(event: React.SyntheticEvent<SVGElement>): void {
     const {onNearestXY, data} = this.props;
+
+    if (!data) {
+      return;
+    }
 
     const coordinate = this._getXYCoordinateInContainer(event);
     const xScaleFn = this._getAttributeFunctor('x');
     const yScaleFn = this._getAttributeFunctor('y');
 
+    if (!xScaleFn || !yScaleFn) {
+      return;
+    }
+
     // Create a voronoi with each node center points
-    const voronoiInstance = voronoi()
+    const voronoiInstance = voronoi<T>()
       .x(xScaleFn)
       .y(yScaleFn);
 
     const foundPoint = voronoiInstance(data).find(coordinate.x, coordinate.y);
+    if (!foundPoint) {
+      return;
+    }
     const value = foundPoint.data;
 
     if (!value) {
       return;
     }
-    onNearestXY(value, {
+    onNearestXY!(value, {
       innerX: foundPoint[0],
       innerY: foundPoint[1],
       index: foundPoint.index,
-      event: event.nativeEvent
+      event: (event as any).nativeEvent
     });
   }
 
@@ -219,10 +281,10 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _seriesClickHandler = event => {
+  _seriesClickHandler = (event: React.MouseEvent<SVGElement>): void => {
     const {onSeriesClick} = this.props;
     if (onSeriesClick) {
-      onSeriesClick({event});
+      onSeriesClick({event: event.nativeEvent});
     }
   };
 
@@ -231,10 +293,10 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _seriesMouseOutHandler = event => {
+  _seriesMouseOutHandler = (event: React.MouseEvent<SVGElement>): void => {
     const {onSeriesMouseOut} = this.props;
     if (onSeriesMouseOut) {
-      onSeriesMouseOut({event});
+      onSeriesMouseOut({event: event.nativeEvent});
     }
   };
 
@@ -243,10 +305,10 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _seriesMouseOverHandler = event => {
+  _seriesMouseOverHandler = (event: React.MouseEvent<SVGElement>): void => {
     const {onSeriesMouseOver} = this.props;
     if (onSeriesMouseOver) {
-      onSeriesMouseOver({event});
+      onSeriesMouseOver({event: event.nativeEvent});
     }
   };
 
@@ -255,10 +317,10 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _seriesRightClickHandler = event => {
+  _seriesRightClickHandler = (event: React.MouseEvent<SVGElement>): void => {
     const {onSeriesRightClick} = this.props;
     if (onSeriesRightClick) {
-      onSeriesRightClick({event});
+      onSeriesRightClick({event: event.nativeEvent});
     }
   };
 
@@ -268,13 +330,13 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _valueClickHandler = (d, event) => {
+  _valueClickHandler = (d: T, event: React.MouseEvent<SVGElement>): void => {
     const {onValueClick, onSeriesClick} = this.props;
     if (onValueClick) {
-      onValueClick(d, {event});
+      onValueClick(d, {event: event.nativeEvent});
     }
     if (onSeriesClick) {
-      onSeriesClick({event});
+      onSeriesClick({event: event.nativeEvent});
     }
   };
 
@@ -284,13 +346,13 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _valueMouseOutHandler = (d, event) => {
+  _valueMouseOutHandler = (d: T, event: React.MouseEvent<SVGElement>): void => {
     const {onValueMouseOut, onSeriesMouseOut} = this.props;
     if (onValueMouseOut) {
-      onValueMouseOut(d, {event});
+      onValueMouseOut(d, {event: event.nativeEvent});
     }
     if (onSeriesMouseOut) {
-      onSeriesMouseOut({event});
+      onSeriesMouseOut({event: event.nativeEvent});
     }
   };
 
@@ -300,13 +362,16 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _valueMouseOverHandler = (d, event) => {
+  _valueMouseOverHandler = (
+    d: T,
+    event: React.MouseEvent<SVGElement>
+  ): void => {
     const {onValueMouseOver, onSeriesMouseOver} = this.props;
     if (onValueMouseOver) {
-      onValueMouseOver(d, {event});
+      onValueMouseOver(d, {event: event.nativeEvent});
     }
     if (onSeriesMouseOver) {
-      onSeriesMouseOver({event});
+      onSeriesMouseOver({event: event.nativeEvent});
     }
   };
 
@@ -316,19 +381,26 @@ class AbstractSeries extends PureComponent {
    * @param {Object} event Event.
    * @protected
    */
-  _valueRightClickHandler = (d, event) => {
+  _valueRightClickHandler = (
+    d: T,
+    event: React.MouseEvent<SVGElement>
+  ): void => {
     const {onValueRightClick, onSeriesRightClick} = this.props;
     if (onValueRightClick) {
-      onValueRightClick(d, {event});
+      onValueRightClick(d, {event: event.nativeEvent});
     }
     if (onSeriesRightClick) {
-      onSeriesRightClick({event});
+      onSeriesRightClick({event: event.nativeEvent});
     }
   };
+
+  render(): React.ReactNode {
+    return null;
+  }
 }
 
-AbstractSeries.displayName = 'AbstractSeries';
-AbstractSeries.propTypes = propTypes;
-AbstractSeries.defaultProps = defaultProps;
+(AbstractSeries as any).displayName = 'AbstractSeries';
+(AbstractSeries as any).propTypes = propTypes;
+(AbstractSeries as any).defaultProps = defaultProps;
 
 export default AbstractSeries;
