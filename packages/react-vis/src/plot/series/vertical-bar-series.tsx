@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Uber Technologies, Inc.
+// Copyright (c) 2016 - 2017 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,19 +18,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import AbstractSeries from './abstract-series';
-import BarSeries from './bar-series-canvas';
+import React from 'react';
 
-class HorizontalBarSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
-    return false;
-  }
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import BarSeries from './bar-series';
 
-  static get isCanvas() {
-    return true;
-  }
+export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {}
 
-  static getParentConfig(attr) {
+class VerticalBarSeries extends AbstractSeries<any> {
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
     const isDomainAdjustmentNeeded = attr === 'x';
     const zeroBaseValue = attr === 'y';
     return {
@@ -39,27 +35,19 @@ class HorizontalBarSeriesCanvas extends AbstractSeries {
     };
   }
 
-  static renderLayer(props, ctx) {
-    BarSeries.renderLayer(
-      {
-        ...props,
-        linePosAttr: 'x',
-        valuePosAttr: 'y',
-        lineSizeAttr: 'width',
-        valueSizeAttr: 'height'
-      },
-      ctx
+  render(): JSX.Element {
+    return (
+      <BarSeries
+        {...this.props}
+        linePosAttr="x"
+        valuePosAttr="y"
+        lineSizeAttr="width"
+        valueSizeAttr="height"
+      />
     );
-  }
-
-  render() {
-    return null;
   }
 }
 
-HorizontalBarSeriesCanvas.displayName = 'HorizontalBarSeriesCanvas';
-HorizontalBarSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
-};
+(VerticalBarSeries as any).displayName = 'VerticalBarSeries';
 
-export default HorizontalBarSeriesCanvas;
+export default VerticalBarSeries;

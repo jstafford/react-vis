@@ -1,4 +1,4 @@
-// Copyright (c) 2016 - 2017 Uber Technologies, Inc.
+// Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,34 +18,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React from 'react';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import RectSeriesCanvas from './rect-series-canvas';
 
-import AbstractSeries from './abstract-series';
-import RectSeries from './rect-series';
+export interface VerticalRectSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class HorizontalRectSeries extends AbstractSeries {
-  static getParentConfig(attr) {
+class VerticalRectSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
+    return false;
+  }
+
+  static get isCanvas(): boolean {
+    return true;
+  }
+
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
     const isDomainAdjustmentNeeded = false;
-    const zeroBaseValue = attr === 'x';
+    const zeroBaseValue = attr === 'y';
     return {
       isDomainAdjustmentNeeded,
       zeroBaseValue
     };
   }
 
-  render() {
-    return (
-      <RectSeries
-        {...this.props}
-        linePosAttr="y"
-        valuePosAttr="x"
-        lineSizeAttr="height"
-        valueSizeAttr="width"
-      />
+  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+    RectSeriesCanvas.renderLayer(
+      {
+        ...props,
+        linePosAttr: 'x',
+        valuePosAttr: 'y',
+        lineSizeAttr: 'width',
+        valueSizeAttr: 'height'
+      },
+      ctx
     );
+  }
+
+  render(): null {
+    return null;
   }
 }
 
-HorizontalRectSeries.displayName = 'HorizontalRectSeries';
+(VerticalRectSeriesCanvas as any).displayName = 'VerticalRectSeriesCanvas';
+(VerticalRectSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
+};
 
-export default HorizontalRectSeries;
+export default VerticalRectSeriesCanvas;

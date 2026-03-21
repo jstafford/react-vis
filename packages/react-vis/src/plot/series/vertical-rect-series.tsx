@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Uber Technologies, Inc.
+// Copyright (c) 2016 - 2017 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,48 +18,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import AbstractSeries from './abstract-series';
-import RectSeries from './rect-series-canvas';
+import React from 'react';
 
-class HorizontalRectSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
-    return false;
-  }
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import RectSeries from './rect-series';
 
-  static get isCanvas() {
-    return true;
-  }
+export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {}
 
-  static getParentConfig(attr) {
+class VerticalRectSeries extends AbstractSeries<any> {
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
     const isDomainAdjustmentNeeded = false;
-    const zeroBaseValue = attr === 'x';
+    const zeroBaseValue = attr === 'y';
     return {
       isDomainAdjustmentNeeded,
       zeroBaseValue
     };
   }
 
-  static renderLayer(props, ctx) {
-    RectSeries.renderLayer(
-      {
-        ...props,
-        linePosAttr: 'y',
-        valuePosAttr: 'x',
-        lineSizeAttr: 'height',
-        valueSizeAttr: 'width'
-      },
-      ctx
+  render(): JSX.Element {
+    return (
+      <RectSeries
+        {...this.props}
+        linePosAttr="x"
+        valuePosAttr="y"
+        lineSizeAttr="width"
+        valueSizeAttr="height"
+      />
     );
-  }
-
-  render() {
-    return null;
   }
 }
 
-HorizontalRectSeriesCanvas.displayName = 'HorizontalRectSeriesCanvas';
-HorizontalRectSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
-};
+(VerticalRectSeries as any).displayName = 'VerticalRectSeries';
 
-export default HorizontalRectSeriesCanvas;
+export default VerticalRectSeries;

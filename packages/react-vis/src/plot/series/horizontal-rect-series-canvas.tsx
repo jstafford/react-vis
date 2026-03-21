@@ -18,32 +18,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import AbstractSeries from './abstract-series';
-import MarkSeriesCanvas from './mark-series-canvas';
-import LineSeriesCanvas from './line-series-canvas';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import RectSeriesCanvas from './rect-series-canvas';
 
-class LineMarkSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
+export interface HorizontalRectSeriesCanvasProps extends AbstractSeriesProps<any> {}
+
+class HorizontalRectSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
     return false;
   }
 
-  static get isCanvas() {
+  static get isCanvas(): boolean {
     return true;
   }
 
-  static renderLayer(props, ctx) {
-    LineSeriesCanvas.renderLayer(props, ctx);
-    MarkSeriesCanvas.renderLayer(props, ctx);
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
+    const isDomainAdjustmentNeeded = false;
+    const zeroBaseValue = attr === 'x';
+    return {
+      isDomainAdjustmentNeeded,
+      zeroBaseValue
+    };
   }
 
-  render() {
+  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+    RectSeriesCanvas.renderLayer(
+      {
+        ...props,
+        linePosAttr: 'y',
+        valuePosAttr: 'x',
+        lineSizeAttr: 'height',
+        valueSizeAttr: 'width'
+      },
+      ctx
+    );
+  }
+
+  render(): null {
     return null;
   }
 }
 
-LineMarkSeriesCanvas.displayName = 'LineMarkSeriesCanvas';
-LineMarkSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
+(HorizontalRectSeriesCanvas as any).displayName = 'HorizontalRectSeriesCanvas';
+(HorizontalRectSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
 };
 
-export default LineMarkSeriesCanvas;
+export default HorizontalRectSeriesCanvas;

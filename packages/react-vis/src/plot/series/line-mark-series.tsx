@@ -19,33 +19,44 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import AbstractSeries from './abstract-series';
-import RectSeries from './rect-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import LineSeries from './line-series';
+import MarkSeries from './mark-series';
 
-class VerticalRectSeries extends AbstractSeries {
-  static getParentConfig(attr) {
-    const isDomainAdjustmentNeeded = false;
-    const zeroBaseValue = attr === 'y';
+export interface LineMarkSeriesProps extends AbstractSeriesProps<any> {
+  lineStyle?: React.CSSProperties | {[key: string]: any};
+  markStyle?: React.CSSProperties | {[key: string]: any};
+}
+
+const propTypes = {
+  ...(LineSeries as any).propTypes,
+  lineStyle: PropTypes.object,
+  markStyle: PropTypes.object
+};
+
+class LineMarkSeries extends AbstractSeries<any> {
+  static get defaultProps() {
     return {
-      isDomainAdjustmentNeeded,
-      zeroBaseValue
+      ...(LineSeries as any).defaultProps,
+      lineStyle: {},
+      markStyle: {}
     };
   }
 
-  render() {
+  render(): JSX.Element {
+    const {lineStyle, markStyle, style} = this.props;
     return (
-      <RectSeries
-        {...this.props}
-        linePosAttr="x"
-        valuePosAttr="y"
-        lineSizeAttr="width"
-        valueSizeAttr="height"
-      />
+      <g className="rv-xy-plot__series rv-xy-plot__series--linemark">
+        <LineSeries {...this.props} style={{...style, ...lineStyle}} />
+        <MarkSeries {...this.props} style={{...style, ...markStyle}} />
+      </g>
     );
   }
 }
 
-VerticalRectSeries.displayName = 'VerticalRectSeries';
+(LineMarkSeries as any).displayName = 'LineMarkSeries';
+(LineMarkSeries as any).propTypes = propTypes;
 
-export default VerticalRectSeries;
+export default LineMarkSeries;

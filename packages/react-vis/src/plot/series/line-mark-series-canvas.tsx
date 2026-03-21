@@ -1,4 +1,4 @@
-// Copyright (c) 2016 - 2017 Uber Technologies, Inc.
+// Copyright (c) 2017 Uber Technologies, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,34 +18,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React from 'react';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import MarkSeriesCanvas from './mark-series-canvas';
+import LineSeriesCanvas from './line-series-canvas';
 
-import AbstractSeries from './abstract-series';
-import BarSeries from './bar-series';
+export interface LineMarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class VerticalBarSeries extends AbstractSeries {
-  static getParentConfig(attr) {
-    const isDomainAdjustmentNeeded = attr === 'x';
-    const zeroBaseValue = attr === 'y';
-    return {
-      isDomainAdjustmentNeeded,
-      zeroBaseValue
-    };
+class LineMarkSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
+    return false;
   }
 
-  render() {
-    return (
-      <BarSeries
-        {...this.props}
-        linePosAttr="x"
-        valuePosAttr="y"
-        lineSizeAttr="width"
-        valueSizeAttr="height"
-      />
-    );
+  static get isCanvas(): boolean {
+    return true;
+  }
+
+  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+    LineSeriesCanvas.renderLayer(props, ctx);
+    MarkSeriesCanvas.renderLayer(props, ctx);
+  }
+
+  render(): null {
+    return null;
   }
 }
 
-VerticalBarSeries.displayName = 'VerticalBarSeries';
+(LineMarkSeriesCanvas as any).displayName = 'LineMarkSeriesCanvas';
+(LineMarkSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
+};
 
-export default VerticalBarSeries;
+export default LineMarkSeriesCanvas;

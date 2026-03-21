@@ -18,20 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import AbstractSeries from './abstract-series';
-import RectSeries from './rect-series-canvas';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import BarSeriesCanvas from './bar-series-canvas';
 
-class HorizontalRectSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
+export interface VerticalBarSeriesCanvasProps extends AbstractSeriesProps<any> {}
+
+class VerticalBarSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
     return false;
   }
 
-  static get isCanvas() {
+  static get isCanvas(): boolean {
     return true;
   }
 
-  static getParentConfig(attr) {
-    const isDomainAdjustmentNeeded = false;
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
+    const isDomainAdjustmentNeeded = attr === 'x';
     const zeroBaseValue = attr === 'y';
     return {
       isDomainAdjustmentNeeded,
@@ -39,8 +41,8 @@ class HorizontalRectSeriesCanvas extends AbstractSeries {
     };
   }
 
-  static renderLayer(props, ctx) {
-    RectSeries.renderLayer(
+  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+    BarSeriesCanvas.renderLayer(
       {
         ...props,
         linePosAttr: 'x',
@@ -52,14 +54,14 @@ class HorizontalRectSeriesCanvas extends AbstractSeries {
     );
   }
 
-  render() {
+  render(): null {
     return null;
   }
 }
 
-HorizontalRectSeriesCanvas.displayName = 'HorizontalRectSeriesCanvas';
-HorizontalRectSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
+(VerticalBarSeriesCanvas as any).displayName = 'VerticalBarSeriesCanvas';
+(VerticalBarSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
 };
 
-export default HorizontalRectSeriesCanvas;
+export default VerticalBarSeriesCanvas;

@@ -25,14 +25,21 @@ import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--rect';
 
-class RectSeries extends AbstractSeries {
+export interface RectSeriesProps extends AbstractSeriesProps<any> {
+  linePosAttr?: string;
+  valuePosAttr?: string;
+  lineSizeAttr?: string;
+  valueSizeAttr?: string;
+}
+
+class RectSeries extends AbstractSeries<any> {
   static get propTypes() {
     return {
-      ...AbstractSeries.propTypes,
+      ...(AbstractSeries as any).propTypes,
       linePosAttr: PropTypes.string,
       valuePosAttr: PropTypes.string,
       lineSizeAttr: PropTypes.string,
@@ -40,7 +47,7 @@ class RectSeries extends AbstractSeries {
     };
   }
 
-  render() {
+  render(): JSX.Element | null {
     const {
       animation,
       className,
@@ -61,7 +68,7 @@ class RectSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <RectSeries {...this.props} animation={null} />
+          <RectSeries {...this.props} animation={false} />
         </Animation>
       );
     }
@@ -81,22 +88,22 @@ class RectSeries extends AbstractSeries {
         className={getCombinedClassName(predefinedClassName, className)}
         transform={`translate(${marginLeft},${marginTop})`}
       >
-        {data.map((d, i) => {
-          const attrs = {
+        {data.map((d: any, i: number) => {
+          const attrs: {[key: string]: any} = {
             style: {
               opacity: opacityFunctor && opacityFunctor(d),
               stroke: strokeFunctor && strokeFunctor(d),
               fill: fillFunctor && fillFunctor(d),
               ...style
             },
-            [linePosAttr]: line0Functor(d),
-            [lineSizeAttr]: Math.abs(lineFunctor(d) - line0Functor(d)),
-            [valuePosAttr]: Math.min(value0Functor(d), valueFunctor(d)),
-            [valueSizeAttr]: Math.abs(-value0Functor(d) + valueFunctor(d)),
-            onClick: e => this._valueClickHandler(d, e),
-            onContextMenu: e => this._valueRightClickHandler(d, e),
-            onMouseOver: e => this._valueMouseOverHandler(d, e),
-            onMouseOut: e => this._valueMouseOutHandler(d, e)
+            [linePosAttr as string]: line0Functor!(d),
+            [lineSizeAttr as string]: Math.abs(lineFunctor!(d) - line0Functor!(d)),
+            [valuePosAttr as string]: Math.min(value0Functor!(d), valueFunctor!(d)),
+            [valueSizeAttr as string]: Math.abs(-value0Functor!(d) + valueFunctor!(d)),
+            onClick: (e: React.MouseEvent) => this._valueClickHandler(d, e as any),
+            onContextMenu: (e: React.MouseEvent) => this._valueRightClickHandler(d, e as any),
+            onMouseOver: (e: React.MouseEvent) => this._valueMouseOverHandler(d, e as any),
+            onMouseOut: (e: React.MouseEvent) => this._valueMouseOutHandler(d, e as any)
           };
           return <rect key={String(i)} {...attrs} />;
         })}
@@ -105,6 +112,6 @@ class RectSeries extends AbstractSeries {
   }
 }
 
-RectSeries.displayName = 'RectSeries';
+(RectSeries as any).displayName = 'RectSeries';
 
 export default RectSeries;
