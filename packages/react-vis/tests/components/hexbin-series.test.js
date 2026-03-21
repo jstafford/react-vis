@@ -39,7 +39,7 @@ describe('HexbinSeries', () => {
 
       // click next x
       {
-        numHexes: 56,
+        numHexes: 20,
         text:
           'PREV X X AXIS cylinders NEXT XPREV Y Y AXIS power (hp) NEXT Y3.03.54.04.55.05.56.06.57.07.58.0050100150200cylinderspower (hp)',
         buttonToPress: 1

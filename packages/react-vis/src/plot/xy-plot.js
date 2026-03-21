@@ -144,10 +144,10 @@ class XYPlot extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, state) {
     const children = getSeriesChildren(nextProps.children);
     const nextData = getStackedData(children, nextProps.stackBy);
-    const {scaleMixins} = this.state;
+    const {scaleMixins} = state;
     const nextScaleMixins = XYPlot._getScaleMixins(nextData, nextProps);
     if (
       !checkIfMixinsAreEqual(
