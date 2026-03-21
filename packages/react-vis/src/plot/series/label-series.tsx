@@ -21,17 +21,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--label';
 
-const getTextAnchor = (labelAnchorX, leftOfMiddle) => {
+export interface LabelSeriesProps extends AbstractSeriesProps<any> {
+  allowOffsetToBeReversed?: boolean;
+  getLabel?: (d: any) => string;
+  rotation?: number;
+  xRange?: number[];
+  yRange?: number[];
+  labelAnchorX?: string;
+  labelAnchorY?: string;
+  _data?: any[];
+}
+
+const getTextAnchor = (labelAnchorX: string | undefined, leftOfMiddle: boolean): string => {
   return labelAnchorX ? labelAnchorX : leftOfMiddle ? 'start' : 'end';
 };
-const getDominantBaseline = (labelAnchorY, aboveMiddle) => {
+const getDominantBaseline = (labelAnchorY: string | undefined, aboveMiddle: boolean): string => {
   return labelAnchorY
     ? labelAnchorY
     : aboveMiddle
@@ -39,8 +50,8 @@ const getDominantBaseline = (labelAnchorY, aboveMiddle) => {
     : 'text-after-edge';
 };
 
-class LabelSeries extends AbstractSeries {
-  render() {
+class LabelSeries extends AbstractSeries<any> {
+  render(): JSX.Element | null {
     const {
       animation,
       allowOffsetToBeReversed,
@@ -56,7 +67,7 @@ class LabelSeries extends AbstractSeries {
       yRange,
       labelAnchorX,
       labelAnchorY
-    } = this.props;
+    } = this.props as LabelSeriesProps;
     if (!data) {
       return null;
     }
@@ -64,29 +75,29 @@ class LabelSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <LabelSeries {...this.props} animation={null} _data={data} />
+          <LabelSeries {...this.props} animation={false} _data={data} />
         </Animation>
       );
     }
 
-    const xFunctor = this._getAttributeFunctor('x');
-    const yFunctor = this._getAttributeFunctor('y');
+    const xFunctor = this._getAttributeFunctor('x')!;
+    const yFunctor = this._getAttributeFunctor('y')!;
 
     return (
       <g
         className={getCombinedClassName(predefinedClassName, className)}
         transform={`translate(${marginLeft},${marginTop})`}
-        style={style}
+        style={style as React.CSSProperties}
       >
-        {data.reduce((res, d, i) => {
+        {data.reduce((res: JSX.Element[], d: any, i: number) => {
           const {style: markStyle, xOffset, yOffset} = d;
-          if (!getLabel(d)) {
+          if (!getLabel!(d)) {
             return res;
           }
           const xVal = xFunctor(d);
           const yVal = yFunctor(d);
-          const leftOfMiddle = xVal < (xRange[1] - xRange[0]) / 2;
-          const aboveMiddle = yVal < Math.abs(yRange[1] - yRange[0]) / 2;
+          const leftOfMiddle = xVal < ((xRange![1] - xRange![0]) / 2);
+          const aboveMiddle = yVal < Math.abs(yRange![1] - yRange![0]) / 2;
 
           const x =
             xVal +
@@ -100,17 +111,19 @@ class LabelSeries extends AbstractSeries {
           const attrs = {
             dominantBaseline: getDominantBaseline(labelAnchorY, aboveMiddle),
             className: 'rv-xy-plot__series--label-text',
-            onClick: e => this._valueClickHandler(d, e),
-            onContextMenu: e => this._valueRightClickHandler(d, e),
-            onMouseOver: e => this._valueMouseOverHandler(d, e),
-            onMouseOut: e => this._valueMouseOutHandler(d, e),
+            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) =>
+              this._valueRightClickHandler(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) =>
+              this._valueMouseOverHandler(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e),
             textAnchor: getTextAnchor(labelAnchorX, leftOfMiddle),
             x,
             y,
             transform: `rotate(${labelRotation},${x},${y})`,
             ...markStyle
           };
-          const textContent = getLabel(_data ? _data[i] : d);
+          const textContent = getLabel!(_data ? _data[i] : d);
           return res.concat([
             <text key={String(i)} {...attrs}>
               {textContent}
@@ -122,7 +135,7 @@ class LabelSeries extends AbstractSeries {
   }
 }
 
-LabelSeries.propTypes = {
+(LabelSeries as any).propTypes = {
   animation: PropTypes.bool,
   allowOffsetToBeReversed: PropTypes.bool,
   className: PropTypes.string,
@@ -147,11 +160,11 @@ LabelSeries.propTypes = {
   labelAnchorX: PropTypes.string,
   labelAnchorY: PropTypes.string
 };
-LabelSeries.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(LabelSeries as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   animation: false,
   rotation: 0,
-  getLabel: d => d.label
+  getLabel: (d: any) => d.label
 };
-LabelSeries.displayName = 'LabelSeries';
+(LabelSeries as any).displayName = 'LabelSeries';
 export default LabelSeries;

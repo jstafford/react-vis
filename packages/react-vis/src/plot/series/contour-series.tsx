@@ -24,7 +24,7 @@ import {contourDensity} from 'd3-contour';
 import {geoPath} from 'd3-geo';
 import {scaleLinear} from 'd3-scale';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -32,7 +32,12 @@ import {CONTINUOUS_COLOR_RANGE} from 'theme';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--contour';
 
-function getDomain(data) {
+export interface ContourSeriesProps extends AbstractSeriesProps<any> {
+  bandwidth?: number;
+  colorRange?: string[];
+}
+
+function getDomain(data: Array<{value: number}>): {min: number; max: number} {
   return data.reduce(
     (acc, row) => {
       return {
@@ -44,8 +49,8 @@ function getDomain(data) {
   );
 }
 
-class ContourSeries extends AbstractSeries {
-  render() {
+class ContourSeries extends AbstractSeries<any> {
+  render(): JSX.Element | null {
     const {
       animation,
       bandwidth,
@@ -57,7 +62,7 @@ class ContourSeries extends AbstractSeries {
       marginLeft,
       marginTop,
       style
-    } = this.props;
+    } = this.props as ContourSeriesProps;
 
     if (!data || !innerWidth || !innerHeight) {
       return null;
@@ -66,39 +71,39 @@ class ContourSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <ContourSeries {...this.props} animation={null} />
+          <ContourSeries {...this.props} animation={false} />
         </Animation>
       );
     }
 
-    const x = this._getAttributeFunctor('x');
-    const y = this._getAttributeFunctor('y');
+    const x = this._getAttributeFunctor('x')!;
+    const y = this._getAttributeFunctor('y')!;
 
     const contouredData = contourDensity()
-      .x(d => x(d))
-      .y(d => y(d))
+      .x((d: any) => x(d))
+      .y((d: any) => y(d))
       .size([innerWidth, innerHeight])
-      .bandwidth(bandwidth)(data);
+      .bandwidth(bandwidth ?? 40)(data);
 
     const geo = geoPath();
-    const {min, max} = getDomain(contouredData);
-    const colorScale = scaleLinear()
+    const {min, max} = getDomain(contouredData as any);
+    const colorScale = scaleLinear<string>()
       .domain([min, max])
-      .range(colorRange || CONTINUOUS_COLOR_RANGE);
+      .range((colorRange || CONTINUOUS_COLOR_RANGE) as string[]);
     return (
       <g
         className={getCombinedClassName(predefinedClassName, className)}
         transform={`translate(${marginLeft},${marginTop})`}
       >
-        {contouredData.map((polygon, index) => {
+        {(contouredData as any[]).map((polygon: any, index: number) => {
           return (
             <path
               className="rv-xy-plot__series--contour-line"
               key={`rv-xy-plot__series--contour-line-${index}`}
-              d={geo(polygon)}
+              d={geo(polygon) ?? undefined}
               style={{
-                fill: colorScale(polygon.value),
-                ...style
+                fill: colorScale((polygon as any).value),
+                ...(style as React.CSSProperties)
               }}
             />
           );
@@ -108,8 +113,8 @@ class ContourSeries extends AbstractSeries {
   }
 }
 
-ContourSeries.propTypes = {
-  ...AbstractSeries.propTypes,
+(ContourSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   animation: PropTypes.bool,
   bandwidth: PropTypes.number,
   className: PropTypes.string,
@@ -118,8 +123,8 @@ ContourSeries.propTypes = {
   style: PropTypes.object
 };
 
-ContourSeries.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(ContourSeries as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   bandwidth: 40,
   style: {}
 };

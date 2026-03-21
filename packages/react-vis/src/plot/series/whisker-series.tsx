@@ -26,18 +26,41 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_OPACITY} from 'theme';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--whisker';
 const DEFAULT_STROKE_WIDTH = 1;
 const DEFAULT_CROSS_BAR_WIDTH = 6;
+
+export interface WhiskerSeriesProps extends AbstractSeriesProps<any> {
+  strokeWidth?: number;
+  crossBarWidth?: number;
+}
+
+interface WhiskerMarkProps {
+  crossBarWidth: number;
+  opacityFunctor: any;
+  sizeFunctor: any;
+  strokeFunctor: any;
+  strokeWidth: number;
+  style: React.CSSProperties | {[key: string]: any};
+  valueClickHandler: (d: any, e: React.MouseEvent<SVGElement>) => void;
+  valueMouseOutHandler: (d: any, e: React.MouseEvent<SVGElement>) => void;
+  valueMouseOverHandler: (d: any, e: React.MouseEvent<SVGElement>) => void;
+  valueRightClickHandler: (d: any, e: React.MouseEvent<SVGElement>) => void;
+  xFunctor: any;
+  yFunctor: any;
+}
 
 /**
  * Render whisker lines for a data point.
  * @param {Object} whiskerMarkProps All the properties of the whisker mark.
  * @private
  */
-const renderWhiskerMark = whiskerMarkProps => (d, i) => {
+const renderWhiskerMark = (whiskerMarkProps: WhiskerMarkProps) => (
+  d: any,
+  i: number
+): JSX.Element | null => {
   const {
     crossBarWidth,
     opacityFunctor,
@@ -166,8 +189,8 @@ const renderWhiskerMark = whiskerMarkProps => (d, i) => {
   );
 };
 
-class WhiskerSeries extends AbstractSeries {
-  render() {
+class WhiskerSeries extends AbstractSeries<any> {
+  render(): JSX.Element | null {
     const {
       animation,
       className,
@@ -177,27 +200,27 @@ class WhiskerSeries extends AbstractSeries {
       marginTop,
       strokeWidth,
       style
-    } = this.props;
+    } = this.props as WhiskerSeriesProps;
     if (!data) {
       return null;
     }
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <WhiskerSeries {...this.props} animation={null} />
+          <WhiskerSeries {...this.props} animation={false} />
         </Animation>
       );
     }
 
-    const whiskerMarkProps = {
-      crossBarWidth,
+    const whiskerMarkProps: WhiskerMarkProps = {
+      crossBarWidth: crossBarWidth ?? DEFAULT_CROSS_BAR_WIDTH,
       opacityFunctor: this._getAttributeFunctor('opacity'),
       sizeFunctor: this._getAttributeFunctor('size'),
       strokeFunctor:
         this._getAttributeFunctor('stroke') ||
         this._getAttributeFunctor('color'),
-      strokeWidth,
-      style,
+      strokeWidth: strokeWidth ?? DEFAULT_STROKE_WIDTH,
+      style: style as React.CSSProperties,
       xFunctor: this._getAttributeFunctor('x'),
       yFunctor: this._getAttributeFunctor('y'),
       valueClickHandler: this._valueClickHandler,
@@ -217,13 +240,13 @@ class WhiskerSeries extends AbstractSeries {
   }
 }
 
-WhiskerSeries.displayName = 'WhiskerSeries';
-WhiskerSeries.propTypes = {
-  ...AbstractSeries.propTypes,
+(WhiskerSeries as any).displayName = 'WhiskerSeries';
+(WhiskerSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   strokeWidth: PropTypes.number
 };
-WhiskerSeries.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(WhiskerSeries as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   crossBarWidth: DEFAULT_CROSS_BAR_WIDTH,
   size: 0,
   strokeWidth: DEFAULT_STROKE_WIDTH

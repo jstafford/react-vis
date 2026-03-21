@@ -21,7 +21,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -29,12 +29,21 @@ import {getCombinedClassName} from 'utils/styling-utils';
 const predefinedClassName =
   'rv-xy-plot__series rv-xy-plot__series--custom-svg-wrapper';
 
-const DEFAULT_STYLE = {
+const DEFAULT_STYLE: React.CSSProperties = {
   stroke: 'blue',
   fill: 'blue'
 };
 
-function predefinedComponents(type, size = 2, style = DEFAULT_STYLE) {
+export interface CustomSVGSeriesProps extends AbstractSeriesProps<any> {
+  customComponent?: string | ((d: any, pos: any, style: any, funcs: any) => JSX.Element);
+  size?: number;
+}
+
+function predefinedComponents(
+  type: string,
+  size: number = 2,
+  style: React.CSSProperties = DEFAULT_STYLE
+): JSX.Element {
   switch (type) {
     case 'diamond':
       return (
@@ -93,16 +102,23 @@ function getInnerComponent({
   positionFunctions,
   style,
   propsSize
-}) {
+}: {
+  customComponent: any;
+  defaultType: string | ((d: any, pos: any, style: any, funcs: any) => JSX.Element);
+  positionInPixels: {x: number; y: number};
+  positionFunctions: {x: any; y: any};
+  style: React.CSSProperties | {[key: string]: any};
+  propsSize: number;
+}): JSX.Element {
   const {size} = customComponent;
   const aggStyle = {...style, ...(customComponent.style || {})};
   const innerComponent = customComponent.customComponent;
   if (!innerComponent && typeof defaultType === 'string') {
-    return predefinedComponents(defaultType, size || propsSize, aggStyle);
+    return predefinedComponents(defaultType as string, size || propsSize, aggStyle);
   }
   // if default component is a function
   if (!innerComponent) {
-    return defaultType(
+    return (defaultType as Function)(
       customComponent,
       positionInPixels,
       aggStyle,
@@ -110,7 +126,7 @@ function getInnerComponent({
     );
   }
   if (typeof innerComponent === 'string') {
-    return predefinedComponents(innerComponent || defaultType, size, aggStyle);
+    return predefinedComponents((innerComponent || defaultType) as string, size, aggStyle);
   }
   // if inner component is a function
   return innerComponent(
@@ -121,8 +137,8 @@ function getInnerComponent({
   );
 }
 
-class CustomSVGSeries extends AbstractSeries {
-  render() {
+class CustomSVGSeries extends AbstractSeries<any> {
+  render(): JSX.Element | null {
     const {
       animation,
       className,
@@ -134,7 +150,7 @@ class CustomSVGSeries extends AbstractSeries {
       marginTop,
       style,
       size
-    } = this.props;
+    } = this.props as CustomSVGSeriesProps;
 
     if (!data || !innerWidth || !innerHeight) {
       return null;
@@ -148,9 +164,9 @@ class CustomSVGSeries extends AbstractSeries {
       );
     }
 
-    const x = this._getAttributeFunctor('x');
-    const y = this._getAttributeFunctor('y');
-    const contents = data.map((seriesComponent, index) => {
+    const x = this._getAttributeFunctor('x')!;
+    const y = this._getAttributeFunctor('y')!;
+    const contents = data.map((seriesComponent: any, index: number) => {
       const positionInPixels = {
         x: x(seriesComponent),
         y: y(seriesComponent)
@@ -158,10 +174,10 @@ class CustomSVGSeries extends AbstractSeries {
       const innerComponent = getInnerComponent({
         customComponent: seriesComponent,
         positionInPixels,
-        defaultType: customComponent,
+        defaultType: customComponent as any,
         positionFunctions: {x, y},
-        style,
-        propsSize: size
+        style: style as React.CSSProperties,
+        propsSize: size ?? 2
       });
       return (
         <g
@@ -186,7 +202,7 @@ class CustomSVGSeries extends AbstractSeries {
   }
 }
 
-CustomSVGSeries.propTypes = {
+(CustomSVGSeries as any).propTypes = {
   animation: PropTypes.bool,
   className: PropTypes.string,
   customComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
@@ -204,8 +220,8 @@ CustomSVGSeries.propTypes = {
   onValueMouseOut: PropTypes.func
 };
 
-CustomSVGSeries.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(CustomSVGSeries as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   animation: false,
   customComponent: 'circle',
   style: {},

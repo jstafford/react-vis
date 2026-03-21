@@ -31,6 +31,7 @@
     "remove-unpm-rfs": "./remove-refs-to-unpm.pl"
   },
   "devDependencies": {
+    "@types/d3-contour": "^3.0.6",
     "babel-eslint": "^10.1.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "^6.11.0",

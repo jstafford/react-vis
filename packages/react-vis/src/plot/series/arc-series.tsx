@@ -24,7 +24,7 @@ import Animation from 'animation';
 import {arc as arcBuilder} from 'd3-shape';
 
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import {
   getAttributeFunctor,
   getAttr0Functor,
@@ -37,8 +37,18 @@ import {getCombinedClassName} from 'utils/styling-utils';
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--arc';
 const ATTRIBUTES = ['radius', 'angle'];
 
-const defaultProps = {
-  ...AbstractSeries.defaultProps,
+export interface ArcSeriesProps extends AbstractSeriesProps<any> {
+  center?: {x: number; y: number};
+  arcClassName?: string;
+  padAngle?: number | ((d: any) => number);
+}
+
+interface ArcSeriesState {
+  scaleProps: {[key: string]: any};
+}
+
+const defaultProps: Partial<ArcSeriesProps> = {
+  ...(AbstractSeries as any).defaultProps,
   center: {x: 0, y: 0},
   arcClassName: '',
   className: '',
@@ -54,7 +64,7 @@ const defaultProps = {
  * @param {Object} row - coordinate object to be modifed
  * @return {Object} angle corrected object
  */
-function modifyRow(row) {
+function modifyRow(row: any): any {
   const {radius, angle, angle0} = row;
   const truedAngle = -1 * angle + Math.PI / 2;
   const truedAngle0 = -1 * angle0 + Math.PI / 2;
@@ -67,14 +77,16 @@ function modifyRow(row) {
   };
 }
 
-class ArcSeries extends AbstractSeries {
-  constructor(props) {
+class ArcSeries extends AbstractSeries<any> {
+  state: ArcSeriesState;
+
+  constructor(props: ArcSeriesProps) {
     super(props);
     const scaleProps = this._getAllScaleProps(props);
     this.state = {scaleProps};
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: ArcSeriesProps): void {
     this.setState({scaleProps: this._getAllScaleProps(nextProps)});
   }
 
@@ -85,7 +97,7 @@ class ArcSeries extends AbstractSeries {
    * @returns {Object} Map of scales.
    * @private
    */
-  _getAllScaleProps(props) {
+  _getAllScaleProps(props: ArcSeriesProps): {[key: string]: any} {
     const defaultScaleProps = this._getDefaultScaleProps(props);
     const userScaleProps = extractScalePropsFromProps(props, ATTRIBUTES);
     const missingScaleProps = getMissingScaleProps(
@@ -93,7 +105,7 @@ class ArcSeries extends AbstractSeries {
         ...defaultScaleProps,
         ...userScaleProps
       },
-      props.data,
+      props.data || [],
       ATTRIBUTES
     );
 
@@ -110,9 +122,9 @@ class ArcSeries extends AbstractSeries {
    * @returns {Object} Defaults.
    * @private
    */
-  _getDefaultScaleProps(props) {
+  _getDefaultScaleProps(props: ArcSeriesProps): {[key: string]: any} {
     const {innerWidth, innerHeight} = props;
-    const radius = Math.min(innerWidth / 2, innerHeight / 2);
+    const radius = Math.min((innerWidth ?? 0) / 2, (innerHeight ?? 0) / 2);
     return {
       radiusRange: [0, radius],
       _radiusValue: radius,
@@ -120,7 +132,7 @@ class ArcSeries extends AbstractSeries {
     };
   }
 
-  render() {
+  render(): JSX.Element | null {
     const {
       arcClassName,
       animation,
@@ -133,14 +145,14 @@ class ArcSeries extends AbstractSeries {
       marginTop,
       padAngle,
       style
-    } = this.props;
+    } = this.props as ArcSeriesProps;
 
     if (!data) {
       return null;
     }
 
     if (animation) {
-      const cloneData = data.map(d => ({...d}));
+      const cloneData = data.map((d: any) => ({...d}));
       return (
         <g className="rv-xy-plot__series--arc__animation-wrapper">
           <Animation
@@ -150,14 +162,14 @@ class ArcSeries extends AbstractSeries {
           >
             <ArcSeries
               {...this.props}
-              animation={null}
+              animation={false}
               disableSeries={true}
               data={cloneData}
             />
           </Animation>
           <ArcSeries
             {...this.props}
-            animation={null}
+            animation={false}
             hideSeries
             style={{stroke: 'red'}}
           />
@@ -167,19 +179,19 @@ class ArcSeries extends AbstractSeries {
 
     const {scaleProps} = this.state;
     const {radiusDomain} = scaleProps;
-    // need to generate our own functors as abstract series doesnt have anythign for us
-    const radius = getAttributeFunctor(scaleProps, 'radius');
-    const radius0 = getAttr0Functor(scaleProps, 'radius');
-    const angle = getAttributeFunctor(scaleProps, 'angle');
-    const angle0 = getAttr0Functor(scaleProps, 'angle');
+    // need to generate our own functors as abstract series doesnt have anything for us
+    const radius = getAttributeFunctor(scaleProps, 'radius')!;
+    const radius0 = getAttr0Functor(scaleProps, 'radius')!;
+    const angle = getAttributeFunctor(scaleProps, 'angle')!;
+    const angle0 = getAttr0Functor(scaleProps, 'angle')!;
     // but it does have good color support!
     const fill =
       this._getAttributeFunctor('fill') || this._getAttributeFunctor('color');
     const stroke =
       this._getAttributeFunctor('stroke') || this._getAttributeFunctor('color');
     const opacity = this._getAttributeFunctor('opacity');
-    const x = this._getAttributeFunctor('x');
-    const y = this._getAttributeFunctor('y');
+    const x = this._getAttributeFunctor('x')!;
+    const y = this._getAttributeFunctor('y')!;
 
     return (
       <g
@@ -190,10 +202,10 @@ class ArcSeries extends AbstractSeries {
         onContextMenu={this._seriesRightClickHandler}
         opacity={hideSeries ? 0 : 1}
         pointerEvents={disableSeries ? 'none' : 'all'}
-        transform={`translate(${marginLeft + x(center)},${marginTop +
+        transform={`translate(${(marginLeft ?? 0) + x(center)},${(marginTop ?? 0) +
           y(center)})`}
       >
-        {data.map((row, i) => {
+        {data.map((row: any, i: number) => {
           const noRadius = radiusDomain[1] === radiusDomain[0];
           const arcArg = {
             innerRadius: noRadius ? 0 : radius0(row),
@@ -201,7 +213,7 @@ class ArcSeries extends AbstractSeries {
             startAngle: angle0(row) || 0,
             endAngle: angle(row)
           };
-          const arcedData = arcBuilder().padAngle(padAngle);
+          const arcedData = arcBuilder().padAngle(padAngle as number);
           const rowStyle = row.style || {};
           const rowClassName = row.className || '';
           return (
@@ -211,7 +223,7 @@ class ArcSeries extends AbstractSeries {
                 opacity: opacity && opacity(row),
                 stroke: stroke && stroke(row),
                 fill: fill && fill(row),
-                ...style,
+                ...(style as React.CSSProperties),
                 ...rowStyle
               }}
               onClick={e => this._valueClickHandler(modifyRow(row), e)}
@@ -221,7 +233,7 @@ class ArcSeries extends AbstractSeries {
               onMouseOver={e => this._valueMouseOverHandler(modifyRow(row), e)}
               onMouseOut={e => this._valueMouseOutHandler(modifyRow(row), e)}
               className={`${predefinedClassName}-path ${arcClassName} ${rowClassName}`}
-              d={arcedData(arcArg)}
+              d={arcedData(arcArg) ?? undefined}
             />
           );
         })}
@@ -229,8 +241,9 @@ class ArcSeries extends AbstractSeries {
     );
   }
 }
-ArcSeries.propTypes = {
-  ...AbstractSeries.propTypes,
+
+(ArcSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   ...getScalePropTypesByAttribute('radius'),
   ...getScalePropTypesByAttribute('angle'),
   center: PropTypes.shape({
@@ -240,7 +253,7 @@ ArcSeries.propTypes = {
   arcClassName: PropTypes.string,
   padAngle: PropTypes.oneOfType([PropTypes.func, PropTypes.number])
 };
-ArcSeries.defaultProps = defaultProps;
-ArcSeries.displayName = 'ArcSeries';
+(ArcSeries as any).defaultProps = defaultProps;
+(ArcSeries as any).displayName = 'ArcSeries';
 
 export default ArcSeries;
