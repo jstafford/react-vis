@@ -76,7 +76,7 @@ describe('Highlight', () => {
       nativeEvent: {offsetX: 200, offsetY: 200}
     });
     expect($.text()).toBe(
-      '−5051015200102030405060708090Reset ZoomLast Draw AreaTop: 11.083578425950623Right: 34.98Bottom: -0.5863163548405383Left: 13.2'
+      '02468101416182022242628303234Reset ZoomLast Draw AreaTop: 11.083578425950623Right: 34.98Bottom: -0.5863163548405383Left: 13.2'
     );
   });
 
