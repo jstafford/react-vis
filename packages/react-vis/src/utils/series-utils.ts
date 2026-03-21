@@ -20,16 +20,32 @@
 
 import React from 'react';
 
-import AbstractSeries from 'plot/series/abstract-series';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const AbstractSeries = require('plot/series/abstract-series').default || require('plot/series/abstract-series');
 import {DISCRETE_COLOR_RANGE, DEFAULT_OPACITY} from 'theme';
+
+export type RVDatum = {[key: string]: any};
+
+export interface SeriesProps {
+  data?: RVDatum[];
+  cluster?: string;
+  stack?: boolean;
+  [key: string]: any;
+}
+
+interface SeriesTypeInfo {
+  sameTypeTotal: number;
+  sameTypeIndex: number;
+  clusters: Set<string | undefined>;
+}
 
 /**
  * Check if the component is series or not.
  * @param {React.Component} child Component.
  * @returns {boolean} True if the child is series, false otherwise.
  */
-export function isSeriesChild(child) {
-  const {prototype} = child.type;
+export function isSeriesChild(child: React.ReactElement): boolean {
+  const {prototype} = (child.type as any);
   return prototype instanceof AbstractSeries;
 }
 
@@ -38,8 +54,10 @@ export function isSeriesChild(child) {
  * @param {Object} children Children.
  * @returns {Array} Array of children.
  */
-export function getSeriesChildren(children) {
-  return React.Children.toArray(children).filter(
+export function getSeriesChildren(
+  children: React.ReactNode
+): React.ReactElement[] {
+  return (React.Children.toArray(children) as React.ReactElement[]).filter(
     child => child && isSeriesChild(child)
   );
 }
@@ -50,10 +68,12 @@ export function getSeriesChildren(children) {
  * @returns {{}} Map of repetitions where sameTypeTotal is the total amount and
  * sameTypeIndex is always 0.
  */
-function collectSeriesTypesInfo(children) {
-  const result = {};
+function collectSeriesTypesInfo(
+  children: React.ReactElement[]
+): {[displayName: string]: SeriesTypeInfo} {
+  const result: {[displayName: string]: SeriesTypeInfo} = {};
   children.filter(isSeriesChild).forEach(child => {
-    const {displayName} = child.type;
+    const {displayName} = child.type as any;
     const {cluster} = child.props;
     if (!result[displayName]) {
       result[displayName] = {
@@ -73,7 +93,7 @@ function collectSeriesTypesInfo(children) {
  * @param {Array} data - an array of objects to check
  * @returns {Boolean} whether or not this series contains polar configuration
  */
-function seriesHasAngleRadius(data = []) {
+function seriesHasAngleRadius(data: RVDatum[] = []): boolean {
   if (!data) {
     return false;
   }
@@ -86,7 +106,7 @@ function seriesHasAngleRadius(data = []) {
  * @param {String} attr - the property being checked
  * @returns {Boolean} whether or not this series contains polar configuration
  */
-function prepareData(data) {
+function prepareData(data: RVDatum[]): RVDatum[] {
   if (!seriesHasAngleRadius(data)) {
     return data;
   }
@@ -108,75 +128,81 @@ function prepareData(data) {
  * @param {string} attr Attribute to stack by.
  * @returns {Array} New array of children for the series.
  */
-export function getStackedData(children, attr) {
+export function getStackedData(
+  children: Array<React.ReactElement | null>,
+  attr: string
+): Array<RVDatum[] | null> {
   const areSomeSeriesStacked = children.some(
     series => series && series.props.stack
   );
   // It stores the last segment position added to each bar, separated by cluster.
-  const latestAttrPositions = {};
+  const latestAttrPositions: {[cluster: string]: {[seriesType: string]: {[baseVal: string]: {[key: string]: any}}}} = {};
 
-  return children.reduce((accumulator, series) => {
-    // Skip the children that are not series (e.g. don't have any data).
-    if (!series) {
-      accumulator.push(null);
-      return accumulator;
-    }
-    const seriesType = series.type.displayName;
+  return children.reduce(
+    (accumulator: Array<RVDatum[] | null>, series) => {
+      // Skip the children that are not series (e.g. don't have any data).
+      if (!series) {
+        accumulator.push(null);
+        return accumulator;
+      }
+      const seriesType = (series.type as any).displayName;
 
-    const {data, cluster = 'default', stack} = series.props;
-    const preppedData = prepareData(data, attr);
+      const {data, cluster = 'default', stack} = series.props;
+      const preppedData = prepareData(data);
 
-    if (
-      !attr ||
-      !preppedData ||
-      !preppedData.length ||
-      (areSomeSeriesStacked && !stack)
-    ) {
-      accumulator.push(preppedData);
-      return accumulator;
-    }
+      if (
+        !attr ||
+        !preppedData ||
+        !preppedData.length ||
+        (areSomeSeriesStacked && !stack)
+      ) {
+        accumulator.push(preppedData);
+        return accumulator;
+      }
 
-    const attr0 = `${attr}0`;
-    const baseAttr = attr === 'y' ? 'x' : 'y';
+      const attr0 = `${attr}0`;
+      const baseAttr = attr === 'y' ? 'x' : 'y';
 
-    accumulator.push(
-      preppedData.map(d => {
-        if (!latestAttrPositions[cluster]) {
-          latestAttrPositions[cluster] = {};
-        }
-        if (!latestAttrPositions[cluster][seriesType]) {
-          latestAttrPositions[cluster][seriesType] = {};
-        }
+      accumulator.push(
+        preppedData.map((d: RVDatum) => {
+          if (!latestAttrPositions[cluster]) {
+            latestAttrPositions[cluster] = {};
+          }
+          if (!latestAttrPositions[cluster][seriesType]) {
+            latestAttrPositions[cluster][seriesType] = {};
+          }
 
-        const prevD = latestAttrPositions[cluster][seriesType][d[baseAttr]];
-        // It is the first segment of a bar.
-        if (!prevD) {
-          latestAttrPositions[cluster][seriesType][d[baseAttr]] = {
-            [attr0]: d[attr0],
-            [attr]: d[attr]
+          const prevD = latestAttrPositions[cluster][seriesType][d[baseAttr]];
+          // It is the first segment of a bar.
+          if (!prevD) {
+            latestAttrPositions[cluster][seriesType][d[baseAttr]] = {
+              [attr0]: d[attr0],
+              [attr]: d[attr]
+            };
+
+            return {...d};
+          }
+
+          // Calculate the position of the next segment in a bar.
+          const nextD = {
+            ...d,
+            [attr0]: prevD[attr],
+            [attr]: prevD[attr] + d[attr] - (d[attr0] || 0)
           };
 
-          return {...d};
-        }
+          latestAttrPositions[cluster][seriesType][d[baseAttr]] = {
+            [attr0]: nextD[attr0],
+            [attr]: nextD[attr]
+          };
 
-        // Calculate the position of the next segment in a bar.
-        const nextD = {
-          ...d,
-          [attr0]: prevD[attr],
-          [attr]: prevD[attr] + d[attr] - (d[attr0] || 0)
-        };
+          return nextD;
+        })
+      );
 
-        latestAttrPositions[cluster][seriesType][d[baseAttr]] = {
-          [attr0]: nextD[attr0],
-          [attr]: nextD[attr]
-        };
-
-        return nextD;
-      })
-    );
-
-    return accumulator;
-  }, []);
+      return accumulator;
+    },
+    []
+  );
 }
 
 /**
@@ -185,15 +211,17 @@ export function getStackedData(children, attr) {
  * @returns {Array} Array of series props for each child. If a child is not a
  * series, than it's undefined.
  */
-export function getSeriesPropsFromChildren(children) {
-  const result = [];
+export function getSeriesPropsFromChildren(
+  children: React.ReactElement[]
+): Array<{[key: string]: any} | undefined> {
+  const result: Array<{[key: string]: any} | undefined> = [];
   const seriesTypesInfo = collectSeriesTypesInfo(children);
   let seriesIndex = 0;
   const _opacityValue = DEFAULT_OPACITY;
   children.forEach(child => {
-    let props;
+    let props: {[key: string]: any} | undefined;
     if (isSeriesChild(child)) {
-      const seriesTypeInfo = seriesTypesInfo[child.type.displayName];
+      const seriesTypeInfo = seriesTypesInfo[(child.type as any).displayName];
       const _colorValue =
         DISCRETE_COLOR_RANGE[seriesIndex % DISCRETE_COLOR_RANGE.length];
       props = {
@@ -224,11 +252,11 @@ export function getSeriesPropsFromChildren(children) {
  * it is an array of objects!
  * @returns {number} the maximum value in coordinates for the radial variable
  */
-export function getRadialDomain(data) {
+export function getRadialDomain(data: RVDatum[]): number {
   return data.reduce((res, row) => Math.max(row.radius, res), 0);
 }
 
-export const ANIMATED_SERIES_PROPS = [
+export const ANIMATED_SERIES_PROPS: string[] = [
   'xRange',
   'xDomain',
   'x',
@@ -265,7 +293,13 @@ export const ANIMATED_SERIES_PROPS = [
   'innerRadius'
 ];
 
-export function getStackParams(props) {
+export function getStackParams(props: {
+  _stackBy?: string;
+  valuePosAttr?: string;
+  cluster?: string;
+  sameTypeTotal?: number;
+  sameTypeIndex?: number;
+}): {sameTypeTotal: number; sameTypeIndex: number} {
   const {_stackBy, valuePosAttr, cluster} = props;
   let {sameTypeTotal = 1, sameTypeIndex = 0} = props;
 

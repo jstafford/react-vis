@@ -35,6 +35,22 @@ import PropTypes from 'prop-types';
 import {warning} from './react-utils';
 import {getUniquePropertyValues, addValueToArray} from './data-utils';
 
+// A flexible type alias for any D3 scale function
+type AnyD3Scale = any;
+
+// Type for a scale object used throughout this module
+export interface ScaleObject {
+  type: string;
+  domain: any[];
+  range: any[];
+  distance: number;
+  attr: string;
+  baseValue: any;
+  isValue: boolean;
+  accessor: (d: any) => any;
+  accessor0: (d: any) => any;
+}
+
 /**
  * Linear scale name.
  * @type {string}
@@ -91,7 +107,7 @@ const TIME_UTC_SCALE_TYPE = 'time-utc';
  * @type {Object}
  * @const
  */
-const SCALE_FUNCTIONS = {
+const SCALE_FUNCTIONS: {[key: string]: (...args: any[]) => AnyD3Scale} = {
   [LINEAR_SCALE_TYPE]: scaleLinear,
   [ORDINAL_SCALE_TYPE]: scalePoint,
   [CATEGORY_SCALE_TYPE]: scaleOrdinal,
@@ -114,7 +130,7 @@ const XYPLOT_ATTR = ['color', 'fill', 'opacity', 'stroke'];
  * @param {String} str Array of values.
  * @returns {String} titlecased string
  */
-function toTitleCase(str) {
+function toTitleCase(str: string): string {
   return `${str[0].toUpperCase()}${str.slice(1)}`;
 }
 
@@ -128,7 +144,10 @@ function toTitleCase(str) {
  * @returns {number} Index of an element where the smallest distance was found.
  * @private
  */
-export function _getSmallestDistanceIndex(values, scaleObject) {
+export function _getSmallestDistanceIndex(
+  values: any[],
+  scaleObject: ScaleObject
+): number {
   const scaleFn = getScaleFnFromScaleObject(scaleObject);
   let result = 0;
   if (scaleFn) {
@@ -158,12 +177,12 @@ export function _getSmallestDistanceIndex(values, scaleObject) {
  * @private
  */
 
-function addInvertFunctionToOrdinalScaleObject(scale) {
+function addInvertFunctionToOrdinalScaleObject(scale: AnyD3Scale): void {
   if (scale.invert) {
     return;
   }
 
-  scale.invert = function invert(value) {
+  scale.invert = function invert(value: number): any {
     const [lower, upper] = scale.range();
     const start = Math.min(lower, upper);
     const stop = Math.max(lower, upper);
@@ -193,7 +212,9 @@ function addInvertFunctionToOrdinalScaleObject(scale) {
  * @returns {*} Scale function.
  * @private
  */
-export function getScaleFnFromScaleObject(scaleObject) {
+export function getScaleFnFromScaleObject(
+  scaleObject: ScaleObject | null
+): AnyD3Scale | null {
   if (!scaleObject) {
     return null;
   }
@@ -226,11 +247,16 @@ export function getScaleFnFromScaleObject(scaleObject) {
  * @returns {Array} Domain.
  * @private
  */
-export function getDomainByAccessor(allData, accessor, accessor0, type) {
+export function getDomainByAccessor(
+  allData: any[],
+  accessor: (d: any) => any,
+  accessor0: (d: any) => any,
+  type: string
+): any[] {
   let domain;
 
   // Collect both attr and available attr0 values from the array of data.
-  const values = allData.reduce((data, d) => {
+  const values = allData.reduce((data: any[], d: any) => {
     const value = accessor(d);
     const value0 = accessor0(d);
     if (_isDefined(value)) {
@@ -266,7 +292,13 @@ export function getDomainByAccessor(allData, accessor, accessor0, type) {
  * @returns {Object} Custom scale object.
  * @private
  */
-function _createScaleObjectForValue(attr, value, type, accessor, accessor0) {
+function _createScaleObjectForValue(
+  attr: string,
+  value: any,
+  type: string,
+  accessor: (d: any) => any,
+  accessor0: (d: any) => any
+): ScaleObject | null {
   if (type === LITERAL_SCALE_TYPE) {
     return {
       type: LITERAL_SCALE_TYPE,
@@ -318,7 +350,16 @@ function _createScaleObjectForFunction({
   baseValue,
   accessor,
   accessor0
-}) {
+}: {
+  domain: any[];
+  range: any[];
+  type: string;
+  distance: number;
+  attr: string;
+  baseValue: any;
+  accessor: (d: any) => any;
+  accessor0: (d: any) => any;
+}): ScaleObject {
   return {
     domain,
     range,
@@ -340,7 +381,10 @@ function _createScaleObjectForFunction({
  * @returns {*} Null or an object with the scale.
  * @private
  */
-function _collectScaleObjectFromProps(props, attr) {
+function _collectScaleObjectFromProps(
+  props: {[key: string]: any},
+  attr: string
+): ScaleObject | null {
   const {
     [attr]: value,
     [`_${attr}Value`]: fallbackValue,
@@ -349,8 +393,8 @@ function _collectScaleObjectFromProps(props, attr) {
     [`${attr}BaseValue`]: baseValue,
     [`${attr}Type`]: type = LINEAR_SCALE_TYPE,
     [`${attr}NoFallBack`]: noFallBack,
-    [`get${toTitleCase(attr)}`]: accessor = d => d[attr],
-    [`get${toTitleCase(attr)}0`]: accessor0 = d => d[`${attr}0`]
+    [`get${toTitleCase(attr)}`]: accessor = (d: any) => d[attr],
+    [`get${toTitleCase(attr)}0`]: accessor0 = (d: any) => d[`${attr}0`]
   } = props;
 
   let {[`${attr}Domain`]: domain} = props;
@@ -400,7 +444,7 @@ function _collectScaleObjectFromProps(props, attr) {
  * @returns {number} Domain adjustment.
  * @private
  */
-function _computeLeftDomainAdjustment(values) {
+function _computeLeftDomainAdjustment(values: any[]): number {
   if (values.length > 1) {
     return (values[1] - values[0]) / 2;
   }
@@ -416,7 +460,7 @@ function _computeLeftDomainAdjustment(values) {
  * @returns {number} Domain adjustment.
  * @private
  */
-function _computeRightDomainAdjustment(values) {
+function _computeRightDomainAdjustment(values: any[]): number {
   if (values.length > 1) {
     return (values[values.length - 1] - values[values.length - 2]) / 2;
   }
@@ -435,7 +479,12 @@ function _computeRightDomainAdjustment(values) {
  * @returns {number} Domain adjustment.
  * @private
  */
-function _computeScaleDistance(values, domain, bestDistIndex, scaleFn) {
+function _computeScaleDistance(
+  values: any[],
+  domain: any[],
+  bestDistIndex: number,
+  scaleFn: AnyD3Scale
+): number {
   if (values.length > 1) {
     // Avoid zero indexes.
     const i = Math.max(bestDistIndex, 1);
@@ -455,7 +504,12 @@ function _computeScaleDistance(values, domain, bestDistIndex, scaleFn) {
  * @param {string} type Type.
  * @private
  */
-function _normalizeValues(data, values, accessor0, type) {
+function _normalizeValues(
+  data: any[],
+  values: any[],
+  accessor0: (d: any) => any,
+  type: string
+): any[] {
   if (type === TIME_SCALE_TYPE && values.length === 1) {
     const attr0 = accessor0(data[0]);
 
@@ -472,7 +526,10 @@ function _normalizeValues(data, values, accessor0, type) {
  * @returns {{domain0: number, domainN: number, distance: number}} Result.
  * @private
  */
-export function _getScaleDistanceAndAdjustedDomain(data, scaleObject) {
+export function _getScaleDistanceAndAdjustedDomain(
+  data: any[],
+  scaleObject: ScaleObject
+): {domain0: any; domainN: any; distance: number} {
   const {domain, type, accessor, accessor0} = scaleObject;
 
   const uniqueValues = getUniquePropertyValues(data, accessor);
@@ -481,7 +538,7 @@ export function _getScaleDistanceAndAdjustedDomain(data, scaleObject) {
   const values = _normalizeValues(data, uniqueValues, accessor0, type);
   const index = _getSmallestDistanceIndex(values, scaleObject);
 
-  const adjustedDomain = [].concat(domain);
+  const adjustedDomain: any[] = ([] as any[]).concat(domain);
 
   adjustedDomain[0] -= _computeLeftDomainAdjustment(values);
   adjustedDomain[domain.length - 1] += _computeRightDomainAdjustment(values);
@@ -516,7 +573,10 @@ export function _getScaleDistanceAndAdjustedDomain(data, scaleObject) {
  * @returns {boolean} True if scale adjustments possible.
  * @private
  */
-function _isScaleAdjustmentPossible(props, scaleObject) {
+function _isScaleAdjustmentPossible(
+  props: {[key: string]: any},
+  scaleObject: ScaleObject
+): boolean {
   const {attr} = scaleObject;
   const {_adjustBy: adjustBy = [], _adjustWhat: adjustWhat = []} = props;
 
@@ -533,7 +593,10 @@ function _isScaleAdjustmentPossible(props, scaleObject) {
  * @returns {*} Scale object with adjustments.
  * @private
  */
-function _adjustContinuousScale(props, scaleObject) {
+function _adjustContinuousScale(
+  props: {[key: string]: any},
+  scaleObject: ScaleObject
+): ScaleObject {
   const {_allData: allSeriesData, _adjustWhat: adjustWhat = []} = props;
 
   // Assign the initial values.
@@ -545,7 +608,7 @@ function _adjustContinuousScale(props, scaleObject) {
 
   // Find the smallest left position of the domain, the largest right position
   // of the domain and the best distance for them.
-  allSeriesData.forEach((data, index) => {
+  allSeriesData.forEach((data: any[], index: number) => {
     if (adjustWhat.indexOf(index) === -1) {
       return;
     }
@@ -573,7 +636,7 @@ function _adjustContinuousScale(props, scaleObject) {
  * @returns {*} Scale object with adjustments.
  * @private
  */
-export function _adjustCategoricalScale(scaleObject) {
+export function _adjustCategoricalScale(scaleObject: ScaleObject): ScaleObject {
   const scaleFn = getScaleFnFromScaleObject(scaleObject);
   const {domain, range} = scaleObject;
   if (domain.length > 1) {
@@ -591,7 +654,10 @@ export function _adjustCategoricalScale(scaleObject) {
  * @param {string} attr Attribute.
  * @returns {*} Scale object, value or null.
  */
-export function getScaleObjectFromProps(props, attr) {
+export function getScaleObjectFromProps(
+  props: {[key: string]: any},
+  attr: string
+): ScaleObject | null {
   // Create the initial scale object.
   const scaleObject = _collectScaleObjectFromProps(props, attr);
   if (!scaleObject) {
@@ -620,7 +686,10 @@ export function getScaleObjectFromProps(props, attr) {
  * @param {string} attr Attribute.
  * @returns {function} d3 scale function.
  */
-export function getAttributeScale(props, attr) {
+export function getAttributeScale(
+  props: {[key: string]: any},
+  attr: string
+): AnyD3Scale | null {
   const scaleObject = getScaleObjectFromProps(props, attr);
   return getScaleFnFromScaleObject(scaleObject);
 }
@@ -632,11 +701,11 @@ export function getAttributeScale(props, attr) {
  * @returns {*} Value of the point.
  * @private
  */
-function _getAttrValue(d, accessor) {
+function _getAttrValue(d: any, accessor: (d: any) => any): any {
   return accessor(d.data ? d.data : d);
 }
 
-function _isDefined(value) {
+function _isDefined(value: any): boolean {
   return typeof value !== 'undefined';
 }
 
@@ -646,7 +715,7 @@ function _isDefined(value) {
  * @param {Number} padding Percentage of padding to add to domain
  * @returns {Array} Padded Domain
  */
-function _padDomain(domain, padding) {
+function _padDomain(domain: any[] | null | undefined, padding: number): any[] | null | undefined {
   if (!domain) {
     return domain;
   }
@@ -664,11 +733,14 @@ function _padDomain(domain, padding) {
  * @param {Function} accessor - Property accessor.
  * @returns {*} Function or value.
  */
-export function getAttributeFunctor(props, attr) {
+export function getAttributeFunctor(
+  props: {[key: string]: any},
+  attr: string
+): ((d: any) => any) | null {
   const scaleObject = getScaleObjectFromProps(props, attr);
   if (scaleObject) {
     const scaleFn = getScaleFnFromScaleObject(scaleObject);
-    return d => scaleFn(_getAttrValue(d, scaleObject.accessor));
+    return (d: any) => scaleFn(_getAttrValue(d, scaleObject.accessor));
   }
   return null;
 }
@@ -681,13 +753,16 @@ export function getAttributeFunctor(props, attr) {
  * @param {string} attr Attribute name.
  * @returns {*} Function which returns value or null if no values available.
  */
-export function getAttr0Functor(props, attr) {
+export function getAttr0Functor(
+  props: {[key: string]: any},
+  attr: string
+): ((d: any) => any) | null {
   const scaleObject = getScaleObjectFromProps(props, attr);
   if (scaleObject) {
     const {domain} = scaleObject;
     const {baseValue = domain[0]} = scaleObject;
     const scaleFn = getScaleFnFromScaleObject(scaleObject);
-    return d => {
+    return (d: any) => {
       const value = _getAttrValue(d, scaleObject.accessor0);
       return scaleFn(_isDefined(value) ? value : baseValue);
     };
@@ -702,7 +777,10 @@ export function getAttr0Functor(props, attr) {
  * @param {string} attr Property name.
  * @returns {*} Function or value.
  */
-export function getAttributeValue(props, attr) {
+export function getAttributeValue(
+  props: {[key: string]: any},
+  attr: string
+): any {
   const scaleObject = getScaleObjectFromProps(props, attr);
   if (scaleObject) {
     if (!scaleObject.isValue && props[`_${attr}Value`] === undefined) {
@@ -722,7 +800,9 @@ export function getAttributeValue(props, attr) {
  * @returns {Object} Object of xDomain, xRange, xType, xDistance and _xValue,
  * where x is an attribute passed to the function.
  */
-export function getScalePropTypesByAttribute(attr) {
+export function getScalePropTypesByAttribute(
+  attr: string
+): {[key: string]: any} {
   return {
     [`_${attr}Value`]: PropTypes.any,
     [`${attr}Domain`]: PropTypes.array,
@@ -742,8 +822,11 @@ export function getScalePropTypesByAttribute(attr) {
  * components (for instance, `['x', 'y', 'color']`).
  * @returns {Object} Collected props.
  */
-export function extractScalePropsFromProps(props, attributes) {
-  const result = {};
+export function extractScalePropsFromProps(
+  props: {[key: string]: any},
+  attributes: string[]
+): {[key: string]: any} {
+  const result: {[key: string]: any} = {};
   Object.keys(props).forEach(key => {
     // this filtering is critical for extracting the correct accessors!
     const attr = attributes.find(a => {
@@ -772,15 +855,19 @@ export function extractScalePropsFromProps(props, attributes) {
  * components (for instance, `['x', 'y', 'color']`).
  * @returns {Object} Collected props.
  */
-export function getMissingScaleProps(props, data, attributes) {
-  const result = {};
+export function getMissingScaleProps(
+  props: {[key: string]: any},
+  data: any[],
+  attributes: string[]
+): {[key: string]: any} {
+  const result: {[key: string]: any} = {};
   // Make sure that the domain is set pad it if specified
   attributes.forEach(attr => {
     if (!props[`get${toTitleCase(attr)}`]) {
-      result[`get${toTitleCase(attr)}`] = d => d[attr];
+      result[`get${toTitleCase(attr)}`] = (d: any) => d[attr];
     }
     if (!props[`get${toTitleCase(attr)}0`]) {
-      result[`get${toTitleCase(attr)}0`] = d => d[`${attr}0`];
+      result[`get${toTitleCase(attr)}0`] = (d: any) => d[`${attr}0`];
     }
     if (!props[`${attr}Domain`]) {
       result[`${attr}Domain`] = getDomainByAccessor(
@@ -805,15 +892,15 @@ export function getMissingScaleProps(props, data, attributes) {
  * Return a d3 scale that returns the literal value that was given to it
  * @returns {function} literal scale.
  */
-export function literalScale(defaultValue) {
-  function scale(d) {
+export function literalScale(defaultValue: any): AnyD3Scale {
+  function scale(d: any): any {
     if (d === undefined) {
       return defaultValue;
     }
     return d;
   }
 
-  function response() {
+  function response(): typeof scale {
     return scale;
   }
 
@@ -825,7 +912,9 @@ export function literalScale(defaultValue) {
   return scale;
 }
 
-export function getFontColorFromBackground(background) {
+export function getFontColorFromBackground(
+  background: string | null | undefined
+): string | null {
   if (background) {
     return hsl(background).l > 0.57 ? '#222' : '#fff';
   }
@@ -839,27 +928,33 @@ export function getFontColorFromBackground(background) {
  * @returns {Array<Object>} Collected props.
  */
 
-export function getXYPlotValues(props, children) {
-  const XYPlotScales = XYPLOT_ATTR.reduce((prev, attr) => {
-    const {
-      [`${attr}Domain`]: domain,
-      [`${attr}Range`]: range,
-      [`${attr}Type`]: type
-    } = props;
+export function getXYPlotValues(
+  props: {[key: string]: any},
+  children: Array<{props?: {[key: string]: any}}>
+): Array<{[key: string]: any}> {
+  const XYPlotScales: {[key: string]: AnyD3Scale} = XYPLOT_ATTR.reduce(
+    (prev: {[key: string]: AnyD3Scale}, attr) => {
+      const {
+        [`${attr}Domain`]: domain,
+        [`${attr}Range`]: range,
+        [`${attr}Type`]: type
+      } = props;
 
-    if (domain && range && type) {
-      return {
-        ...prev,
-        [attr]: SCALE_FUNCTIONS[type]()
-          .domain(domain)
-          .range(range)
-      };
-    }
-    return prev;
-  }, {});
+      if (domain && range && type) {
+        return {
+          ...prev,
+          [attr]: SCALE_FUNCTIONS[type]()
+            .domain(domain)
+            .range(range)
+        };
+      }
+      return prev;
+    },
+    {}
+  );
 
   return children.map(child =>
-    XYPLOT_ATTR.reduce((prev, attr) => {
+    XYPLOT_ATTR.reduce((prev: {[key: string]: any}, attr) => {
       if (child.props && child.props[attr] !== undefined) {
         const scaleInput = child.props[attr];
         const scale = XYPlotScales[attr];
@@ -885,8 +980,10 @@ const OPTIONAL_SCALE_PROPS_REGS = OPTIONAL_SCALE_PROPS.map(
  * @returns {Object} Optional Props.
  * @private
  */
-export function getOptionalScaleProps(props) {
-  return Object.keys(props).reduce((acc, prop) => {
+export function getOptionalScaleProps(props: {
+  [key: string]: any;
+}): {[key: string]: any} {
+  return Object.keys(props).reduce((acc: {[key: string]: any}, prop) => {
     const propIsNotOptional = OPTIONAL_SCALE_PROPS_REGS.every(
       reg => !prop.match(reg)
     );
