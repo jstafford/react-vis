@@ -24,28 +24,64 @@ import PropTypes from 'prop-types';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
-import Axis from './axis';
+const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
 
-const {LEFT, RIGHT} = ORIENTATION;
+export interface AxisLineProps {
+  height: number;
+  style?: React.CSSProperties | {[key: string]: any};
+  orientation: string;
+  width: number;
+}
 
 const propTypes = {
-  ...Axis.propTypes,
-  orientation: PropTypes.oneOf([LEFT, RIGHT])
+  height: PropTypes.number.isRequired,
+  style: PropTypes.object,
+  orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]).isRequired,
+  width: PropTypes.number.isRequired
 };
 
 const defaultProps = {
-  orientation: LEFT,
-  attr: 'y',
-  attrAxis: 'x'
+  style: {}
 };
 
-function YAxis(props) {
-  return <Axis {...props} />;
+function AxisLine({orientation, width, height, style}: AxisLineProps) {
+  let lineProps;
+  if (orientation === LEFT) {
+    lineProps = {
+      x1: width,
+      x2: width,
+      y1: 0,
+      y2: height
+    };
+  } else if (orientation === RIGHT) {
+    lineProps = {
+      x1: 0,
+      x2: 0,
+      y1: 0,
+      y2: height
+    };
+  } else if (orientation === TOP) {
+    lineProps = {
+      x1: 0,
+      x2: width,
+      y1: height,
+      y2: height
+    };
+  } else {
+    lineProps = {
+      x1: 0,
+      x2: width,
+      y1: 0,
+      y2: 0
+    };
+  }
+  return (
+    <line {...lineProps} className="rv-xy-plot__axis__line" style={style} />
+  );
 }
 
-YAxis.displayName = 'YAxis';
-YAxis.propTypes = propTypes;
-YAxis.defaultProps = defaultProps;
-YAxis.requiresSVG = true;
+AxisLine.defaultProps = defaultProps;
+AxisLine.displayName = 'AxisLine';
+AxisLine.propTypes = propTypes;
 
-export default YAxis;
+export default AxisLine;

@@ -37,7 +37,7 @@ const defaultProps = {
   attr: 'y'
 };
 
-function HorizontalGridLines(props) {
+function HorizontalGridLines(props: any) {
   return <GridLines {...props} />;
 }
 

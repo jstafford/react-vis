@@ -27,6 +27,27 @@ import Animation, {AnimationPropType} from 'animation';
 
 import {getTicksTotalFromSize, getTickValues} from '../utils/axis-utils';
 
+interface CircularGridLinesProps {
+  centerX?: number;
+  centerY?: number;
+  width?: number;
+  height?: number;
+  top?: number;
+  left?: number;
+  rRange?: number[];
+  style?: React.CSSProperties | {[key: string]: any};
+  tickValues?: number[];
+  tickTotal?: number;
+  animation?: any;
+  marginTop?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  [key: string]: any;
+}
+
 const animatedProps = [
   'xRange',
   'yRange',
@@ -41,7 +62,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-class CircularGridLines extends PureComponent {
+class CircularGridLines extends PureComponent<CircularGridLinesProps> {
   _getDefaultProps() {
     const {innerWidth, innerHeight, marginTop, marginLeft} = this.props;
     return {
@@ -81,7 +102,7 @@ class CircularGridLines extends PureComponent {
         ) + marginTop})`}
         className="rv-xy-plot__circular-grid-lines"
       >
-        {values.reduce((res, value, index) => {
+        {values.reduce((res: JSX.Element[], value, index) => {
           const radius = xScale(value);
           if (rRange && (radius < rRange[0] || radius > rRange[1])) {
             return res;
@@ -109,14 +130,10 @@ CircularGridLines.propTypes = {
   top: PropTypes.number,
   left: PropTypes.number,
   rRange: PropTypes.arrayOf(PropTypes.number),
-
   style: PropTypes.object,
-
   tickValues: PropTypes.arrayOf(PropTypes.number),
   tickTotal: PropTypes.number,
-
   animation: AnimationPropType,
-  // generally supplied by xyplot
   marginTop: PropTypes.number,
   marginBottom: PropTypes.number,
   marginLeft: PropTypes.number,
@@ -128,6 +145,6 @@ CircularGridLines.defaultProps = {
   centerX: 0,
   centerY: 0
 };
-CircularGridLines.requiresSVG = true;
+(CircularGridLines as any).requiresSVG = true;
 
 export default CircularGridLines;

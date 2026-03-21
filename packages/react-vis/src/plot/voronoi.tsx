@@ -5,13 +5,32 @@ import {voronoi} from 'd3-voronoi';
 import {getAttributeFunctor} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-const NOOP = f => f;
+const NOOP = (f: any) => f;
 
-// Find the index of the node at coordinates of a touch point
-function getNodeIndex(evt) {
+interface VoronoiProps {
+  className?: string;
+  extent?: number[][];
+  nodes: {[key: string]: any}[];
+  onBlur?: (data: any) => void;
+  onClick?: (data: any) => void;
+  onMouseUp?: (data: any) => void;
+  onMouseDown?: (data: any) => void;
+  onHover?: (data: any) => void;
+  polygonStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
+  x?: (d: any) => number;
+  y?: (d: any) => number;
+  innerWidth?: number;
+  innerHeight?: number;
+  marginLeft?: number;
+  marginTop?: number;
+  [key: string]: any;
+}
+
+function getNodeIndex(evt: React.TouchEvent<SVGElement>) {
   const {
     nativeEvent: {pageX, pageY}
-  } = evt;
+  } = evt as any;
   const target = document.elementFromPoint(pageX, pageY);
   if (!target) {
     return -1;
@@ -20,14 +39,14 @@ function getNodeIndex(evt) {
   return Array.prototype.indexOf.call(parentNode.childNodes, target);
 }
 
-function getExtent({innerWidth, innerHeight, marginLeft, marginTop}) {
+function getExtent({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProps) {
   return [
     [marginLeft, marginTop],
     [innerWidth + marginLeft, innerHeight + marginTop]
   ];
 }
 
-function Voronoi(props) {
+function Voronoi(props: VoronoiProps) {
   const {
     className,
     extent,
@@ -42,17 +61,15 @@ function Voronoi(props) {
     x,
     y
   } = props;
-  // Create a voronoi with each node center points
+
   const voronoiInstance = voronoi()
     .x(x || getAttributeFunctor(props, 'x'))
     .y(y || getAttributeFunctor(props, 'y'))
     .extent(extent || getExtent(props));
 
-  // Create an array of polygons corresponding to the cells in voronoi
   const polygons = voronoiInstance.polygons(nodes);
 
-  // Create helper function to handle special logic for touch events
-  const handleTouchEvent = handler => evt => {
+  const handleTouchEvent = (handler: (data: any) => void) => (evt: React.TouchEvent<SVGElement>) => {
     evt.preventDefault();
     const index = getNodeIndex(evt);
     if (index > -1 && index < polygons.length) {
@@ -65,8 +82,6 @@ function Voronoi(props) {
     <g
       className={getCombinedClassName(className, 'rv-voronoi')}
       style={style}
-      // Because of the nature of how touch events, and more specifically touchmove
-      // and how it differs from mouseover, we must manage touch events on the parent
       onTouchEnd={handleTouchEvent(onMouseUp)}
       onTouchStart={handleTouchEvent(onMouseDown)}
       onTouchMove={handleTouchEvent(onHover)}

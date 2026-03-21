@@ -21,6 +21,20 @@
 import React from 'react';
 import {generatePoints, getAxisAngle} from 'utils/axis-utils';
 
+export interface DecorativeAxisTicksProps {
+  axisDomain: number[];
+  numberOfTicks: number;
+  axisStart: {x: number; y: number};
+  axisEnd: {x: number; y: number};
+  tickValue: (d: any) => string | number;
+  tickSize: number;
+  style: {
+    ticks?: React.SVGAttributes<SVGLineElement> | {[key: string]: any};
+    text?: React.SVGAttributes<SVGTextElement> | {[key: string]: any};
+    [key: string]: any;
+  };
+}
+
 /**
  * Generate the actual polygons to be plotted
  * @param {Object} props
@@ -35,7 +49,7 @@ import {generatePoints, getAxisAngle} from 'utils/axis-utils';
  - props.style {Object} The style object for the axis
  * @return {Component} the plotted axis
  */
-export default function decorativeAxisTick(props) {
+export default function decorativeAxisTick(props: DecorativeAxisTicksProps) {
   const {
     axisDomain,
     numberOfTicks,
@@ -53,7 +67,7 @@ export default function decorativeAxisTick(props) {
   });
   // add a quarter rotation to make ticks orthogonal to axis
   const tickAngle = getAxisAngle(axisStart, axisEnd) + Math.PI / 2;
-  return points.map((point, index) => {
+  return points.map((point: any, index: number) => {
     const tickProps = {
       x1: 0,
       y1: 0,

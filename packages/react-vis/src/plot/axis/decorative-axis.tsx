@@ -22,7 +22,7 @@ import React from 'react';
 import {format} from 'd3-format';
 import PropTypes from 'prop-types';
 
-import AbstractSeries from 'plot/series/abstract-series';
+import AbstractSeries, {AbstractSeriesProps, RVDatum} from 'plot/series/abstract-series';
 import DecorativeAxisTicks from './decorative-axis-ticks';
 import Animation from 'animation';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -46,7 +46,24 @@ const animatedProps = [
   'tickSizeOuter'
 ];
 
-class DecorativeAxis extends AbstractSeries {
+export interface DecorativeAxisProps extends AbstractSeriesProps {
+  axisDomain: number[];
+  axisEnd: {
+    x?: number | string;
+    y?: number | string;
+  };
+  axisStart: {
+    x?: number | string;
+    y?: number | string;
+  };
+  className?: string;
+  numberOfTicks?: number;
+  tickValue?: (d: any) => string | number;
+  tickSize?: number;
+}
+
+class DecorativeAxis extends AbstractSeries<RVDatum> {
+  declare props: DecorativeAxisProps & AbstractSeriesProps & {style?: any};
   render() {
     const {
       animation,
@@ -65,7 +82,7 @@ class DecorativeAxis extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} {...{animatedProps}}>
-          <DecorativeAxis {...this.props} animation={null} />
+          <DecorativeAxis {...this.props} animation={null as any} />
         </Animation>
       );
     }
@@ -84,19 +101,19 @@ class DecorativeAxis extends AbstractSeries {
             x2: x({x: axisEnd.x}),
             y1: y({y: axisStart.y}),
             y2: y({y: axisEnd.y}),
-            ...style.line
+            ...(style as any).line
           }}
           className="rv-xy-plot__axis__line"
         />
         <g className="rv-xy-manipulable-axis__ticks">
           {DecorativeAxisTicks({
-            axisDomain,
+            axisDomain: axisDomain!,
             axisEnd: {x: x(axisEnd), y: y(axisEnd)},
             axisStart: {x: x(axisStart), y: y(axisStart)},
-            numberOfTicks,
-            tickValue,
-            tickSize,
-            style
+            numberOfTicks: numberOfTicks!,
+            tickValue: tickValue!,
+            tickSize: tickSize!,
+            style: style as any
           })}
         </g>
       </g>
@@ -106,10 +123,11 @@ class DecorativeAxis extends AbstractSeries {
 
 const DEFAULT_FORMAT = format('.2r');
 
-DecorativeAxis.defaultProps = {
+DecorativeAxis.displayName = 'DecorativeAxis';
+(DecorativeAxis as any).defaultProps = {
   className: '',
   numberOfTicks: 10,
-  tickValue: d => DEFAULT_FORMAT(d),
+  tickValue: (d: any) => DEFAULT_FORMAT(d),
   tickSize: 5,
   style: {
     line: {
@@ -121,8 +139,8 @@ DecorativeAxis.defaultProps = {
     text: {}
   }
 };
-DecorativeAxis.propTypes = {
-  ...AbstractSeries.propTypes,
+(DecorativeAxis as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   axisDomain: PropTypes.arrayOf(PropTypes.number).isRequired,
   axisEnd: PropTypes.shape({
     x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -143,4 +161,5 @@ DecorativeAxis.propTypes = {
   })
 };
 DecorativeAxis.displayName = 'DecorativeAxis';
+
 export default DecorativeAxis;

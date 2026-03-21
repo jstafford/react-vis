@@ -24,28 +24,28 @@ import PropTypes from 'prop-types';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
-import Axis from './axis';
+import Axis, {AxisProps} from './axis';
 
-const {TOP, BOTTOM} = ORIENTATION;
+const {LEFT, RIGHT} = ORIENTATION;
 
 const propTypes = {
   ...Axis.propTypes,
-  orientation: PropTypes.oneOf([TOP, BOTTOM])
+  orientation: PropTypes.oneOf([LEFT, RIGHT])
 };
 
 const defaultProps = {
-  orientation: BOTTOM,
-  attr: 'x',
-  attrAxis: 'y'
+  orientation: LEFT,
+  attr: 'y',
+  attrAxis: 'x'
 };
 
-function XAxis(props) {
+function YAxis(props: AxisProps) {
   return <Axis {...props} />;
 }
 
-XAxis.displayName = 'XAxis';
-XAxis.propTypes = propTypes;
-XAxis.defaultProps = defaultProps;
-XAxis.requiresSVG = true;
+YAxis.displayName = 'YAxis';
+YAxis.propTypes = propTypes;
+YAxis.defaultProps = defaultProps;
+YAxis.requiresSVG = true;
 
-export default XAxis;
+export default YAxis;

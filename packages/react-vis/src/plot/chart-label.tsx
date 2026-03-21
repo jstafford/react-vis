@@ -23,21 +23,34 @@ import PropTypes from 'prop-types';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 
-class ChartLabel extends React.PureComponent {
+interface ChartLabelProps {
+  innerHeight?: number;
+  innerWidth?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  marginTop?: number;
+  className?: string;
+  includeMargin?: boolean;
+  style?: {[key: string]: any};
+  text: string;
+  xPercent: number;
+  yPercent: number;
+}
+
+class ChartLabel extends React.PureComponent<ChartLabelProps> {
   static get requiresSVG() {
     return true;
   }
 
   render() {
     const {
-      // rv defined
       innerHeight,
       innerWidth,
       marginBottom,
       marginLeft,
       marginRight,
       marginTop,
-      // user defined
       className,
       includeMargin,
       style,

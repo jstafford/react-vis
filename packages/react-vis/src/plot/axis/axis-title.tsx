@@ -28,8 +28,31 @@ import {ORIENTATION} from 'utils/axis-utils';
 const ADJUSTMENT_FOR_TEXT_SIZE = 16;
 const MARGIN = 6;
 const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
+
+export interface AxisTitleProps {
+  width: number;
+  height: number;
+  orientation: string;
+  style?: React.CSSProperties | {[key: string]: any};
+  title: string;
+  position?: 'start' | 'middle' | 'end';
+}
+
+interface TransformEntry {
+  x: number;
+  y: number;
+  rotation: number;
+  textAnchor: string;
+}
+
+interface TransformMap {
+  start: TransformEntry;
+  middle: TransformEntry;
+  end: TransformEntry;
+}
+
 const defaultProps = {
-  position: 'end'
+  position: 'end' as const
 };
 
 /**
@@ -38,7 +61,10 @@ const defaultProps = {
  * @param {number} height - height of axis
  * @returns {Object} Object of transformations, keyed by orientation
  */
-const transformation = (width, height) => ({
+const transformation = (
+  width: number,
+  height: number
+): {[key: string]: TransformMap} => ({
   [LEFT]: {
     end: {
       x: ADJUSTMENT_FOR_TEXT_SIZE,
@@ -129,18 +155,25 @@ const propTypes = {
   title: PropTypes.string.isRequired
 };
 
-function AxisTitle({orientation, position, width, height, style, title}) {
+function AxisTitle({
+  orientation,
+  position,
+  width,
+  height,
+  style,
+  title
+}: AxisTitleProps) {
   const outerGroupTranslateX = orientation === LEFT ? width : 0;
   const outerGroupTranslateY = orientation === TOP ? height : 0;
   const outerGroupTransform = `translate(${outerGroupTranslateX}, ${outerGroupTranslateY})`;
   const {x, y, rotation, textAnchor} = transformation(width, height)[
     orientation
-  ][position];
+  ][position!];
   const innerGroupTransform = `translate(${x}, ${y}) rotate(${rotation})`;
 
   return (
     <g transform={outerGroupTransform} className="rv-xy-plot__axis__title">
-      <g style={{textAnchor, ...style}} transform={innerGroupTransform}>
+      <g style={{textAnchor: textAnchor as any, ...style}} transform={innerGroupTransform}>
         <text style={style}>{title}</text>
       </g>
     </g>
@@ -150,4 +183,5 @@ function AxisTitle({orientation, position, width, height, style, title}) {
 AxisTitle.displayName = 'AxisTitle';
 AxisTitle.propTypes = propTypes;
 AxisTitle.defaultProps = defaultProps;
+
 export default AxisTitle;

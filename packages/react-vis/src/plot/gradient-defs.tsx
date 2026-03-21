@@ -19,62 +19,33 @@
 // THE SOFTWARE.
 
 import React from 'react';
-
 import PropTypes from 'prop-types';
 
-import {ORIENTATION} from 'utils/axis-utils';
+import {getCombinedClassName} from 'utils/styling-utils';
 
-const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
+interface GradientDefsProps {
+  className?: string;
+  children?: React.ReactNode;
+}
 
-const propTypes = {
-  height: PropTypes.number.isRequired,
-  style: PropTypes.object,
-  orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]).isRequired,
-  width: PropTypes.number.isRequired
-};
+const predefinedClassName = 'rv-gradient-defs';
 
-const defaultProps = {
-  style: {}
-};
-
-function AxisLine({orientation, width, height, style}) {
-  let lineProps;
-  if (orientation === LEFT) {
-    lineProps = {
-      x1: width,
-      x2: width,
-      y1: 0,
-      y2: height
-    };
-  } else if (orientation === RIGHT) {
-    lineProps = {
-      x1: 0,
-      x2: 0,
-      y1: 0,
-      y2: height
-    };
-  } else if (orientation === TOP) {
-    lineProps = {
-      x1: 0,
-      x2: width,
-      y1: height,
-      y2: height
-    };
-  } else {
-    lineProps = {
-      x1: 0,
-      x2: width,
-      y1: 0,
-      y2: 0
-    };
-  }
+function GradientDefs(props: GradientDefsProps) {
+  const {className} = props;
   return (
-    <line {...lineProps} className="rv-xy-plot__axis__line" style={style} />
+    <defs className={getCombinedClassName(predefinedClassName, className)}>
+      {props.children}
+    </defs>
   );
 }
 
-AxisLine.defaultProps = defaultProps;
-AxisLine.displayName = 'AxisLine';
-AxisLine.propTypes = propTypes;
+GradientDefs.displayName = 'GradientDefs';
+GradientDefs.requiresSVG = true;
+GradientDefs.propTypes = {
+  className: PropTypes.string
+};
+GradientDefs.defaultProps = {
+  className: ''
+};
 
-export default AxisLine;
+export default GradientDefs;

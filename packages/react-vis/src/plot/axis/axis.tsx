@@ -21,7 +21,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import Animation from 'animation';
+import Animation, {AnimationParam, AnimationPropType} from 'animation';
 import {ORIENTATION, getTicksTotalFromSize} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -49,6 +49,39 @@ const defaultAnimatedProps = [
 
 const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
 
+export interface AxisProps {
+  orientation?: string;
+  attr: string;
+  attrAxis?: string;
+  width?: number;
+  height?: number;
+  top?: number;
+  left?: number;
+  title?: string;
+  style?: React.CSSProperties | {[key: string]: any};
+  className?: string;
+  hideTicks?: boolean;
+  hideLine?: boolean;
+  on0?: boolean;
+  tickLabelAngle?: number;
+  tickSize?: number;
+  tickSizeInner?: number;
+  tickSizeOuter?: number;
+  tickPadding?: number;
+  tickValues?: Array<number | string>;
+  tickFormat?: (d: any) => string | number;
+  tickTotal?: number;
+  marginTop?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  animation?: AnimationParam;
+  position?: string;
+  [key: string]: any;
+}
+
 const propTypes = {
   orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]),
   attr: PropTypes.string.isRequired,
@@ -58,9 +91,7 @@ const propTypes = {
   top: PropTypes.number,
   left: PropTypes.number,
   title: PropTypes.string,
-
   style: PropTypes.object,
-
   className: PropTypes.string,
   hideTicks: PropTypes.bool,
   hideLine: PropTypes.bool,
@@ -75,9 +106,6 @@ const propTypes = {
   ),
   tickFormat: PropTypes.func,
   tickTotal: PropTypes.number,
-
-  // Not expected to be used by the users.
-  // TODO: Add underscore to these properties later.
   marginTop: PropTypes.number,
   marginBottom: PropTypes.number,
   marginLeft: PropTypes.number,
@@ -99,12 +127,12 @@ const predefinedClassName = 'rv-xy-plot__axis';
 const VERTICAL_CLASS_NAME = 'rv-xy-plot__axis--vertical';
 const HORIZONTAL_CLASS_NAME = 'rv-xy-plot__axis--horizontal';
 
-class Axis extends PureComponent {
-  /**
-   * Define the default values depending on the data passed from the outside.
-   * @returns {*} Object of default properties.
-   * @private
-   */
+class Axis extends PureComponent<AxisProps> {
+  static displayName = 'Axis';
+  static propTypes = propTypes;
+  static defaultProps = defaultProps;
+  static requiresSVG = true;
+
   _getDefaultAxisProps() {
     const {
       innerWidth,
@@ -117,15 +145,15 @@ class Axis extends PureComponent {
     } = this.props;
     if (orientation === BOTTOM) {
       return {
-        tickTotal: getTicksTotalFromSize(innerWidth),
-        top: innerHeight + marginTop,
+        tickTotal: getTicksTotalFromSize(innerWidth!),
+        top: innerHeight! + marginTop!,
         left: marginLeft,
         width: innerWidth,
         height: marginBottom
       };
     } else if (orientation === TOP) {
       return {
-        tickTotal: getTicksTotalFromSize(innerWidth),
+        tickTotal: getTicksTotalFromSize(innerWidth!),
         top: 0,
         left: marginLeft,
         width: innerWidth,
@@ -133,7 +161,7 @@ class Axis extends PureComponent {
       };
     } else if (orientation === LEFT) {
       return {
-        tickTotal: getTicksTotalFromSize(innerHeight),
+        tickTotal: getTicksTotalFromSize(innerHeight!),
         top: marginTop,
         left: 0,
         width: marginLeft,
@@ -141,9 +169,9 @@ class Axis extends PureComponent {
       };
     }
     return {
-      tickTotal: getTicksTotalFromSize(innerHeight),
+      tickTotal: getTicksTotalFromSize(innerHeight!),
       top: marginTop,
-      left: marginLeft + innerWidth,
+      left: marginLeft! + innerWidth!,
       width: marginRight,
       height: innerHeight
     };
@@ -153,15 +181,15 @@ class Axis extends PureComponent {
     const {animation} = this.props;
 
     if (animation) {
-      const animatedProps = animation.nonAnimatedProps
+      const animatedProps = (animation as any).nonAnimatedProps
         ? defaultAnimatedProps.filter(
-            prop => animation.nonAnimatedProps.indexOf(prop) < 0
+            prop => (animation as any).nonAnimatedProps.indexOf(prop) < 0
           )
         : defaultAnimatedProps;
 
       return (
         <Animation {...this.props} {...{animatedProps}}>
-          <Axis {...this.props} animation={null} />
+          <Axis {...this.props} animation={null as any} />
         </Animation>
       );
     }
@@ -187,7 +215,7 @@ class Axis extends PureComponent {
       top,
       width
     } = props;
-    const isVertical = [LEFT, RIGHT].indexOf(orientation) > -1;
+    const isVertical = [LEFT, RIGHT].indexOf(orientation!) > -1;
     const axisClassName = isVertical
       ? VERTICAL_CLASS_NAME
       : HORIZONTAL_CLASS_NAME;
@@ -195,11 +223,11 @@ class Axis extends PureComponent {
     let leftPos = left;
     let topPos = top;
     if (on0) {
-      const scale = getAttributeScale(props, attrAxis);
+      const scale = getAttributeScale(props, attrAxis!);
       if (isVertical) {
         leftPos = scale(0);
       } else {
-        topPos = marginTop + scale(0);
+        topPos = marginTop! + scale(0);
       }
     }
 
@@ -215,33 +243,28 @@ class Axis extends PureComponent {
       >
         {!hideLine && (
           <AxisLine
-            height={height}
-            width={width}
-            orientation={orientation}
-            style={{...style, ...style.line}}
+            height={height!}
+            width={width!}
+            orientation={orientation!}
+            style={{...style, ...(style as any).line}}
           />
         )}
         {!hideTicks && (
-          <AxisTicks {...props} style={{...style, ...style.ticks}} />
+          <AxisTicks {...(props as any)} style={{...style, ...(style as any).ticks}} />
         )}
         {title ? (
           <AxisTitle
-            position={position}
+            position={position as 'start' | 'middle' | 'end' | undefined}
             title={title}
-            height={height}
-            width={width}
-            style={{...style, ...style.title}}
-            orientation={orientation}
+            height={height!}
+            width={width!}
+            style={{...style, ...(style as any).title}}
+            orientation={orientation!}
           />
         ) : null}
       </g>
     );
   }
 }
-
-Axis.displayName = 'Axis';
-Axis.propTypes = propTypes;
-Axis.defaultProps = defaultProps;
-Axis.requiresSVG = true;
 
 export default Axis;

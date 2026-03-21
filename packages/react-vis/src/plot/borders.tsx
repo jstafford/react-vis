@@ -22,6 +22,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {getCombinedClassName} from 'utils/styling-utils';
 
+interface BordersProps {
+  style?: {
+    all?: React.CSSProperties;
+    bottom?: React.CSSProperties;
+    left?: React.CSSProperties;
+    right?: React.CSSProperties;
+    top?: React.CSSProperties;
+  };
+  marginTop?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  className?: string;
+}
+
 const propTypes = {
   style: PropTypes.shape({
     bottom: PropTypes.object,
@@ -29,7 +46,6 @@ const propTypes = {
     right: PropTypes.object,
     top: PropTypes.object
   }),
-  // supplied by xyplot
   marginTop: PropTypes.number,
   marginBottom: PropTypes.number,
   marginLeft: PropTypes.number,
@@ -46,7 +62,7 @@ const CLASSES = {
   top: 'rv-xy-plot__borders-top'
 };
 
-function Borders(props) {
+function Borders(props: BordersProps) {
   const {
     marginTop,
     marginBottom,

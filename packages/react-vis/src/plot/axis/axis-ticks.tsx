@@ -27,6 +27,29 @@ import {getAttributeScale} from 'utils/scales-utils';
 
 const {LEFT, RIGHT, TOP, BOTTOM} = ORIENTATION;
 
+export interface AxisTicksStyle {
+  line?: React.CSSProperties | {[key: string]: any};
+  text?: React.CSSProperties | {[key: string]: any};
+  [key: string]: any;
+}
+
+export interface AxisTicksProps {
+  attr: string;
+  height: number;
+  orientation: string;
+  style?: AxisTicksStyle;
+  width: number;
+  tickFormat?: (d: any, i: number, scale: any, tickTotal: number) => any;
+  tickLabelAngle?: number;
+  tickPadding?: number;
+  tickSize?: number;
+  tickSizeInner?: number;
+  tickSizeOuter?: number;
+  tickTotal?: number;
+  tickValues?: any[];
+  [key: string]: any;
+}
+
 const propTypes = {
   height: PropTypes.number.isRequired,
   orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]).isRequired,
@@ -38,26 +61,35 @@ const defaultProps = {
   style: {}
 };
 
-function _getTickFormatFn(scale, tickTotal, tickFormat) {
+function _getTickFormatFn(
+  scale: any,
+  tickTotal: number | undefined,
+  tickFormat: AxisTicksProps['tickFormat']
+) {
   return !tickFormat
     ? scale.tickFormat
       ? scale.tickFormat(tickTotal)
-      : v => v
+      : (v: any) => v
     : tickFormat;
 }
 
-class AxisTicks extends React.Component {
+class AxisTicks extends React.Component<AxisTicksProps> {
+  static defaultProps = defaultProps;
+  static displayName = 'AxisTicks';
+  static propTypes = propTypes;
+  static requiresSVG = true;
+
   /**
    * Check if axis ticks should be mirrored (for the right and top positions.
    * @returns {boolean} True if mirrored.
    * @private
    */
-  _areTicksWrapped() {
+  _areTicksWrapped(): boolean {
     const {orientation} = this.props;
     return orientation === LEFT || orientation === TOP;
   }
 
-  _getTickContainerPropsGetterFn() {
+  _getTickContainerPropsGetterFn(): (pos: number, offset?: number) => {transform: string} {
     if (this._isAxisVertical()) {
       return pos => {
         return {transform: `translate(0, ${pos})`};
@@ -73,7 +105,7 @@ class AxisTicks extends React.Component {
    * @returns {Object} Object with properties.
    * @private
    */
-  _getTickLabelProps() {
+  _getTickLabelProps(): {textAnchor: string; dy: string; transform: string} {
     const {
       orientation,
       tickLabelAngle,
@@ -83,7 +115,7 @@ class AxisTicks extends React.Component {
     } = this.props;
 
     // Assign the text orientation inside the label of the tick mark.
-    let textAnchor;
+    let textAnchor: string;
     if (orientation === LEFT || (orientation === BOTTOM && tickLabelAngle)) {
       textAnchor = 'end';
     } else if (
@@ -100,7 +132,7 @@ class AxisTicks extends React.Component {
     const isVertical = this._isAxisVertical();
     const wrap = this._areTicksWrapped() ? -1 : 1;
 
-    const labelOffset = wrap * (tickSizeOuter + tickPadding);
+    const labelOffset = wrap * ((tickSizeOuter as number) + (tickPadding as number));
     const transform =
       (isVertical
         ? `translate(${labelOffset}, 0)`
@@ -128,7 +160,7 @@ class AxisTicks extends React.Component {
    * @returns {Object} Props.
    * @private
    */
-  _getTickLineProps() {
+  _getTickLineProps(): {[key: string]: number} {
     const {
       tickSize,
       tickSizeOuter = tickSize,
@@ -141,8 +173,8 @@ class AxisTicks extends React.Component {
     return {
       [`${tickXAttr}1`]: 0,
       [`${tickXAttr}2`]: 0,
-      [`${tickYAttr}1`]: -wrap * tickSizeInner,
-      [`${tickYAttr}2`]: wrap * tickSizeOuter
+      [`${tickYAttr}1`]: -wrap * (tickSizeInner as number),
+      [`${tickYAttr}2`]: wrap * (tickSizeOuter as number)
     };
   }
 
@@ -151,7 +183,7 @@ class AxisTicks extends React.Component {
    * @returns {boolean} True if vertical.
    * @private
    */
-  _isAxisVertical() {
+  _isAxisVertical(): boolean {
     const {orientation} = this.props;
     return orientation === LEFT || orientation === RIGHT;
   }
@@ -173,7 +205,7 @@ class AxisTicks extends React.Component {
 
     const scale = getAttributeScale(this.props, attr);
 
-    const values = getTickValues(scale, tickTotal, tickValues);
+    const values = getTickValues(scale, tickTotal as number, tickValues);
     const tickFormatFn = _getTickFormatFn(scale, tickTotal, tickFormat);
 
     const translateFn = this._getTickContainerPropsGetterFn();
@@ -185,23 +217,23 @@ class AxisTicks extends React.Component {
       const labelNode = tickFormatFn(v, i, scale, tickTotal);
       const shouldRenderAsOwnNode =
         React.isValidElement(labelNode) &&
-        !['tspan', 'textPath'].includes(labelNode.type);
-      const shouldAddProps = labelNode && typeof labelNode.type !== 'string';
+        !['tspan', 'textPath'].includes((labelNode as React.ReactElement).type as string);
+      const shouldAddProps = labelNode && typeof (labelNode as React.ReactElement).type !== 'string';
       return (
         <g
           key={i}
           {...translateFn(pos, 0)}
           className="rv-xy-plot__axis__tick"
-          style={style}
+          style={style as any}
         >
           <line
-            {...pathProps}
+            {...(pathProps as any)}
             className="rv-xy-plot__axis__tick__line"
-            style={{...style, ...style.line}}
+            style={{...(style as any), ...(style as any).line}}
           />
           {shouldRenderAsOwnNode ? (
             React.cloneElement(
-              labelNode,
+              labelNode as React.ReactElement,
               shouldAddProps
                 ? {
                     ...textProps,
@@ -212,9 +244,9 @@ class AxisTicks extends React.Component {
             )
           ) : (
             <text
-              {...textProps}
+              {...(textProps as any)}
               className="rv-xy-plot__axis__tick__text"
-              style={{...style, ...style.text}}
+              style={{...(style as any), ...(style as any).text}}
             >
               {labelNode}
             </text>
@@ -233,10 +265,5 @@ class AxisTicks extends React.Component {
     );
   }
 }
-
-AxisTicks.defaultProps = defaultProps;
-AxisTicks.displayName = 'AxisTicks';
-AxisTicks.propTypes = propTypes;
-AxisTicks.requiresSVG = true;
 
 export default AxisTicks;

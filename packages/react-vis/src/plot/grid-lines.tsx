@@ -33,6 +33,27 @@ import {
 
 const {VERTICAL, HORIZONTAL} = DIRECTION;
 
+interface GridLinesProps {
+  direction?: string;
+  attr: string;
+  width?: number;
+  height?: number;
+  top?: number;
+  left?: number;
+  style?: React.CSSProperties | {[key: string]: any};
+  tickValues?: Array<number | string>;
+  tickTotal?: number;
+  animation?: any;
+  marginTop?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  className?: string;
+  [key: string]: any;
+}
+
 const propTypes = {
   direction: PropTypes.oneOf([VERTICAL, HORIZONTAL]),
   attr: PropTypes.string.isRequired,
@@ -40,17 +61,12 @@ const propTypes = {
   height: PropTypes.number,
   top: PropTypes.number,
   left: PropTypes.number,
-
   style: PropTypes.object,
-
   tickValues: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string])
   ),
   tickTotal: PropTypes.number,
-
   animation: AnimationPropType,
-
-  // generally supplied by xyplot
   marginTop: PropTypes.number,
   marginBottom: PropTypes.number,
   marginLeft: PropTypes.number,
@@ -77,7 +93,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-class GridLines extends PureComponent {
+class GridLines extends PureComponent<GridLinesProps> {
   _getDefaultProps() {
     const {
       innerWidth,
@@ -138,7 +154,7 @@ class GridLines extends PureComponent {
       >
         {values.map((v, i) => {
           const pos = scale(v);
-          const pathProps = {
+          const pathProps: {[key: string]: number} = {
             [`${tickYAttr}1`]: pos,
             [`${tickYAttr}2`]: pos,
             [`${tickXAttr}1`]: 0,
@@ -161,6 +177,6 @@ class GridLines extends PureComponent {
 GridLines.displayName = 'GridLines';
 GridLines.defaultProps = defaultProps;
 GridLines.propTypes = propTypes;
-GridLines.requiresSVG = true;
+(GridLines as any).requiresSVG = true;
 
 export default GridLines;

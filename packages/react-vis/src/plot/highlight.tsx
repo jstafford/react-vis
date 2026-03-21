@@ -5,14 +5,30 @@ import AbstractSeries from './series/abstract-series';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-function getLocs(evt) {
+interface BrushArea {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+interface HighlightState {
+  dragging: boolean;
+  brushArea: BrushArea;
+  brushing: boolean;
+  startLocX: number;
+  startLocY: number;
+  dragArea: BrushArea | null;
+}
+
+function getLocs(evt: any) {
   const xLoc = evt.type === 'touchstart' ? evt.pageX : evt.offsetX;
   const yLoc = evt.type === 'touchstart' ? evt.pageY : evt.offsetY;
   return {xLoc, yLoc};
 }
 
-class Highlight extends AbstractSeries {
-  state = {
+class Highlight extends AbstractSeries<any> {
+  state: HighlightState = {
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},
     brushing: false,
@@ -21,7 +37,7 @@ class Highlight extends AbstractSeries {
     dragArea: null
   };
 
-  _getDrawArea(xLoc, yLoc) {
+  _getDrawArea(xLoc: number, yLoc: number) {
     const {startLocX, startLocY} = this.state;
     const {
       enableX,
@@ -48,7 +64,7 @@ class Highlight extends AbstractSeries {
     };
   }
 
-  _getDragArea(xLoc, yLoc) {
+  _getDragArea(xLoc: number, yLoc: number) {
     const {enableX, enableY} = this.props;
     const {startLocX, startLocY, dragArea} = this.state;
 
@@ -60,7 +76,7 @@ class Highlight extends AbstractSeries {
     };
   }
 
-  _clickedOutsideDrag(xLoc, yLoc) {
+  _clickedOutsideDrag(xLoc: number, yLoc: number) {
     const {enableX, enableY} = this.props;
     const {
       dragArea,
@@ -80,15 +96,10 @@ class Highlight extends AbstractSeries {
     return true;
   }
 
-  _convertAreaToCoordinates(brushArea) {
-    // NOTE only continuous scales are supported for brushing/getting coordinates back
+  _convertAreaToCoordinates(brushArea: BrushArea) {
     const {enableX, enableY, marginLeft, marginTop} = this.props;
     const xScale = getAttributeScale(this.props, 'x');
     const yScale = getAttributeScale(this.props, 'y');
-
-    // Ensure that users wishes are being respected about which scales are evaluated
-    // this is specifically enabled to ensure brushing on mixed categorical and linear
-    // charts will run as expected
 
     if (enableX && enableY) {
       return {
@@ -116,12 +127,12 @@ class Highlight extends AbstractSeries {
     return {};
   }
 
-  startBrushing(e) {
+  startBrushing(e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) {
     const {onBrushStart, onDragStart, drag} = this.props;
     const {dragArea} = this.state;
-    const {xLoc, yLoc} = getLocs(e.nativeEvent);
+    const {xLoc, yLoc} = getLocs((e as any).nativeEvent);
 
-    const startArea = (dragging, resetDrag) => {
+    const startArea = (dragging: boolean, resetDrag: any) => {
       const emptyBrush = {
         bottom: yLoc,
         left: xLoc,
@@ -157,23 +168,20 @@ class Highlight extends AbstractSeries {
 
   stopBrushing() {
     const {brushing, dragging, brushArea} = this.state;
-    // Quickly short-circuit if the user isn't brushing in our component
     if (!brushing && !dragging) {
       return;
     }
     const {onBrushEnd, onDragEnd, drag} = this.props;
     const noHorizontal = Math.abs(brushArea.right - brushArea.left) < 5;
     const noVertical = Math.abs(brushArea.top - brushArea.bottom) < 5;
-    // Invoke the callback with null if the selected area was < 5px
     const isNulled = noVertical || noHorizontal;
-    // Clear the draw area
     this.setState({
       brushing: false,
       dragging: false,
       brushArea: drag ? brushArea : {top: 0, right: 0, bottom: 0, left: 0},
       startLocX: 0,
       startLocY: 0,
-      dragArea: drag && !isNulled && brushArea
+      dragArea: drag && !isNulled ? brushArea : null
     });
 
     if (brushing && onBrushEnd) {
@@ -185,10 +193,10 @@ class Highlight extends AbstractSeries {
     }
   }
 
-  onBrush(e) {
+  onBrush(e: React.MouseEvent<SVGElement>) {
     const {onBrush, onDrag, drag} = this.props;
     const {brushing, dragging} = this.state;
-    const {xLoc, yLoc} = getLocs(e.nativeEvent);
+    const {xLoc, yLoc} = getLocs((e as any).nativeEvent);
     if (brushing) {
       const brushArea = this._getDrawArea(xLoc, yLoc);
       this.setState({brushArea});
@@ -259,16 +267,15 @@ class Highlight extends AbstractSeries {
           height={Math.max(touchHeight, 0)}
           onMouseDown={e => this.startBrushing(e)}
           onMouseMove={e => this.onBrush(e)}
-          onMouseUp={e => this.stopBrushing(e)}
-          onMouseLeave={e => this.stopBrushing(e)}
-          // preventDefault() so that mouse event emulation does not happen
+          onMouseUp={e => this.stopBrushing()}
+          onMouseLeave={e => this.stopBrushing()}
           onTouchEnd={e => {
             e.preventDefault();
-            this.stopBrushing(e);
+            this.stopBrushing();
           }}
           onTouchCancel={e => {
             e.preventDefault();
-            this.stopBrushing(e);
+            this.stopBrushing();
           }}
           onContextMenu={e => e.preventDefault()}
           onContextMenuCapture={e => e.preventDefault()}

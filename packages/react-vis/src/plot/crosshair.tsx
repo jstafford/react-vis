@@ -25,12 +25,27 @@ import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-/**
- * Format title by detault.
- * @param {Array} values List of values.
- * @returns {*} Formatted value or undefined.
- */
-function defaultTitleFormat(values) {
+interface CrosshairProps {
+  className?: string;
+  values?: Array<number | string | object | boolean>;
+  series?: object;
+  innerWidth?: number;
+  innerHeight?: number;
+  marginLeft?: number;
+  marginTop?: number;
+  orientation?: 'left' | 'right';
+  itemsFormat?: (values: any[]) => Array<{title: any; value: any}>;
+  titleFormat?: (values: any[]) => {title: any; value: any} | undefined;
+  style?: {
+    line?: React.CSSProperties;
+    title?: React.CSSProperties;
+    box?: React.CSSProperties;
+  };
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
+function defaultTitleFormat(values: any[]) {
   const value = getFirstNonEmptyValue(values);
   if (value) {
     return {
@@ -40,12 +55,7 @@ function defaultTitleFormat(values) {
   }
 }
 
-/**
- * Format items by default.
- * @param {Array} values Array of values.
- * @returns {*} Formatted list of items.
- */
-function defaultItemsFormat(values) {
+function defaultItemsFormat(values: any[]) {
   return values.map((v, i) => {
     if (v) {
       return {value: v.y, title: i};
@@ -53,16 +63,11 @@ function defaultItemsFormat(values) {
   });
 }
 
-/**
- * Get the first non-empty item from an array.
- * @param {Array} values Array of values.
- * @returns {*} First non-empty value or undefined.
- */
-function getFirstNonEmptyValue(values) {
+function getFirstNonEmptyValue(values: any[]) {
   return (values || []).find(v => Boolean(v));
 }
 
-class Crosshair extends PureComponent {
+class Crosshair extends PureComponent<CrosshairProps> {
   static get defaultProps() {
     return {
       titleFormat: defaultTitleFormat,
@@ -102,11 +107,6 @@ class Crosshair extends PureComponent {
     };
   }
 
-  /**
-   * Render crosshair items (title + value for each series).
-   * @returns {*} Array of React classes with the crosshair values.
-   * @private
-   */
   _renderCrosshairItems() {
     const {values, itemsFormat} = this.props;
     const items = itemsFormat(values);
@@ -115,7 +115,7 @@ class Crosshair extends PureComponent {
     }
     return items
       .filter(i => i)
-      .map(function renderValue(item, i) {
+      .map(function renderValue(item: {title: any; value: any}, i: number) {
         return (
           <div className="rv-crosshair__item" key={`item${i}`}>
             <span className="rv-crosshair__item__title">{item.title}</span>
@@ -126,11 +126,6 @@ class Crosshair extends PureComponent {
       });
   }
 
-  /**
-   * Render crosshair title.
-   * @returns {*} Container with the crosshair title.
-   * @private
-   */
   _renderCrosshairTitle() {
     const {values, titleFormat, style} = this.props;
     const titleItem = titleFormat(values);

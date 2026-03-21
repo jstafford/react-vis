@@ -1,6 +1,12 @@
 import React from 'react';
 
-export default function ContentClipPath(props) {
+interface ContentClipPathProps {
+  id?: string;
+  innerWidth?: number;
+  innerHeight?: number;
+}
+
+export default function ContentClipPath(props: ContentClipPathProps) {
   const {id = 'content-area', innerWidth, innerHeight} = props;
   return (
     <defs>

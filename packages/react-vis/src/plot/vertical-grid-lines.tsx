@@ -37,7 +37,7 @@ const defaultProps = {
   attr: 'x'
 };
 
-function VerticalGridLines(props) {
+function VerticalGridLines(props: any) {
   return <GridLines {...props} />;
 }
 

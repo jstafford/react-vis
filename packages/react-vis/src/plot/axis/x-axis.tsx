@@ -19,28 +19,33 @@
 // THE SOFTWARE.
 
 import React from 'react';
+
 import PropTypes from 'prop-types';
 
-import {getCombinedClassName} from 'utils/styling-utils';
+import {ORIENTATION} from 'utils/axis-utils';
 
-const predefinedClassName = 'rv-gradient-defs';
+import Axis, {AxisProps} from './axis';
 
-function GradientDefs(props) {
-  const {className} = props;
-  return (
-    <defs className={getCombinedClassName(predefinedClassName, className)}>
-      {props.children}
-    </defs>
-  );
+const {TOP, BOTTOM} = ORIENTATION;
+
+const propTypes = {
+  ...Axis.propTypes,
+  orientation: PropTypes.oneOf([TOP, BOTTOM])
+};
+
+const defaultProps = {
+  orientation: BOTTOM,
+  attr: 'x',
+  attrAxis: 'y'
+};
+
+function XAxis(props: AxisProps) {
+  return <Axis {...props} />;
 }
 
-GradientDefs.displayName = 'GradientDefs';
-GradientDefs.requiresSVG = true;
-GradientDefs.propTypes = {
-  className: PropTypes.string
-};
-GradientDefs.defaultProps = {
-  className: ''
-};
+XAxis.displayName = 'XAxis';
+XAxis.propTypes = propTypes;
+XAxis.defaultProps = defaultProps;
+XAxis.requiresSVG = true;
 
-export default GradientDefs;
+export default XAxis;

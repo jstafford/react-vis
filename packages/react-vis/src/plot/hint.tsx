@@ -25,23 +25,6 @@ import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-/*
- * Hint provides two options for placement of hint:
- * a) around a data point in one of four quadrants (imagine the point bisected
- *    by two axes -vertical, horizontal- creating 4 quadrants around a data
- *    point).
- * b) **New** pin to an edge of chart/plot area and position along that edge
- *    using data point's other dimension value.
- *
- * To support these two options, deprecate one Hint props (orientation) with two
- * new Hint align prop object (horizontal, vertical) with following values:
- *
- *   horizontal: auto, left, right, leftEdge, rightEdge
- *   vertical: auto, bottom, top, bottomEdge, topEdge
- *
- * Thus, the following ALIGN constants are the values for horizontal
- * and vertical
- */
 const ALIGN = {
   AUTO: 'auto',
   LEFT: 'left',
@@ -54,9 +37,6 @@ const ALIGN = {
   TOP_EDGE: 'topEdge'
 };
 
-/**
- * For backwards support, retain the ORIENTATION prop constants
- */
 const ORIENTATION = {
   BOTTOM_LEFT: 'bottomleft',
   BOTTOM_RIGHT: 'bottomright',
@@ -64,18 +44,37 @@ const ORIENTATION = {
   TOP_RIGHT: 'topright'
 };
 
-/**
- * Default format function for the value.
- * @param {Object} value Value.
- * @returns {Array} title-value pairs.
- */
-function defaultFormat(value) {
+interface AlignShape {
+  horizontal: string;
+  vertical: string;
+}
+
+interface HintProps {
+  marginTop?: number;
+  marginLeft?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  scales?: object;
+  value?: {[key: string]: any};
+  format?: (value: {[key: string]: any}) => Array<{title: any; value: any}>;
+  style?: {[key: string]: any};
+  className?: string;
+  align?: AlignShape;
+  getAlignStyle?: (align: AlignShape, x: number, y: number) => React.CSSProperties;
+  orientation?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
+function defaultFormat(value: {[key: string]: any}) {
   return Object.keys(value).map(function getProp(key) {
     return {title: key, value: transformValueToString(value[key])};
   });
 }
 
-class Hint extends PureComponent {
+class Hint extends PureComponent<HintProps> {
   static get defaultProps() {
     return {
       format: defaultFormat,
@@ -124,16 +123,7 @@ class Hint extends PureComponent {
     };
   }
 
-  /**
-   * Obtain align object with horizontal and vertical settings
-   * but convert any AUTO values to the non-auto ALIGN depending on the
-   * values of x and y.
-   * @param {number} x X value.
-   * @param {number} y Y value.
-   * @returns {Object} Align object w/ horizontal, vertical prop strings.
-   * @private
-   */
-  _getAlign(x, y) {
+  _getAlign(x: number, y: number): AlignShape {
     const {
       innerWidth,
       innerHeight,
@@ -152,13 +142,7 @@ class Hint extends PureComponent {
     return align;
   }
 
-  /**
-   * Get the class names from align values.
-   * @param {Object} align object with horizontal and vertical prop strings.
-   * @returns {string} Class names.
-   * @private
-   */
-  _getAlignClassNames(align) {
+  _getAlignClassNames(align: AlignShape) {
     const {orientation} = this.props;
     const orientationClass = orientation
       ? `rv-hint--orientation-${orientation}`
@@ -167,108 +151,45 @@ class Hint extends PureComponent {
      rv-hint--verticalAlign-${align.vertical}`;
   }
 
-  /**
-   * Get a CSS mixin for a proper positioning of the element.
-   * @param {Object} align object with horizontal and vertical prop strings.
-   * @param {number} x X position.
-   * @param {number} y Y position.
-   * @returns {Object} Object, that may contain `left` or `right, `top` or
-   * `bottom` properties.
-   * @private
-   */
-  _getAlignStyle(align, x, y) {
+  _getAlignStyle(align: AlignShape, x: number, y: number): React.CSSProperties {
     return {
       ...this._getXCSS(align.horizontal, x),
       ...this._getYCSS(align.vertical, y)
     };
   }
 
-  /**
-   * Get the bottom coordinate of the hint.
-   * When y undefined or null, edge case, pin bottom.
-   * @param {number} y Y.
-   * @returns {{bottom: *}} Mixin.
-   * @private
-   */
-  _getCSSBottom(y) {
+  _getCSSBottom(y: number | null | undefined): React.CSSProperties {
     if (y === undefined || y === null) {
-      return {
-        bottom: 0
-      };
+      return {bottom: 0};
     }
-
     const {innerHeight, marginBottom} = this.props;
-    return {
-      bottom: marginBottom + innerHeight - y
-    };
+    return {bottom: marginBottom + innerHeight - y};
   }
 
-  /**
-   * Get the left coordinate of the hint.
-   * When x undefined or null, edge case, pin left.
-   * @param {number} x X.
-   * @returns {{left: *}} Mixin.
-   * @private
-   */
-  _getCSSLeft(x) {
+  _getCSSLeft(x: number | null | undefined): React.CSSProperties {
     if (x === undefined || x === null) {
-      return {
-        left: 0
-      };
+      return {left: 0};
     }
-
     const {marginLeft} = this.props;
-    return {
-      left: marginLeft + x
-    };
+    return {left: marginLeft + x};
   }
 
-  /**
-   * Get the right coordinate of the hint.
-   * When x undefined or null, edge case, pin right.
-   * @param {number} x X.
-   * @returns {{right: *}} Mixin.
-   * @private
-   */
-  _getCSSRight(x) {
+  _getCSSRight(x: number | null | undefined): React.CSSProperties {
     if (x === undefined || x === null) {
-      return {
-        right: 0
-      };
+      return {right: 0};
     }
-
     const {innerWidth, marginRight} = this.props;
-    return {
-      right: marginRight + innerWidth - x
-    };
+    return {right: marginRight + innerWidth - x};
   }
 
-  /**
-   * Get the top coordinate of the hint.
-   * When y undefined or null, edge case, pin top.
-   * @param {number} y Y.
-   * @returns {{top: *}} Mixin.
-   * @private
-   */
-  _getCSSTop(y) {
+  _getCSSTop(y: number | null | undefined): React.CSSProperties {
     if (y === undefined || y === null) {
-      return {
-        top: 0
-      };
+      return {top: 0};
     }
-
     const {marginTop} = this.props;
-    return {
-      top: marginTop + y
-    };
+    return {top: marginTop + y};
   }
 
-  /**
-   * Get the position for the hint and the appropriate class name.
-   * @returns {{style: Object, positionClassName: string}} Style and className for the
-   * hint.
-   * @private
-   */
   _getPositionInfo() {
     const {value, getAlignStyle} = this.props;
 
@@ -285,73 +206,45 @@ class Hint extends PureComponent {
     };
   }
 
-  _getXCSS(horizontal, x) {
-    // obtain xCSS
+  _getXCSS(horizontal: string, x: number): React.CSSProperties {
     switch (horizontal) {
       case ALIGN.LEFT_EDGE:
-        // this pins x to left edge
         return this._getCSSLeft(null);
       case ALIGN.RIGHT_EDGE:
-        // this pins x to left edge
         return this._getCSSRight(null);
       case ALIGN.LEFT:
-        // this places hint text to the left of center, so set its right edge
         return this._getCSSRight(x);
       case ALIGN.RIGHT:
       default:
-        // this places hint text to the right of center, so set its left edge
-        // default case should not be possible but if it happens set to RIGHT
         return this._getCSSLeft(x);
     }
   }
 
-  _getYCSS(verticalAlign, y) {
-    // obtain yCSS
+  _getYCSS(verticalAlign: string, y: number): React.CSSProperties {
     switch (verticalAlign) {
       case ALIGN.TOP_EDGE:
-        // this pins x to top edge
         return this._getCSSTop(null);
       case ALIGN.BOTTOM_EDGE:
-        // this pins x to bottom edge
         return this._getCSSBottom(null);
       case ALIGN.BOTTOM:
-        // this places hint text to the bottom of center, so set its top edge
         return this._getCSSTop(y);
       case ALIGN.TOP:
       default:
-        // this places hint text to the top of center, so set its bottom edge
-        // default case should not be possible but if it happens set to BOTTOM
         return this._getCSSBottom(y);
     }
   }
 
-  _mapOrientationToAlign(orientation) {
-    // TODO: print warning that this feature is deprecated and support will be
-    // removed in next major release.
+  _mapOrientationToAlign(orientation: string): AlignShape {
     switch (orientation) {
       case ORIENTATION.BOTTOM_LEFT:
-        return {
-          horizontal: ALIGN.LEFT,
-          vertical: ALIGN.BOTTOM
-        };
+        return {horizontal: ALIGN.LEFT, vertical: ALIGN.BOTTOM};
       case ORIENTATION.BOTTOM_RIGHT:
-        return {
-          horizontal: ALIGN.RIGHT,
-          vertical: ALIGN.BOTTOM
-        };
+        return {horizontal: ALIGN.RIGHT, vertical: ALIGN.BOTTOM};
       case ORIENTATION.TOP_LEFT:
-        return {
-          horizontal: ALIGN.LEFT,
-          vertical: ALIGN.TOP
-        };
+        return {horizontal: ALIGN.LEFT, vertical: ALIGN.TOP};
       case ORIENTATION.TOP_RIGHT:
-        return {
-          horizontal: ALIGN.RIGHT,
-          vertical: ALIGN.TOP
-        };
+        return {horizontal: ALIGN.RIGHT, vertical: ALIGN.TOP};
       default:
-        // fall back to horizontalAlign, verticalAlign that are either
-        // provided or defaulted to AUTO.  So, don't change things
         break;
     }
   }
@@ -396,7 +289,7 @@ class Hint extends PureComponent {
 }
 
 Hint.displayName = 'Hint';
-Hint.ORIENTATION = ORIENTATION;
-Hint.ALIGN = ALIGN;
+(Hint as any).ORIENTATION = ORIENTATION;
+(Hint as any).ALIGN = ALIGN;
 
 export default Hint;
