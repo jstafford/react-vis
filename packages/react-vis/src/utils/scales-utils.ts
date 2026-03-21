@@ -107,6 +107,9 @@ const TIME_UTC_SCALE_TYPE = 'time-utc';
  * @type {Object}
  * @const
  */
+// The value type uses `(...args: any[]) => AnyD3Scale` to accommodate both
+// zero-argument d3 constructors (e.g. scaleLinear) and literalScale which
+// requires a defaultValue argument.
 const SCALE_FUNCTIONS: {[key: string]: (...args: any[]) => AnyD3Scale} = {
   [LINEAR_SCALE_TYPE]: scaleLinear,
   [ORDINAL_SCALE_TYPE]: scalePoint,
