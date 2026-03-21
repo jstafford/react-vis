@@ -21,10 +21,13 @@
 /**
  * Get unique property values from an array.
  * @param {Array} arr Array of data.
- * @param {string} propertyName Prop name.
+ * @param {Function} accessor Accessor function.
  * @returns {Array} Array of unique values.
  */
-export function getUniquePropertyValues(arr, accessor) {
+export function getUniquePropertyValues<T, V>(
+  arr: T[],
+  accessor: (item: T) => V
+): V[] {
   const setOfValues = new Set(arr.map(accessor));
   return Array.from(setOfValues);
 }
@@ -35,8 +38,8 @@ export function getUniquePropertyValues(arr, accessor) {
  * @param {Number} value Add zero to domain.
  * @returns {Array} Adjusted domain.
  */
-export function addValueToArray(arr, value) {
-  const result = [].concat(arr);
+export function addValueToArray(arr: number[], value: number): number[] {
+  const result = ([] as number[]).concat(arr);
   if (result[0] > value) {
     result[0] = value;
   }
@@ -51,8 +54,8 @@ export function addValueToArray(arr, value) {
  * @param {Date | number} value The value as date or number.
  * @returns {string | number} The value as string.
  */
-export function transformValueToString(value) {
+export function transformValueToString(value: Date | number): string | number {
   return Object.prototype.toString.call(value) === '[object Date]'
-    ? value.toDateString()
+    ? (value as Date).toDateString()
     : value;
 }

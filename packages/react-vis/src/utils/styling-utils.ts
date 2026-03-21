@@ -25,6 +25,6 @@
  * @returns {string} Interpolated string containing all valid class names.
  */
 
-export function getCombinedClassName(...classNames) {
+export function getCombinedClassName(...classNames: Array<string | undefined | null | false>): string {
   return classNames.filter(cn => cn && typeof cn === 'string').join(' ');
 }

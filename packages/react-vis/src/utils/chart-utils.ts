@@ -20,15 +20,41 @@
 
 import PropTypes from 'prop-types';
 
+export interface Margin {
+  left?: number;
+  top?: number;
+  right?: number;
+  bottom?: number;
+}
+
+export interface InnerDimensions {
+  marginLeft: number;
+  marginTop: number;
+  marginRight: number;
+  marginBottom: number;
+  innerHeight: number;
+  innerWidth: number;
+}
+
+export interface ChartProps {
+  margin?: Margin | number;
+  width: number;
+  height: number;
+  [key: string]: any;
+}
+
 /**
  * Get the dimensions of the component for the future use.
  * @param {Object} props Props.
  * @param {Object} defaultMargins Object with default margins.
  * @returns {Object} Dimensions of the component.
  */
-export function getInnerDimensions(props, defaultMargins) {
+export function getInnerDimensions(
+  props: ChartProps,
+  defaultMargins: Margin
+): InnerDimensions {
   const {margin, width, height} = props;
-  const marginProps = {
+  const marginProps: Margin = {
     ...defaultMargins,
     ...(typeof margin === 'number'
       ? {
@@ -63,7 +89,11 @@ export function getInnerDimensions(props, defaultMargins) {
  * @param  {Number} radius - the max radius of the sunburst
  * @return {Object} an object includes {bottom, left, right, top}
  */
-export function getRadialLayoutMargin(width, height, radius) {
+export function getRadialLayoutMargin(
+  width: number,
+  height: number,
+  radius: number
+): Required<Margin> {
   const marginX = width / 2 - radius;
   const marginY = height / 2 - radius;
   return {
@@ -84,7 +114,7 @@ export const MarginPropType = PropTypes.oneOfType([
   PropTypes.number
 ]);
 
-export const DEFAULT_MARGINS = {
+export const DEFAULT_MARGINS: Required<Margin> = {
   left: 40,
   right: 10,
   top: 10,

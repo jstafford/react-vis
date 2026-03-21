@@ -21,9 +21,10 @@
 import React from 'react';
 
 const [major, minor] = React.version.split('.');
-const versionHigherThanThirteen = Number(minor) > 13 || Number(major) > 13;
+const versionHigherThanThirteen =
+  Number(minor) > 13 || Number(major) > 13;
 
-export const isReactDOMSupported = () => versionHigherThanThirteen;
+export const isReactDOMSupported = (): boolean => versionHigherThanThirteen;
 
 /**
  * Support React 0.13 and greater where refs are React components, not DOM
@@ -31,15 +32,15 @@ export const isReactDOMSupported = () => versionHigherThanThirteen;
  * @param {*} ref React's ref.
  * @returns {Element} DOM element.
  */
-export const getDOMNode = ref => {
+export const getDOMNode = (ref: any): Element | null => {
   if (!isReactDOMSupported()) {
     return ref && ref.getDOMNode();
   }
   return ref;
 };
 
-const USED_MESSAGES = {};
-const HIDDEN_PROCESSES = {
+const USED_MESSAGES: {[key: string]: boolean} = {};
+const HIDDEN_PROCESSES: {[key: string]: boolean} = {
   test: true,
   production: true
 };
@@ -50,9 +51,16 @@ const HIDDEN_PROCESSES = {
  * @param {Boolean} onlyShowMessageOnce - whether or not we allow the
  - message to be show multiple times
  */
-export function warning(message, onlyShowMessageOnce = false) {
+export function warning(
+  message: string,
+  onlyShowMessageOnce: boolean = false
+): void {
   /* eslint-disable no-undef, no-process-env */
-  if (global.process && HIDDEN_PROCESSES[process.env.NODE_ENV]) {
+  if (
+    typeof global !== 'undefined' &&
+    global.process &&
+    HIDDEN_PROCESSES[process.env.NODE_ENV as string]
+  ) {
     return;
   }
   /* eslint-enable no-undef, no-process-env */
@@ -68,6 +76,6 @@ export function warning(message, onlyShowMessageOnce = false) {
  * Convience wrapper for warning
  * @param {String} message - the message to be shown
  */
-export function warnOnce(message) {
+export function warnOnce(message: string): void {
   warning(message, true);
 }

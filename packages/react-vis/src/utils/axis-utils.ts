@@ -21,7 +21,21 @@
 import {range} from 'd3-array';
 import {scaleLinear} from 'd3-scale';
 
-export const ORIENTATION = {
+export interface OrientationType {
+  TOP: string;
+  LEFT: string;
+  RIGHT: string;
+  BOTTOM: string;
+  VERTICAL: string;
+  HORIZONTAL: string;
+}
+
+export interface DirectionType {
+  VERTICAL: string;
+  HORIZONTAL: string;
+}
+
+export const ORIENTATION: OrientationType = {
   TOP: 'top',
   LEFT: 'left',
   RIGHT: 'right',
@@ -30,7 +44,7 @@ export const ORIENTATION = {
   HORIZONTAL: 'horizontal'
 };
 
-export const DIRECTION = {
+export const DIRECTION: DirectionType = {
   VERTICAL: 'vertical',
   HORIZONTAL: 'horizontal'
 };
@@ -40,7 +54,7 @@ export const DIRECTION = {
  * @param {number} size Size of the axis in pixels.
  * @returns {number} Total amount of ticks.
  */
-export function getTicksTotalFromSize(size) {
+export function getTicksTotalFromSize(size: number): number {
   if (size < 700) {
     if (size > 300) {
       return 10;
@@ -50,6 +64,11 @@ export function getTicksTotalFromSize(size) {
   return 20;
 }
 
+export interface D3Scale {
+  ticks?: (count?: number) => any[];
+  domain: () => any[];
+}
+
 /**
  * Get the tick values from a given d3 scale.
  * @param {d3.scale} scale Scale function.
@@ -57,12 +76,28 @@ export function getTicksTotalFromSize(size) {
  * @param {Array} tickValues Array of tick values if they exist.
  * @returns {Array} Array of tick values.
  */
-export function getTickValues(scale, tickTotal, tickValues) {
+export function getTickValues(
+  scale: D3Scale,
+  tickTotal: number,
+  tickValues?: any[]
+): any[] {
   return !tickValues
     ? scale.ticks
       ? scale.ticks(tickTotal)
       : scale.domain()
     : tickValues;
+}
+
+export interface AxisPoint {
+  x: number;
+  y: number;
+}
+
+export interface FitResult {
+  left: number;
+  right: number;
+  slope: number;
+  offset: number;
 }
 
 /**
@@ -72,9 +107,9 @@ export function getTickValues(scale, tickTotal, tickValues) {
  * the start position of the decorative axis
  * @param {Object} axisEnd Object of format {x, y} describing in coordinates
  * the start position of the decorative axis
- * @returns {Number} Object describing each the line in coordinates
+ * @returns {Object} Object describing each the line in coordinates
  */
-export function generateFit(axisStart, axisEnd) {
+export function generateFit(axisStart: AxisPoint, axisEnd: AxisPoint): FitResult {
   // address the special case when the slope is infinite
   if (axisStart.x === axisEnd.x) {
     return {
@@ -94,6 +129,24 @@ export function generateFit(axisStart, axisEnd) {
   };
 }
 
+export interface GeneratePointsParams {
+  axisStart: AxisPoint;
+  axisEnd: AxisPoint;
+  numberOfTicks: number;
+  axisDomain: number[];
+}
+
+export interface TickPoint {
+  x: number;
+  y: number;
+  text: number | undefined;
+}
+
+export interface GeneratePointsResult {
+  slope: number;
+  points: TickPoint[];
+}
+
 /**
  * Generate a description of a decorative axis in terms of a linear equation
  * y = slope * x + offset in coordinates
@@ -104,14 +157,14 @@ export function generateFit(axisStart, axisEnd) {
  * the start position of the decorative axis
  * props.@param {Number} numberOfTicks The number of ticks on the axis
  * props.@param {Array.Numbers} axisDomain The values to be interpolated across for the axis
- * @returns {Number} Object describing the slope and the specific coordinates of the points
+ * @returns {Object} Object describing the slope and the specific coordinates of the points
  */
 export function generatePoints({
   axisStart,
   axisEnd,
   numberOfTicks,
   axisDomain
-}) {
+}: GeneratePointsParams): GeneratePointsResult {
   const {left, right, slope, offset} = generateFit(axisStart, axisEnd);
   // construct a linear band of points, then map them
   const pointSlope = (right - left) / numberOfTicks;
@@ -141,7 +194,7 @@ export function generatePoints({
  * the start position of the decorative axis
  * @returns {Number} Angle in radials
  */
-export function getAxisAngle(axisStart, axisEnd) {
+export function getAxisAngle(axisStart: AxisPoint, axisEnd: AxisPoint): number {
   if (axisStart.x === axisEnd.x) {
     return axisEnd.y > axisStart.y ? Math.PI / 2 : (3 * Math.PI) / 2;
   }

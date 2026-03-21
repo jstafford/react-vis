@@ -20,14 +20,39 @@ const propTypes = {
   onEnd: PropTypes.func
 };
 
+export type AnimationParam =
+  | string
+  | {stiffness?: number; nonAnimatedProps?: string[]; damping?: number}
+  | boolean;
+
+interface AnimationStyle {
+  stiffness: number;
+  damping: number;
+  [key: string]: any;
+}
+
+interface AnimationProps {
+  animatedProps: string[];
+  animation?: AnimationParam;
+  onStart?: () => void;
+  onEnd?: () => void;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
+interface AnimationState {}
+
 /**
  * Format the animation style object
  * @param {Object|String} animationStyle - The animation style property, either the name of a
  * presets are one of noWobble, gentle, wobbly, stiff
  */
-function getAnimationStyle(animationStyle = presets.noWobble) {
+function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): AnimationStyle {
   if (typeof animationStyle === 'string') {
     return presets[animationStyle] || presets.noWobble;
+  }
+  if (typeof animationStyle === 'boolean') {
+    return presets.noWobble;
   }
   const {damping, stiffness} = animationStyle;
   return {
@@ -42,10 +67,10 @@ function getAnimationStyle(animationStyle = presets.noWobble) {
  * @param {Object} props Props.
  * @returns {Object} Object of animated props.
  */
-export function extractAnimatedPropValues(props) {
+export function extractAnimatedPropValues(props: AnimationProps): {[key: string]: any} {
   const {animatedProps, ...otherProps} = props;
 
-  return animatedProps.reduce((result, animatedPropName) => {
+  return animatedProps.reduce((result: {[key: string]: any}, animatedPropName: string) => {
     if (Object.prototype.hasOwnProperty.call(otherProps, animatedPropName)) {
       result[animatedPropName] = otherProps[animatedPropName];
     }
@@ -53,20 +78,22 @@ export function extractAnimatedPropValues(props) {
   }, {});
 }
 
-class Animation extends PureComponent {
-  constructor(props) {
+class Animation extends PureComponent<AnimationProps, AnimationState> {
+  _interpolator: ((t: number) => any) | null = null;
+
+  constructor(props: AnimationProps) {
     super(props);
     this._updateInterpolator(props);
   }
 
-  componentDidUpdate(props) {
+  componentDidUpdate(props: AnimationProps): void {
     this._updateInterpolator(this.props, props);
     if (props.onStart) {
       props.onStart();
     }
   }
 
-  _motionEndHandler = () => {
+  _motionEndHandler = (): void => {
     if (this.props.onEnd) {
       this.props.onEnd();
     }
@@ -78,10 +105,10 @@ class Animation extends PureComponent {
    * @returns {React.Component} Rendered react element.
    * @private
    */
-  _renderChildren = ({i}) => {
+  _renderChildren = ({i}: {i: number}): React.ReactElement => {
     const {children} = this.props;
     const interpolator = this._interpolator;
-    const child = React.Children.only(children);
+    const child = React.Children.only(children) as React.ReactElement;
     const interpolatedProps = interpolator ? interpolator(i) : interpolator;
 
     // interpolator doesnt play nice with deeply nested objected
@@ -90,7 +117,7 @@ class Animation extends PureComponent {
     // after interpolation
     let data = (interpolatedProps && interpolatedProps.data) || null;
     if (data && child.props._data) {
-      data = data.map((row, index) => {
+      data = data.map((row: any, index: number) => {
         const correspondingCell = child.props._data[index];
         return {
           ...row,
@@ -115,14 +142,14 @@ class Animation extends PureComponent {
    * @param {Object} newProps New props.
    * @private
    */
-  _updateInterpolator(oldProps, newProps) {
+  _updateInterpolator(oldProps: AnimationProps, newProps?: AnimationProps): void {
     this._interpolator = interpolate(
       extractAnimatedPropValues(oldProps),
       newProps ? extractAnimatedPropValues(newProps) : null
     );
   }
 
-  render() {
+  render(): React.ReactElement {
     const animationStyle = getAnimationStyle(this.props.animation);
     const defaultStyle = {i: 0};
     const style = {i: spring(1, animationStyle)};
@@ -138,7 +165,7 @@ class Animation extends PureComponent {
   }
 }
 
-Animation.propTypes = propTypes;
+(Animation as any).propTypes = propTypes;
 Animation.displayName = 'Animation';
 
 export default Animation;

@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-export const DISCRETE_COLOR_RANGE = [
+export const DISCRETE_COLOR_RANGE: string[] = [
   '#12939A',
   '#79C7E3',
   '#1A3177',
@@ -26,7 +26,7 @@ export const DISCRETE_COLOR_RANGE = [
   '#EF5D28'
 ];
 
-export const EXTENDED_DISCRETE_COLOR_RANGE = [
+export const EXTENDED_DISCRETE_COLOR_RANGE: string[] = [
   '#19CDD7',
   '#DDB27C',
   '#88572C',
@@ -50,16 +50,16 @@ export const EXTENDED_DISCRETE_COLOR_RANGE = [
   '#B3AD9E'
 ];
 
-export const CONTINUOUS_COLOR_RANGE = ['#EF5D28', '#FF9833'];
+export const CONTINUOUS_COLOR_RANGE: string[] = ['#EF5D28', '#FF9833'];
 
-export const SIZE_RANGE = [1, 10];
+export const SIZE_RANGE: [number, number] = [1, 10];
 
-export const OPACITY_RANGE = [0.1, 1];
-export const OPACITY_TYPE = 'literal';
-export const DEFAULT_OPACITY = 1;
+export const OPACITY_RANGE: [number, number] = [0.1, 1];
+export const OPACITY_TYPE: string = 'literal';
+export const DEFAULT_OPACITY: number = 1;
 
-export const DEFAULT_SIZE = 5;
+export const DEFAULT_SIZE: number = 5;
 
-export const DEFAULT_COLOR = DISCRETE_COLOR_RANGE[0];
+export const DEFAULT_COLOR: string = DISCRETE_COLOR_RANGE[0];
 
-export const DEFAULT_TICK_SIZE = 7;
+export const DEFAULT_TICK_SIZE: number = 7;
