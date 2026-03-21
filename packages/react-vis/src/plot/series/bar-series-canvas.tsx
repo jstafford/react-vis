@@ -17,6 +17,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 import PropTypes from 'prop-types';
 import {rgb} from 'd3-color';
 
@@ -27,23 +28,31 @@ import {
   getAttr0Functor
 } from 'utils/scales-utils';
 import {getStackParams} from 'utils/series-utils';
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
-function getScaleDistance(props, attr) {
+export interface BarSeriesCanvasProps extends AbstractSeriesProps<any> {
+  linePosAttr?: string;
+  valuePosAttr?: string;
+  lineSizeAttr?: string;
+  valueSizeAttr?: string;
+  marginBottom?: number;
+}
+
+function getScaleDistance(props: BarSeriesCanvasProps, attr: string): number {
   const scaleObject = getScaleObjectFromProps(props, attr);
   return scaleObject ? scaleObject.distance : 0;
 }
 
-class BarSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
+class BarSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
     return false;
   }
 
-  static get isCanvas() {
+  static get isCanvas(): boolean {
     return true;
   }
 
-  static renderLayer(props, ctx) {
+  static renderLayer(props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
     const {
       data,
       linePosAttr,
@@ -56,10 +65,10 @@ class BarSeriesCanvas extends AbstractSeries {
       return;
     }
 
-    const distance = getScaleDistance(props, linePosAttr);
-    const line = getAttributeFunctor(props, linePosAttr);
-    const value = getAttributeFunctor(props, valuePosAttr);
-    const value0 = getAttr0Functor(props, valuePosAttr);
+    const distance = getScaleDistance(props, linePosAttr as string);
+    const line = getAttributeFunctor(props, linePosAttr as string);
+    const value = getAttributeFunctor(props, valuePosAttr as string);
+    const value0 = getAttr0Functor(props, valuePosAttr as string);
     const fill =
       getAttributeFunctor(props, 'fill') || getAttributeFunctor(props, 'color');
     const stroke =
@@ -72,9 +81,9 @@ class BarSeriesCanvas extends AbstractSeries {
     // bars of a same 'linePosAttr' value (a.k.a. sameTypeTotal)
     const totalSpaceAvailable = halfSpace * 2;
 
-    const {sameTypeTotal, sameTypeIndex} = getStackParams(props);
-    data.forEach(row => {
-      const totalSpaceCenter = line(row);
+    const {sameTypeTotal, sameTypeIndex} = getStackParams(props as any);
+    (data as any[]).forEach(row => {
+      const totalSpaceCenter = line!(row);
       // totalSpaceStartingPoint is the first pixel were we can start drawing
       const totalSpaceStartingPoint = totalSpaceCenter - halfSpace;
 
@@ -84,23 +93,23 @@ class BarSeriesCanvas extends AbstractSeries {
       const lineSize =
         totalSpaceAvailable / sameTypeTotal - spaceTakenByInterBarsPixels;
 
-      const fillColor = rgb(fill(row));
-      const strokeColor = rgb(stroke(row));
-      const rowOpacity = opacity(row) || DEFAULT_OPACITY;
+      const fillColor = rgb(fill!(row));
+      const strokeColor = rgb(stroke!(row));
+      const rowOpacity = opacity!(row) || DEFAULT_OPACITY;
 
       // linePos is the first pixel were we can start drawing sameTypeIndex bar
       const linePos =
         totalSpaceStartingPoint + lineSize * sameTypeIndex + sameTypeIndex;
-      const valuePos = Math.min(value0(row), value(row));
+      const valuePos = Math.min(value0!(row), value!(row));
       const x = valuePosAttr === 'x' ? valuePos : linePos;
       const y = valuePosAttr === 'y' ? valuePos : linePos;
 
-      const valueSize = Math.abs(-value0(row) + value(row));
+      const valueSize = Math.abs(-value0!(row) + value!(row));
       const height = lineSizeAttr === 'height' ? lineSize : valueSize;
       const width = lineSizeAttr === 'width' ? lineSize : valueSize;
 
       ctx.beginPath();
-      ctx.rect(x + marginBottom, y + marginTop, width, height);
+      ctx.rect(x + (marginBottom as number), y + (marginTop as number), width, height);
       ctx.fillStyle = `rgba(${fillColor.r}, ${fillColor.g}, ${fillColor.b}, ${rowOpacity})`;
       ctx.fill();
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
@@ -108,22 +117,18 @@ class BarSeriesCanvas extends AbstractSeries {
     });
   }
 
-  render() {
+  render(): null {
     return null;
   }
 }
 
-BarSeriesCanvas.displayName = 'BarSeriesCanvas';
-BarSeriesCanvas.defaultProps = {
-  ...AbstractSeries.defaultProps,
-  linePosAttr: PropTypes.string.isRequired,
-  valuePosAttr: PropTypes.string.isRequired,
-  lineSizeAttr: PropTypes.string.isRequired,
-  valueSizeAttr: PropTypes.string.isRequired
+(BarSeriesCanvas as any).displayName = 'BarSeriesCanvas';
+(BarSeriesCanvas as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps
 };
 
-BarSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
+(BarSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
 };
 
 export default BarSeriesCanvas;

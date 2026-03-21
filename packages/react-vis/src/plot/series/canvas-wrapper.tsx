@@ -27,14 +27,30 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 
 const MAX_DRAWS = 30;
 
+export interface CanvasWrapperProps {
+  marginBottom: number;
+  marginLeft: number;
+  marginRight: number;
+  marginTop: number;
+  innerHeight: number;
+  innerWidth: number;
+  pixelRatio: number;
+  children?: React.ReactNode;
+}
+
 /**
  * Draw loop draws each of the layers until it should draw more
- * @param {CanvasContext} ctx - the context where the drawing will take place
+ * @param {CanvasRenderingContext2D} ctx - the context where the drawing will take place
  * @param {Number} height - height of the canvas
  * @param {Number} width - width of the canvas
  * @param {Array} layers - the layer objects to render
  */
-function engageDrawLoop(ctx, height, width, layers) {
+function engageDrawLoop(
+  ctx: CanvasRenderingContext2D,
+  height: number,
+  width: number,
+  layers: any[]
+): void {
   let drawIteration = 0;
   // using setInterval because request animation frame goes too fast
   const drawCycle = setInterval(() => {
@@ -52,13 +68,19 @@ function engageDrawLoop(ctx, height, width, layers) {
 
 /**
  * Loops across each of the layers to be drawn and draws them
- * @param {CanvasContext} ctx - the context where the drawing will take place
+ * @param {CanvasRenderingContext2D} ctx - the context where the drawing will take place
  * @param {Number} height - height of the canvas
  * @param {Number} width - width of the canvas
  * @param {Array} layers - the layer objects to render
  * @param {Number} drawIteration - width of the canvas
  */
-function drawLayers(ctx, height, width, layers, drawIteration) {
+function drawLayers(
+  ctx: CanvasRenderingContext2D,
+  height: number,
+  width: number,
+  layers: any[],
+  drawIteration: number
+): void {
   ctx.clearRect(0, 0, width, height);
   layers.forEach(layer => {
     const {interpolator, newProps, animation} = layer;
@@ -85,7 +107,7 @@ function drawLayers(ctx, height, width, layers, drawIteration) {
  * @param {Object} oldChildren the old children to be rendered.
  * @returns {Array} Object for rendering
  */
-function buildLayers(newChildren, oldChildren) {
+function buildLayers(newChildren: React.ReactElement[], oldChildren: React.ReactElement[]): any[] {
   return newChildren.map((child, index) => {
     const oldProps = oldChildren[index] ? oldChildren[index].props : {};
     const newProps = child.props;
@@ -100,49 +122,62 @@ function buildLayers(newChildren, oldChildren) {
           animatedProps: ANIMATED_SERIES_PROPS
         })
       : null;
-    const interpolator = interpolate(oldAnimatedProps, newAnimatedProps);
+    const interpolator = interpolate(oldAnimatedProps, newAnimatedProps ?? {});
 
     return {
-      renderLayer: child.type.renderLayer,
+      renderLayer: (child.type as any).renderLayer,
       newProps: child.props,
       animation: child.props.animation,
       interpolator
     };
   });
 }
-class CanvasWrapper extends Component {
+
+class CanvasWrapper extends Component<CanvasWrapperProps> {
+  canvas: HTMLCanvasElement | null = null;
+
   static get defaultProps() {
     return {
       pixelRatio: (window && window.devicePixelRatio) || 1
     };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
+    if (!this.canvas) {
+      return;
+    }
     const ctx = this.canvas.getContext('2d');
     if (!ctx) {
       return;
     }
     const {pixelRatio} = this.props;
-    if (!ctx) {
-      return;
-    }
     ctx.scale(pixelRatio, pixelRatio);
 
     this.drawChildren(null, this.props, ctx);
   }
 
-  componentDidUpdate(oldProps) {
-    this.drawChildren(oldProps, this.props, this.canvas.getContext('2d'));
+  componentDidUpdate(oldProps: CanvasWrapperProps): void {
+    if (!this.canvas) {
+      return;
+    }
+    const ctx = this.canvas.getContext('2d');
+    if (ctx) {
+      this.drawChildren(oldProps, this.props, ctx);
+    }
   }
 
   /**
    * Check that we can and should be animating, then kick off animations as apporpriate
    * @param {Object} newProps the new props to be interpolated to
    * @param {Object} oldProps the old props to be interpolated against
-   * @param {DomRef} ctx the canvas context to be drawn on.
+   * @param {CanvasRenderingContext2D} ctx the canvas context to be drawn on.
    * @returns {Array} Object for rendering
    */
-  drawChildren(oldProps, newProps, ctx) {
+  drawChildren(
+    oldProps: CanvasWrapperProps | null,
+    newProps: CanvasWrapperProps,
+    ctx: CanvasRenderingContext2D
+  ): void {
     const {
       children,
       innerHeight,
@@ -156,24 +191,27 @@ class CanvasWrapper extends Component {
       return;
     }
 
-    const childrenShouldAnimate = children.find(child => child.props.animation);
+    const childArray = React.Children.toArray(children) as React.ReactElement[];
+    const childrenShouldAnimate = childArray.find(
+      child => (child as React.ReactElement).props.animation
+    );
 
     const height = innerHeight + marginTop + marginBottom;
     const width = innerWidth + marginLeft + marginRight;
-    const layers = buildLayers(
-      newProps.children,
-      oldProps ? oldProps.children : []
-    );
+    const oldChildArray = oldProps
+      ? (React.Children.toArray(oldProps.children) as React.ReactElement[])
+      : [];
+    const layers = buildLayers(childArray, oldChildArray);
     // if we don't need to be animating, dont! cut short
     if (!childrenShouldAnimate) {
-      drawLayers(ctx, height, width, layers);
+      drawLayers(ctx, height, width, layers, 0);
       return;
     }
 
     engageDrawLoop(ctx, height, width, layers);
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       innerHeight,
       innerWidth,
@@ -205,8 +243,8 @@ class CanvasWrapper extends Component {
   }
 }
 
-CanvasWrapper.displayName = 'CanvasWrapper';
-CanvasWrapper.propTypes = {
+(CanvasWrapper as any).displayName = 'CanvasWrapper';
+(CanvasWrapper as any).propTypes = {
   marginBottom: PropTypes.number.isRequired,
   marginLeft: PropTypes.number.isRequired,
   marginRight: PropTypes.number.isRequired,

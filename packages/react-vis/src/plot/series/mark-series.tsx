@@ -27,19 +27,38 @@ import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--mark';
 const DEFAULT_STROKE_WIDTH = 1;
 
-class MarkSeries extends AbstractSeries {
-  _renderCircle(d, i, strokeWidth, style, scalingFunctions) {
+export interface MarkSeriesProps extends AbstractSeriesProps<any> {
+  getNull?: (d: any) => boolean;
+  nullAccessor?: (d: any) => boolean;
+  strokeWidth?: number;
+}
+
+class MarkSeries extends AbstractSeries<any> {
+  _renderCircle(
+    d: any,
+    i: number,
+    strokeWidth: number | undefined,
+    style: React.CSSProperties | {[key: string]: any},
+    scalingFunctions: {
+      fill: ((d: any) => any) | null;
+      opacity: ((d: any) => any) | null;
+      size: ((d: any) => any) | null;
+      stroke: ((d: any) => any) | null;
+      x: ((d: any) => any) | null;
+      y: ((d: any) => any) | null;
+    }
+  ): JSX.Element {
     const {fill, opacity, size, stroke, x, y} = scalingFunctions;
 
     const attrs = {
       r: size ? size(d) : DEFAULT_SIZE,
-      cx: x(d),
-      cy: y(d),
+      cx: x ? x(d) : 0,
+      cy: y ? y(d) : 0,
       style: {
         opacity: opacity ? opacity(d) : DEFAULT_OPACITY,
         stroke: stroke && stroke(d),
@@ -48,15 +67,15 @@ class MarkSeries extends AbstractSeries {
         ...style
       },
       key: i,
-      onClick: e => this._valueClickHandler(d, e),
-      onContextMenu: e => this._valueRightClickHandler(d, e),
-      onMouseOver: e => this._valueMouseOverHandler(d, e),
-      onMouseOut: e => this._valueMouseOutHandler(d, e)
+      onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
+      onContextMenu: (e: React.MouseEvent<SVGElement>) => this._valueRightClickHandler(d, e),
+      onMouseOver: (e: React.MouseEvent<SVGElement>) => this._valueMouseOverHandler(d, e),
+      onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e)
     };
     return <circle {...attrs} />;
   }
 
-  render() {
+  render(): JSX.Element | null {
     const {
       animation,
       className,
@@ -65,13 +84,16 @@ class MarkSeries extends AbstractSeries {
       marginTop,
       strokeWidth,
       style
-    } = this.props;
+    } = this.props as MarkSeriesProps;
 
-    if (this.props.nullAccessor) {
+    if ((this.props as MarkSeriesProps).nullAccessor) {
       warning('nullAccessor has been renamed to getNull', true);
     }
 
-    const getNull = this.props.nullAccessor || this.props.getNull;
+    const getNull =
+      (this.props as MarkSeriesProps).nullAccessor ||
+      (this.props as MarkSeriesProps).getNull ||
+      (() => true);
 
     if (!data) {
       return null;
@@ -80,7 +102,7 @@ class MarkSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <MarkSeries {...this.props} animation={null} />
+          <MarkSeries {...this.props} animation={false} />
         </Animation>
       );
     }
@@ -105,7 +127,7 @@ class MarkSeries extends AbstractSeries {
         {data.map((d, i) => {
           return (
             getNull(d) &&
-            this._renderCircle(d, i, strokeWidth, style, scalingFunctions)
+            this._renderCircle(d, i, strokeWidth, style as React.CSSProperties, scalingFunctions)
           );
         })}
       </g>
@@ -113,13 +135,13 @@ class MarkSeries extends AbstractSeries {
   }
 }
 
-MarkSeries.displayName = 'MarkSeries';
-MarkSeries.propTypes = {
-  ...AbstractSeries.propTypes,
+(MarkSeries as any).displayName = 'MarkSeries';
+(MarkSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   getNull: PropTypes.func,
   strokeWidth: PropTypes.number
 };
-MarkSeries.defaultProps = {
+(MarkSeries as any).defaultProps = {
   getNull: () => true
 };
 

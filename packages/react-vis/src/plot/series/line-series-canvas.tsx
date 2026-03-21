@@ -17,6 +17,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 import PropTypes from 'prop-types';
 import {rgb} from 'd3-color';
 import * as d3Shape from 'd3-shape';
@@ -24,18 +25,24 @@ import React from 'react';
 
 import {DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor, getAttributeValue} from 'utils/scales-utils';
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
-class LineSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
+export interface LineSeriesCanvasProps extends AbstractSeriesProps<any> {
+  strokeWidth?: number;
+  strokeDasharray?: number[];
+  curve?: string | ((arg: any) => any);
+}
+
+class LineSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
     return false;
   }
 
-  static get isCanvas() {
+  static get isCanvas(): boolean {
     return true;
   }
 
-  static renderLayer(props, ctx) {
+  static renderLayer(props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
     const {
       curve,
       data,
@@ -52,22 +59,22 @@ class LineSeriesCanvas extends AbstractSeries {
     const y = getAttributeFunctor(props, 'y');
     const stroke =
       getAttributeValue(props, 'stroke') || getAttributeValue(props, 'color');
-    const strokeColor = rgb(stroke);
+    const strokeColor = rgb(stroke as string);
     const newOpacity = getAttributeValue(props, 'opacity');
     const opacity = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
     let line = d3Shape
-      .line()
-      .x(row => x(row) + marginLeft)
-      .y(row => y(row) + marginTop);
-    if (typeof curve === 'string' && d3Shape[curve]) {
-      line = line.curve(d3Shape[curve]);
+      .line<any>()
+      .x(row => x!(row) + (marginLeft as number))
+      .y(row => y!(row) + (marginTop as number));
+    if (typeof curve === 'string' && (d3Shape as any)[curve]) {
+      line = line.curve((d3Shape as any)[curve]);
     } else if (typeof curve === 'function') {
       line = line.curve(curve);
     }
 
     ctx.beginPath();
     ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${opacity})`;
-    ctx.lineWidth = strokeWidth;
+    ctx.lineWidth = strokeWidth as number;
 
     if (strokeDasharray) {
       ctx.setLineDash(strokeDasharray);
@@ -81,19 +88,19 @@ class LineSeriesCanvas extends AbstractSeries {
     ctx.setLineDash([]);
   }
 
-  render() {
+  render(): JSX.Element {
     return <div />;
   }
 }
 
-LineSeriesCanvas.displayName = 'LineSeriesCanvas';
-LineSeriesCanvas.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(LineSeriesCanvas as any).displayName = 'LineSeriesCanvas';
+(LineSeriesCanvas as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   strokeWidth: 2
 };
 
-LineSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes,
+(LineSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   strokeWidth: PropTypes.number
 };
 

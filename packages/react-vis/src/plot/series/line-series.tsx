@@ -28,21 +28,36 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--line';
 
-const STROKE_STYLES = {
+const STROKE_STYLES: {[key: string]: string | null} = {
   dashed: '6, 2',
   solid: null
 };
 
-class LineSeries extends AbstractSeries {
-  _renderLine(data, x, y, curve, getNull) {
-    let line = d3Shape.line();
+export interface LineSeriesProps extends AbstractSeriesProps<any> {
+  strokeStyle?: string;
+  curve?: string | ((arg: any) => any) | null;
+  getNull?: (d: any) => boolean;
+  nullAccessor?: (d: any) => boolean;
+  strokeDasharray?: string;
+  strokeWidth?: number | string;
+}
+
+class LineSeries extends AbstractSeries<any> {
+  _renderLine(
+    data: any[],
+    x: (d: any) => any,
+    y: (d: any) => any,
+    curve: string | ((arg: any) => any) | null,
+    getNull: (d: any) => boolean
+  ): string | null {
+    let line = d3Shape.line<any>();
     if (curve !== null) {
-      if (typeof curve === 'string' && d3Shape[curve]) {
-        line = line.curve(d3Shape[curve]);
+      if (typeof curve === 'string' && (d3Shape as any)[curve]) {
+        line = line.curve((d3Shape as any)[curve]);
       } else if (typeof curve === 'function') {
         line = line.curve(curve);
       }
@@ -52,10 +67,10 @@ class LineSeries extends AbstractSeries {
     return line(data);
   }
 
-  render() {
-    const {animation, className, data} = this.props;
+  render(): JSX.Element | null {
+    const {animation, className, data} = this.props as LineSeriesProps;
 
-    if (this.props.nullAccessor) {
+    if ((this.props as LineSeriesProps).nullAccessor) {
       warning('nullAccessor has been renamed to getNull', true);
     }
 
@@ -66,7 +81,7 @@ class LineSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <LineSeries {...this.props} animation={null} />
+          <LineSeries {...this.props} animation={false} />
         </Animation>
       );
     }
@@ -79,7 +94,7 @@ class LineSeries extends AbstractSeries {
       strokeStyle,
       strokeWidth,
       style
-    } = this.props;
+    } = this.props as LineSeriesProps;
 
     const x = this._getAttributeFunctor('x');
     const y = this._getAttributeFunctor('y');
@@ -87,12 +102,15 @@ class LineSeries extends AbstractSeries {
       this._getAttributeValue('stroke') || this._getAttributeValue('color');
     const newOpacity = this._getAttributeValue('opacity');
     const opacity = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
-    const getNull = this.props.nullAccessor || this.props.getNull;
-    const d = this._renderLine(data, x, y, curve, getNull);
+    const getNull =
+      (this.props as LineSeriesProps).nullAccessor ||
+      (this.props as LineSeriesProps).getNull ||
+      (() => true);
+    const d = this._renderLine(data, x as (d: any) => any, y as (d: any) => any, curve ?? null, getNull);
 
     return (
       <path
-        d={d}
+        d={d ?? undefined}
         className={getCombinedClassName(predefinedClassName, className)}
         transform={`translate(${marginLeft},${marginTop})`}
         onMouseOver={this._seriesMouseOverHandler}
@@ -101,25 +119,25 @@ class LineSeries extends AbstractSeries {
         onContextMenu={this._seriesRightClickHandler}
         style={{
           opacity,
-          strokeDasharray: STROKE_STYLES[strokeStyle] || strokeDasharray,
+          strokeDasharray: STROKE_STYLES[strokeStyle as string] || strokeDasharray,
           strokeWidth,
           stroke,
-          ...style
+          ...(style as React.CSSProperties)
         }}
       />
     );
   }
 }
 
-LineSeries.displayName = 'LineSeries';
-LineSeries.propTypes = {
-  ...AbstractSeries.propTypes,
+(LineSeries as any).displayName = 'LineSeries';
+(LineSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   strokeStyle: PropTypes.oneOf(Object.keys(STROKE_STYLES)),
   curve: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   getNull: PropTypes.func
 };
-LineSeries.defaultProps = {
-  ...AbstractSeries.defaultProps,
+(LineSeries as any).defaultProps = {
+  ...(AbstractSeries as any).defaultProps,
   strokeStyle: 'solid',
   style: {},
   opacity: 1,

@@ -23,18 +23,20 @@ import {rgb} from 'd3-color';
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor} from 'utils/scales-utils';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
-class MarkSeriesCanvas extends AbstractSeries {
-  static get requiresSVG() {
+export interface MarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
+
+class MarkSeriesCanvas extends AbstractSeries<any> {
+  static get requiresSVG(): boolean {
     return false;
   }
 
-  static get isCanvas() {
+  static get isCanvas(): boolean {
     return true;
   }
 
-  static renderLayer(props, ctx) {
+  static renderLayer(props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
     const {data, marginLeft, marginTop} = props;
 
     const x = getAttributeFunctor(props, 'x');
@@ -47,15 +49,15 @@ class MarkSeriesCanvas extends AbstractSeries {
       getAttributeFunctor(props, 'color');
     const opacity = getAttributeFunctor(props, 'opacity');
 
-    data.forEach(row => {
-      const fillColor = rgb(fill(row));
-      const strokeColor = rgb(stroke(row));
-      const rowOpacity = opacity(row) || DEFAULT_OPACITY;
+    (data as any[]).forEach(row => {
+      const fillColor = rgb(fill!(row));
+      const strokeColor = rgb(stroke!(row));
+      const rowOpacity = opacity!(row) || DEFAULT_OPACITY;
       ctx.beginPath();
       ctx.arc(
-        x(row) + marginLeft,
-        y(row) + marginTop,
-        size(row),
+        x!(row) + (marginLeft as number),
+        y!(row) + (marginTop as number),
+        size!(row),
         0,
         2 * Math.PI
       );
@@ -66,15 +68,15 @@ class MarkSeriesCanvas extends AbstractSeries {
     });
   }
 
-  render() {
+  render(): null {
     return null;
   }
 }
 
-MarkSeriesCanvas.displayName = 'MarkSeriesCanvas';
+(MarkSeriesCanvas as any).displayName = 'MarkSeriesCanvas';
 
-MarkSeriesCanvas.propTypes = {
-  ...AbstractSeries.propTypes
+(MarkSeriesCanvas as any).propTypes = {
+  ...(AbstractSeries as any).propTypes
 };
 
 export default MarkSeriesCanvas;

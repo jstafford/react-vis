@@ -113,7 +113,7 @@ class AbstractSeries<
    * Get a default config for the parent.
    * @returns {Object} Empty config.
    */
-  static getParentConfig(): Record<string, unknown> {
+  static getParentConfig(attr?: string): Record<string, unknown> {
     return {};
   }
 

@@ -25,14 +25,23 @@ import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--bar';
 
-class BarSeries extends AbstractSeries {
+export interface BarSeriesProps extends AbstractSeriesProps<any> {
+  linePosAttr?: string;
+  valuePosAttr?: string;
+  lineSizeAttr?: string;
+  valueSizeAttr?: string;
+  cluster?: string;
+  barWidth?: number;
+}
+
+class BarSeries extends AbstractSeries<any> {
   static get propTypes() {
     return {
-      ...AbstractSeries.propTypes,
+      ...(AbstractSeries as any).propTypes,
       linePosAttr: PropTypes.string,
       valuePosAttr: PropTypes.string,
       lineSizeAttr: PropTypes.string,
@@ -48,7 +57,7 @@ class BarSeries extends AbstractSeries {
     };
   }
 
-  render() {
+  render(): JSX.Element | null {
     const {
       animation,
       className,
@@ -61,7 +70,7 @@ class BarSeries extends AbstractSeries {
       valuePosAttr,
       valueSizeAttr,
       barWidth
-    } = this.props;
+    } = this.props as BarSeriesProps;
 
     if (!data) {
       return null;
@@ -70,24 +79,24 @@ class BarSeries extends AbstractSeries {
     if (animation) {
       return (
         <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <BarSeries {...this.props} animation={null} />
+          <BarSeries {...this.props} animation={false} />
         </Animation>
       );
     }
 
-    const {sameTypeTotal, sameTypeIndex} = getStackParams(this.props);
+    const {sameTypeTotal, sameTypeIndex} = getStackParams(this.props as any);
 
-    const distance = this._getScaleDistance(linePosAttr);
-    const lineFunctor = this._getAttributeFunctor(linePosAttr);
-    const valueFunctor = this._getAttributeFunctor(valuePosAttr);
-    const value0Functor = this._getAttr0Functor(valuePosAttr);
+    const distance = this._getScaleDistance(linePosAttr as string);
+    const lineFunctor = this._getAttributeFunctor(linePosAttr as string);
+    const valueFunctor = this._getAttributeFunctor(valuePosAttr as string);
+    const value0Functor = this._getAttr0Functor(valuePosAttr as string);
     const fillFunctor =
       this._getAttributeFunctor('fill') || this._getAttributeFunctor('color');
     const strokeFunctor =
       this._getAttributeFunctor('stroke') || this._getAttributeFunctor('color');
     const opacityFunctor = this._getAttributeFunctor('opacity');
 
-    const halfSpace = (distance / 2) * barWidth;
+    const halfSpace = (distance / 2) * (barWidth as number);
 
     return (
       <g
@@ -98,7 +107,7 @@ class BarSeries extends AbstractSeries {
           // totalSpaceAvailable is the space we have available to draw all the
           // bars of a same 'linePosAttr' value (a.k.a. sameTypeTotal)
           const totalSpaceAvailable = halfSpace * 2;
-          const totalSpaceCenter = lineFunctor(d);
+          const totalSpaceCenter = lineFunctor!(d);
           // totalSpaceStartingPoint is the first pixel were we can start drawing
           const totalSpaceStartingPoint = totalSpaceCenter - halfSpace;
           // spaceTakenByInterBarsPixels has the overhead space consumed by each bar of sameTypeTotal
@@ -113,21 +122,21 @@ class BarSeries extends AbstractSeries {
             spacePerBar * sameTypeIndex +
             sameTypeIndex;
 
-          const attrs = {
+          const attrs: {[key: string]: any} = {
             style: {
               opacity: opacityFunctor && opacityFunctor(d),
               stroke: strokeFunctor && strokeFunctor(d),
               fill: fillFunctor && fillFunctor(d),
-              ...style
+              ...(style as React.CSSProperties)
             },
-            [linePosAttr]: barStartingPoint,
-            [lineSizeAttr]: spacePerBar,
-            [valuePosAttr]: Math.min(value0Functor(d), valueFunctor(d)),
-            [valueSizeAttr]: Math.abs(-value0Functor(d) + valueFunctor(d)),
-            onClick: e => this._valueClickHandler(d, e),
-            onContextMenu: e => this._valueRightClickHandler(d, e),
-            onMouseOver: e => this._valueMouseOverHandler(d, e),
-            onMouseOut: e => this._valueMouseOutHandler(d, e)
+            [linePosAttr as string]: barStartingPoint,
+            [lineSizeAttr as string]: spacePerBar,
+            [valuePosAttr as string]: Math.min(value0Functor!(d), valueFunctor!(d)),
+            [valueSizeAttr as string]: Math.abs(-value0Functor!(d) + valueFunctor!(d)),
+            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) => this._valueRightClickHandler(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) => this._valueMouseOverHandler(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e)
           };
           return <rect key={`${i}`} {...attrs} />;
         })}
@@ -136,6 +145,6 @@ class BarSeries extends AbstractSeries {
   }
 }
 
-BarSeries.displayName = 'BarSeries';
+(BarSeries as any).displayName = 'BarSeries';
 
 export default BarSeries;

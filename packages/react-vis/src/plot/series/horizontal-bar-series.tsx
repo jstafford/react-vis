@@ -20,11 +20,13 @@
 
 import React from 'react';
 
-import AbstractSeries from './abstract-series';
+import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import BarSeries from './bar-series';
 
-class HorizontalBarSeries extends AbstractSeries {
-  static getParentConfig(attr) {
+export interface HorizontalBarSeriesProps extends AbstractSeriesProps<any> {}
+
+class HorizontalBarSeries extends AbstractSeries<any> {
+  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
     const isDomainAdjustmentNeeded = attr === 'y';
     const zeroBaseValue = attr === 'x';
     return {
@@ -33,7 +35,7 @@ class HorizontalBarSeries extends AbstractSeries {
     };
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <BarSeries
         {...this.props}
@@ -46,6 +48,6 @@ class HorizontalBarSeries extends AbstractSeries {
   }
 }
 
-HorizontalBarSeries.displayName = 'HorizontalBarSeries';
+(HorizontalBarSeries as any).displayName = 'HorizontalBarSeries';
 
 export default HorizontalBarSeries;
