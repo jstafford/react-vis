@@ -26,8 +26,10 @@ export type AnimationParam =
   | boolean;
 
 interface AnimationStyle {
+  val: number;
   stiffness: number;
   damping: number;
+  precision: number;
   [key: string]: any;
 }
 
@@ -41,6 +43,8 @@ interface AnimationProps {
 }
 
 interface AnimationState {}
+
+// type PresetValues = 'noWobble' | 'gentle' | 'wobbly' | 'stiff';
 
 /**
  * Format the animation style object

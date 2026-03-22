@@ -14,11 +14,11 @@ Object.keys(document.defaultView).forEach(function mapProperties(property) {
   }
 });
 
-global.navigator = {
-  userAgent: 'node.js'
-};
+// global.navigator = {
+//   userAgent: 'node.js'
+// };
 
 /*
  * Canvas mocks
  */
-HTMLCanvasElement.prototype.getContext = () => {};
+// HTMLCanvasElement.prototype.getContext = () => {};

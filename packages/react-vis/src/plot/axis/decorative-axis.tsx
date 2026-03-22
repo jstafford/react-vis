@@ -28,6 +28,8 @@ import Animation from 'animation';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 const predefinedClassName = 'rv-xy-manipulable-axis rv-xy-plot__axis';
+const formatTickValue = (value: number) =>
+  value === 0 ? '0.0' : format('.2r')(value);
 
 const animatedProps = [
   'xRange',
@@ -63,8 +65,9 @@ export interface DecorativeAxisProps extends AbstractSeriesProps {
 }
 
 class DecorativeAxis extends AbstractSeries<RVDatum> {
-  declare props: DecorativeAxisProps & AbstractSeriesProps & {style?: any};
   render() {
+    const props = this.props as DecorativeAxisProps &
+      AbstractSeriesProps & {style?: any};
     const {
       animation,
       className,
@@ -77,12 +80,12 @@ class DecorativeAxis extends AbstractSeries<RVDatum> {
       tickValue,
       tickSize,
       style
-    } = this.props;
+    } = props;
 
     if (animation) {
       return (
-        <Animation {...this.props} {...{animatedProps}}>
-          <DecorativeAxis {...this.props} animation={null as any} />
+        <Animation {...props} {...{animatedProps}}>
+          <DecorativeAxis {...props} animation={null as any} />
         </Animation>
       );
     }
@@ -121,7 +124,7 @@ class DecorativeAxis extends AbstractSeries<RVDatum> {
   }
 }
 
-const DEFAULT_FORMAT = format('.2r');
+const DEFAULT_FORMAT = formatTickValue;
 
 DecorativeAxis.displayName = 'DecorativeAxis';
 (DecorativeAxis as any).defaultProps = {

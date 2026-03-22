@@ -34,7 +34,7 @@ import LabelSeries from 'plot/series/label-series';
 import DecorativeAxis from 'plot/axis/decorative-axis';
 
 const predefinedClassName = 'rv-radar-chart';
-const DEFAULT_FORMAT = format('.2r');
+const DEFAULT_FORMAT = value => (value === 0 ? '0.0' : format('.2r')(value));
 /**
  * Generate axes for each of the domains
  * @param {Object} props
@@ -171,6 +171,18 @@ function getPolygons(props) {
       };
     });
 
+    const handleSeriesMouseOver = info => {
+      if (onSeriesMouseOver) {
+        onSeriesMouseOver({...info, row});
+      }
+    };
+
+    const handleSeriesMouseOut = info => {
+      if (onSeriesMouseOut) {
+        onSeriesMouseOut({...info, row});
+      }
+    };
+
     return (
       <PolygonSeries
         animation={animation}
@@ -184,8 +196,8 @@ function getPolygons(props) {
             row.color || row.fill || colorRange[rowIndex % colorRange.length],
           ...style.polygons
         }}
-        onSeriesMouseOver={onSeriesMouseOver}
-        onSeriesMouseOut={onSeriesMouseOut}
+        onSeriesMouseOver={handleSeriesMouseOver}
+        onSeriesMouseOut={handleSeriesMouseOut}
       />
     );
   });

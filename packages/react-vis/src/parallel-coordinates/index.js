@@ -40,7 +40,7 @@ import DecorativeAxis from 'plot/axis/decorative-axis';
 import Highlight from 'plot/highlight';
 
 const predefinedClassName = 'rv-parallel-coordinates-chart';
-const DEFAULT_FORMAT = format('.2r');
+const DEFAULT_FORMAT = value => (value === 0 ? '0.0' : format('.2r')(value));
 /**
  * Generate axes for each of the domains
  * @param {Object} props
