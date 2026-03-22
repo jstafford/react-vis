@@ -19,14 +19,29 @@
 // THE SOFTWARE.
 
 import React from 'react';
+
 import {DISCRETE_COLOR_RANGE} from 'theme';
-import Animation from 'animation';
+import Animation, {AnimationParam} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 
 const DEFAULT_LINK_COLOR = DISCRETE_COLOR_RANGE[1];
 const DEFAULT_LINK_OPACITY = 0.7;
 
-function SankeyLink(props) {
+export interface SankeyLinkProps {
+  animation?: AnimationParam;
+  color?: string;
+  data: string;
+  node: any;
+  onLinkClick?: (node: any, event: React.MouseEvent<SVGPathElement>) => void;
+  onLinkMouseOver?: (node: any, event: React.MouseEvent<SVGPathElement>) => void;
+  onLinkMouseOut?: (node: any, event: React.MouseEvent<SVGPathElement>) => void;
+  opacity?: number;
+  strokeWidth: number;
+  style?: React.SVGProps<SVGPathElement> | React.CSSProperties;
+  [key: string]: any;
+}
+
+function SankeyLink(props: SankeyLinkProps): JSX.Element {
   const {
     animation,
     data,
@@ -35,33 +50,34 @@ function SankeyLink(props) {
     color,
     strokeWidth,
     style,
-    onLinkClick,
-    onLinkMouseOver,
-    onLinkMouseOut
+    onLinkClick = () => undefined,
+    onLinkMouseOver = () => undefined,
+    onLinkMouseOut = () => undefined
   } = props;
   if (animation) {
     return (
       <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-        <SankeyLink {...props} animation={null} />
+        <SankeyLink {...props} animation={null as any} />
       </Animation>
     );
   }
   return (
     <path
       d={data}
-      {...style}
+      {...(style as any)}
       className="rv-sankey__link"
       opacity={Number.isFinite(opacity) ? opacity : DEFAULT_LINK_OPACITY}
       stroke={color || DEFAULT_LINK_COLOR}
-      onClick={e => onLinkClick(node, e)}
-      onMouseOver={e => onLinkMouseOver(node, e)}
-      onMouseOut={e => onLinkMouseOut(node, e)}
+      onClick={event => onLinkClick(node, event)}
+      onMouseOver={event => onLinkMouseOver(node, event)}
+      onMouseOut={event => onLinkMouseOut(node, event)}
       strokeWidth={strokeWidth}
       fill="none"
     />
   );
 }
 
-SankeyLink.displayName = 'SankeyLink';
-SankeyLink.requiresSVG = true;
+(SankeyLink as any).displayName = 'SankeyLink';
+(SankeyLink as any).requiresSVG = true;
+
 export default SankeyLink;
