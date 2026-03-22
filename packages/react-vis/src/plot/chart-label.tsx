@@ -45,12 +45,12 @@ class ChartLabel extends React.PureComponent<ChartLabelProps> {
 
   render() {
     const {
-      innerHeight,
-      innerWidth,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      marginTop,
+      innerHeight = 0,
+      innerWidth = 0,
+      marginBottom = 0,
+      marginLeft = 0,
+      marginRight = 0,
+      marginTop = 0,
       className,
       includeMargin,
       style,
@@ -73,8 +73,8 @@ class ChartLabel extends React.PureComponent<ChartLabelProps> {
   }
 }
 
-ChartLabel.displayName = 'ChartLabel';
-ChartLabel.propTypes = {
+(ChartLabel as any).displayName = 'ChartLabel';
+(ChartLabel as any).propTypes = {
   className: PropTypes.string,
   includeMargin: PropTypes.bool,
   style: PropTypes.object,
@@ -82,7 +82,7 @@ ChartLabel.propTypes = {
   xPercent: PropTypes.number.isRequired,
   yPercent: PropTypes.number.isRequired
 };
-ChartLabel.defaultProps = {
+(ChartLabel as any).defaultProps = {
   className: '',
   includeMargin: true,
   text: '',

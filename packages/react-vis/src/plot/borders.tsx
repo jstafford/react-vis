@@ -64,14 +64,14 @@ const CLASSES = {
 
 function Borders(props: BordersProps) {
   const {
-    marginTop,
-    marginBottom,
-    marginLeft,
-    marginRight,
-    innerWidth,
-    innerHeight,
-    style,
-    className
+    marginTop = 0,
+    marginBottom = 0,
+    marginLeft = 0,
+    marginRight = 0,
+    innerWidth = 0,
+    innerHeight = 0,
+    style = {},
+    className = ''
   } = props;
   const height = innerHeight + marginTop + marginBottom;
   const width = innerWidth + marginLeft + marginRight;
@@ -113,8 +113,8 @@ function Borders(props: BordersProps) {
   );
 }
 
-Borders.displayName = 'Borders';
-Borders.defaultProps = {
+(Borders as any).displayName = 'Borders';
+(Borders as any).defaultProps = {
   className: '',
   style: {
     all: {},
@@ -124,7 +124,7 @@ Borders.defaultProps = {
     top: {}
   }
 };
-Borders.propTypes = propTypes;
-Borders.requiresSVG = true;
+(Borders as any).propTypes = propTypes;
+(Borders as any).requiresSVG = true;
 
 export default Borders;

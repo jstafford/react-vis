@@ -108,14 +108,14 @@ class Crosshair extends PureComponent<CrosshairProps> {
   }
 
   _renderCrosshairItems() {
-    const {values, itemsFormat} = this.props;
+    const {values = [], itemsFormat = defaultItemsFormat} = this.props;
     const items = itemsFormat(values);
     if (!items) {
       return null;
     }
     return items
-      .filter(i => i)
-      .map(function renderValue(item: {title: any; value: any}, i: number) {
+      .filter(Boolean)
+      .map(function renderValue(item: any, i: number) {
         return (
           <div className="rv-crosshair__item" key={`item${i}`}>
             <span className="rv-crosshair__item__title">{item.title}</span>
@@ -127,7 +127,11 @@ class Crosshair extends PureComponent<CrosshairProps> {
   }
 
   _renderCrosshairTitle() {
-    const {values, titleFormat, style} = this.props;
+    const {
+      values = [],
+      titleFormat = defaultTitleFormat,
+      style = {line: {}, title: {}, box: {}}
+    } = this.props;
     const titleItem = titleFormat(values);
     if (!titleItem) {
       return null;
@@ -145,18 +149,18 @@ class Crosshair extends PureComponent<CrosshairProps> {
     const {
       children,
       className,
-      values,
-      marginTop,
-      marginLeft,
-      innerWidth,
-      innerHeight,
-      style
+      values = [],
+      marginTop = 0,
+      marginLeft = 0,
+      innerWidth = 0,
+      innerHeight = 0,
+      style = {line: {}, title: {}, box: {}}
     } = this.props;
     const value = getFirstNonEmptyValue(values);
     if (!value) {
       return null;
     }
-    const x = getAttributeFunctor(this.props, 'x');
+    const x = getAttributeFunctor(this.props, 'x') as (datum: any) => number;
     const innerLeft = x(value);
 
     const {
@@ -193,6 +197,6 @@ class Crosshair extends PureComponent<CrosshairProps> {
   }
 }
 
-Crosshair.displayName = 'Crosshair';
+(Crosshair as any).displayName = 'Crosshair';
 
 export default Crosshair;

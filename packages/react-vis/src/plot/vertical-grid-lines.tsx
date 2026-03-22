@@ -28,7 +28,7 @@ import {DIRECTION} from 'utils/axis-utils';
 const {VERTICAL} = DIRECTION;
 
 const propTypes = {
-  ...GridLines.propTypes,
+  ...(GridLines as any).propTypes,
   direction: PropTypes.oneOf([VERTICAL])
 };
 
@@ -42,8 +42,9 @@ function VerticalGridLines(props: any) {
 }
 
 VerticalGridLines.displayName = 'VerticalGridLines';
-VerticalGridLines.propTypes = propTypes;
-VerticalGridLines.defaultProps = defaultProps;
-VerticalGridLines.requiresSVG = true;
+(VerticalGridLines as any).displayName = 'VerticalGridLines';
+(VerticalGridLines as any).propTypes = propTypes;
+(VerticalGridLines as any).defaultProps = defaultProps;
+(VerticalGridLines as any).requiresSVG = true;
 
 export default VerticalGridLines;

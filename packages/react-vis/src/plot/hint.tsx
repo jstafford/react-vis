@@ -125,12 +125,13 @@ class Hint extends PureComponent<HintProps> {
 
   _getAlign(x: number, y: number): AlignShape {
     const {
-      innerWidth,
-      innerHeight,
+      innerWidth = 0,
+      innerHeight = 0,
       orientation,
-      align: {horizontal, vertical}
+      align: alignProp = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO}
     } = this.props;
-    const align = orientation
+    const {horizontal, vertical} = alignProp;
+    const align: AlignShape = orientation
       ? this._mapOrientationToAlign(orientation)
       : {horizontal, vertical};
     if (horizontal === ALIGN.AUTO) {
@@ -162,7 +163,7 @@ class Hint extends PureComponent<HintProps> {
     if (y === undefined || y === null) {
       return {bottom: 0};
     }
-    const {innerHeight, marginBottom} = this.props;
+    const {innerHeight = 0, marginBottom = 0} = this.props;
     return {bottom: marginBottom + innerHeight - y};
   }
 
@@ -170,7 +171,7 @@ class Hint extends PureComponent<HintProps> {
     if (x === undefined || x === null) {
       return {left: 0};
     }
-    const {marginLeft} = this.props;
+    const {marginLeft = 0} = this.props;
     return {left: marginLeft + x};
   }
 
@@ -178,7 +179,7 @@ class Hint extends PureComponent<HintProps> {
     if (x === undefined || x === null) {
       return {right: 0};
     }
-    const {innerWidth, marginRight} = this.props;
+    const {innerWidth = 0, marginRight = 0} = this.props;
     return {right: marginRight + innerWidth - x};
   }
 
@@ -186,15 +187,17 @@ class Hint extends PureComponent<HintProps> {
     if (y === undefined || y === null) {
       return {top: 0};
     }
-    const {marginTop} = this.props;
+    const {marginTop = 0} = this.props;
     return {top: marginTop + y};
   }
 
   _getPositionInfo() {
-    const {value, getAlignStyle} = this.props;
+    const {value = {}, getAlignStyle} = this.props;
 
-    const x = getAttributeFunctor(this.props, 'x')(value);
-    const y = getAttributeFunctor(this.props, 'y')(value);
+    const xFunctor = getAttributeFunctor(this.props, 'x') as (datum: any) => number;
+    const yFunctor = getAttributeFunctor(this.props, 'y') as (datum: any) => number;
+    const x = xFunctor(value);
+    const y = yFunctor(value);
 
     const align = this._getAlign(x, y);
 
@@ -245,12 +248,18 @@ class Hint extends PureComponent<HintProps> {
       case ORIENTATION.TOP_RIGHT:
         return {horizontal: ALIGN.RIGHT, vertical: ALIGN.TOP};
       default:
-        break;
+        return {horizontal: ALIGN.RIGHT, vertical: ALIGN.BOTTOM};
     }
   }
 
   render() {
-    const {value, format, children, style, className} = this.props;
+    const {
+      value = {},
+      format = defaultFormat,
+      children,
+      style = {},
+      className
+    } = this.props;
 
     const {position, positionClassName} = this._getPositionInfo();
     return (
@@ -288,7 +297,7 @@ class Hint extends PureComponent<HintProps> {
   }
 }
 
-Hint.displayName = 'Hint';
+(Hint as any).displayName = 'Hint';
 (Hint as any).ORIENTATION = ORIENTATION;
 (Hint as any).ALIGN = ALIGN;
 

@@ -96,10 +96,10 @@ const animatedProps = [
 class GridLines extends PureComponent<GridLinesProps> {
   _getDefaultProps() {
     const {
-      innerWidth,
-      innerHeight,
-      marginTop,
-      marginLeft,
+      innerWidth = 0,
+      innerHeight = 0,
+      marginTop = 0,
+      marginLeft = 0,
       direction
     } = this.props;
     return {
@@ -144,8 +144,8 @@ class GridLines extends PureComponent<GridLinesProps> {
     const tickYAttr = isVertical ? 'x' : 'y';
     const length = isVertical ? height : width;
 
-    const scale = getAttributeScale(props, attr);
-    const values = getTickValues(scale, tickTotal, tickValues);
+    const scale = getAttributeScale(props, attr) as (value: any) => number;
+    const values = getTickValues(scale as any, tickTotal, tickValues);
 
     return (
       <g
@@ -174,9 +174,9 @@ class GridLines extends PureComponent<GridLinesProps> {
   }
 }
 
-GridLines.displayName = 'GridLines';
-GridLines.defaultProps = defaultProps;
-GridLines.propTypes = propTypes;
+(GridLines as any).displayName = 'GridLines';
+(GridLines as any).defaultProps = defaultProps;
+(GridLines as any).propTypes = propTypes;
 (GridLines as any).requiresSVG = true;
 
 export default GridLines;

@@ -55,7 +55,5 @@ export function addValueToArray(arr: number[], value: number): number[] {
  * @returns {string | number} The value as string.
  */
 export function transformValueToString(value: Date | number): string | number {
-  return Object.prototype.toString.call(value) === '[object Date]'
-    ? (value as Date).toDateString()
-    : value;
+  return value instanceof Date ? value.toDateString() : value;
 }

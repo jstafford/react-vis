@@ -64,7 +64,12 @@ const animatedProps = [
 
 class CircularGridLines extends PureComponent<CircularGridLinesProps> {
   _getDefaultProps() {
-    const {innerWidth, innerHeight, marginTop, marginLeft} = this.props;
+    const {
+      innerWidth = 0,
+      innerHeight = 0,
+      marginTop = 0,
+      marginLeft = 0
+    } = this.props;
     return {
       left: marginLeft,
       top: marginTop,
@@ -90,11 +95,18 @@ class CircularGridLines extends PureComponent<CircularGridLinesProps> {
       ...this.props
     };
 
-    const {tickTotal, tickValues, marginLeft, marginTop, rRange, style} = props;
+    const {
+      tickTotal,
+      tickValues,
+      marginLeft = 0,
+      marginTop = 0,
+      rRange,
+      style
+    } = props;
 
-    const xScale = getAttributeScale(props, 'x');
-    const yScale = getAttributeScale(props, 'y');
-    const values = getTickValues(xScale, tickTotal, tickValues);
+    const xScale = getAttributeScale(props, 'x') as (value: any) => number;
+    const yScale = getAttributeScale(props, 'y') as (value: any) => number;
+    const values = getTickValues(xScale as any, tickTotal, tickValues);
     return (
       <g
         transform={`translate(${xScale(centerX) + marginLeft},${yScale(
@@ -121,8 +133,8 @@ class CircularGridLines extends PureComponent<CircularGridLinesProps> {
   }
 }
 
-CircularGridLines.displayName = 'CircularGridLines';
-CircularGridLines.propTypes = {
+(CircularGridLines as any).displayName = 'CircularGridLines';
+(CircularGridLines as any).propTypes = {
   centerX: PropTypes.number,
   centerY: PropTypes.number,
   width: PropTypes.number,
@@ -141,7 +153,7 @@ CircularGridLines.propTypes = {
   innerWidth: PropTypes.number,
   innerHeight: PropTypes.number
 };
-CircularGridLines.defaultProps = {
+(CircularGridLines as any).defaultProps = {
   centerX: 0,
   centerY: 0
 };

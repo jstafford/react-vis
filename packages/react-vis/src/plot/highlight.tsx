@@ -66,13 +66,14 @@ class Highlight extends AbstractSeries<any> {
 
   _getDragArea(xLoc: number, yLoc: number) {
     const {enableX, enableY} = this.props;
-    const {startLocX, startLocY, dragArea} = this.state;
+    const {startLocX, startLocY, dragArea, brushArea} = this.state;
+    const area = dragArea || brushArea;
 
     return {
-      bottom: dragArea.bottom + (enableY ? yLoc - startLocY : 0),
-      left: dragArea.left + (enableX ? xLoc - startLocX : 0),
-      right: dragArea.right + (enableX ? xLoc - startLocX : 0),
-      top: dragArea.top + (enableY ? yLoc - startLocY : 0)
+      bottom: area.bottom + (enableY ? yLoc - startLocY : 0),
+      left: area.left + (enableX ? xLoc - startLocX : 0),
+      right: area.right + (enableX ? xLoc - startLocX : 0),
+      top: area.top + (enableY ? yLoc - startLocY : 0)
     };
   }
 
@@ -97,9 +98,9 @@ class Highlight extends AbstractSeries<any> {
   }
 
   _convertAreaToCoordinates(brushArea: BrushArea) {
-    const {enableX, enableY, marginLeft, marginTop} = this.props;
-    const xScale = getAttributeScale(this.props, 'x');
-    const yScale = getAttributeScale(this.props, 'y');
+    const {enableX, enableY, marginLeft = 0, marginTop = 0} = this.props;
+    const xScale = getAttributeScale(this.props, 'x') as any;
+    const yScale = getAttributeScale(this.props, 'y') as any;
 
     if (enableX && enableY) {
       return {
@@ -223,12 +224,12 @@ class Highlight extends AbstractSeries<any> {
       highlightWidth,
       highlightX,
       highlightY,
-      innerWidth,
-      innerHeight,
-      marginLeft,
-      marginRight,
-      marginTop,
-      marginBottom,
+      innerWidth = 0,
+      innerHeight = 0,
+      marginLeft = 0,
+      marginRight = 0,
+      marginTop = 0,
+      marginBottom = 0,
       opacity
     } = this.props;
     const {
@@ -237,13 +238,13 @@ class Highlight extends AbstractSeries<any> {
 
     let leftPos = 0;
     if (highlightX) {
-      const xScale = getAttributeScale(this.props, 'x');
+      const xScale = getAttributeScale(this.props, 'x') as (value: any) => number;
       leftPos = xScale(highlightX);
     }
 
     let topPos = 0;
     if (highlightY) {
-      const yScale = getAttributeScale(this.props, 'y');
+      const yScale = getAttributeScale(this.props, 'y') as (value: any) => number;
       topPos = yScale(highlightY);
     }
 
@@ -295,8 +296,8 @@ class Highlight extends AbstractSeries<any> {
   }
 }
 
-Highlight.displayName = 'HighlightOverlay';
-Highlight.defaultProps = {
+(Highlight as any).displayName = 'HighlightOverlay';
+(Highlight as any).defaultProps = {
   color: 'rgb(77, 182, 172)',
   className: '',
   enableX: true,
@@ -304,8 +305,8 @@ Highlight.defaultProps = {
   opacity: 0.3
 };
 
-Highlight.propTypes = {
-  ...AbstractSeries.propTypes,
+(Highlight as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
   enableX: PropTypes.bool,
   enableY: PropTypes.bool,
   highlightHeight: PropTypes.number,

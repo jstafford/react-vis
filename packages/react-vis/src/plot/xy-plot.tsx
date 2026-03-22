@@ -22,8 +22,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import equal from 'deep-equal';
 
-import {getCombinedClassName} from 'utils/styling-utils';
+import {AnimationParam, AnimationPropType} from 'animation';
+import CanvasWrapper from './series/canvas-wrapper';
 
+import {getCombinedClassName} from 'utils/styling-utils';
+import {
+  getInnerDimensions,
+  Margin,
+  MarginPropType,
+  DEFAULT_MARGINS
+} from 'utils/chart-utils';
 import {
   extractScalePropsFromProps,
   getMissingScaleProps,
@@ -33,22 +41,15 @@ import {
 import {
   getStackedData,
   getSeriesChildren,
-  getSeriesPropsFromChildren
+  getSeriesPropsFromChildren,
+  RVDatum
 } from 'utils/series-utils';
-import {
-  getInnerDimensions,
-  MarginPropType,
-  DEFAULT_MARGINS
-} from 'utils/chart-utils';
-import {AnimationPropType} from 'animation';
 import {
   CONTINUOUS_COLOR_RANGE,
   EXTENDED_DISCRETE_COLOR_RANGE,
   SIZE_RANGE,
   OPACITY_TYPE
 } from 'theme';
-
-import CanvasWrapper from './series/canvas-wrapper';
 
 const ATTRIBUTES = [
   'x',
@@ -60,7 +61,92 @@ const ATTRIBUTES = [
   'stroke',
   'opacity',
   'size'
-];
+] as const;
+
+type ScaleAttribute = (typeof ATTRIBUTES)[number];
+type PlotData = Array<RVDatum[] | null>;
+type SeriesPropsInfo = Array<{[key: string]: any} | undefined>;
+type PlotEvent = React.SyntheticEvent<SVGSVGElement>;
+type PlotEventHandler = (event: PlotEvent) => void;
+
+interface ParentConfig {
+  isDomainAdjustmentNeeded?: boolean;
+  zeroBaseValue?: boolean;
+}
+
+interface ParentSeriesComponent {
+  onParentMouseDown?: PlotEventHandler;
+  onParentMouseEnter?: PlotEventHandler;
+  onParentMouseLeave?: PlotEventHandler;
+  onParentMouseMove?: PlotEventHandler;
+  onParentMouseUp?: PlotEventHandler;
+  onParentTouchMove?: PlotEventHandler;
+  onParentTouchStart?: PlotEventHandler;
+}
+
+type SeriesComponentType = React.JSXElementConstructor<any> & {
+  requiresSVG?: boolean;
+  isCanvas?: boolean;
+  getParentConfig?: (attr?: string, props?: {[key: string]: any}) => ParentConfig;
+  prototype?: {render?: unknown};
+};
+
+interface ScaleMixins {
+  _allData: PlotData;
+  _adjustBy: string[];
+  _adjustWhat: number[];
+  _stackBy?: string;
+  [key: string]: any;
+}
+
+interface XYPlotProps {
+  animation?: AnimationParam;
+  children?: React.ReactNode;
+  className?: string;
+  dontCheckIfEmpty?: boolean;
+  hasTreeStructure?: boolean;
+  height: number;
+  margin?: Margin | number;
+  onClick?: PlotEventHandler;
+  onDoubleClick?: PlotEventHandler;
+  onMouseDown?: PlotEventHandler;
+  onMouseUp?: PlotEventHandler;
+  onMouseEnter?: PlotEventHandler;
+  onMouseLeave?: PlotEventHandler;
+  onMouseMove?: PlotEventHandler;
+  onTouchStart?: PlotEventHandler;
+  onTouchMove?: PlotEventHandler;
+  onTouchEnd?: PlotEventHandler;
+  onTouchCancel?: PlotEventHandler;
+  onWheel?: React.WheelEventHandler<SVGSVGElement>;
+  stackBy?: ScaleAttribute;
+  style?: React.CSSProperties;
+  width: number;
+  [key: string]: any;
+}
+
+interface XYPlotState {
+  data: PlotData;
+  scaleMixins: ScaleMixins;
+}
+
+function getSeriesComponentType(
+  componentType: React.ReactElement['type']
+): SeriesComponentType | null {
+  return typeof componentType === 'string'
+    ? null
+    : (componentType as SeriesComponentType);
+}
+
+function requiresSVG(component: React.ReactElement): boolean {
+  const componentType = getSeriesComponentType(component.type);
+  return componentType ? Boolean(componentType.requiresSVG) : false;
+}
+
+function isCanvasComponent(component: React.ReactElement): boolean {
+  const componentType = getSeriesComponentType(component.type);
+  return componentType ? Boolean(componentType.isCanvas) : false;
+}
 
 /**
  * Remove parents from tree formatted data. deep-equal doesnt play nice with data
@@ -68,7 +154,7 @@ const ATTRIBUTES = [
  * @param {Array} data - the data object to have circular deps resolved in
  * @returns {Array} the sanitized data
  */
-function cleanseData(data) {
+function cleanseData(data: PlotData): PlotData {
   return data.map(series => {
     if (!Array.isArray(series)) {
       return series;
@@ -84,7 +170,11 @@ function cleanseData(data) {
  * @param {Boolean} hasTreeStructure - Whether or not to cleanse the data of possible cyclic structures
  * @returns {Boolean} whether or not the two mixins objects are equal
  */
-function checkIfMixinsAreEqual(nextScaleMixins, scaleMixins, hasTreeStructure) {
+function checkIfMixinsAreEqual(
+  nextScaleMixins: ScaleMixins,
+  scaleMixins: ScaleMixins,
+  hasTreeStructure?: boolean
+): boolean {
   const newMixins = {
     ...nextScaleMixins,
     _allData: hasTreeStructure
@@ -97,11 +187,12 @@ function checkIfMixinsAreEqual(nextScaleMixins, scaleMixins, hasTreeStructure) {
       ? cleanseData(scaleMixins._allData)
       : scaleMixins._allData
   };
-  // it's hard to say if this function is reasonable?
   return equal(newMixins, oldMixins);
 }
 
-class XYPlot extends React.Component {
+class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
+  static displayName = 'XYPlot';
+
   static get defaultProps() {
     return {
       className: ''
@@ -133,20 +224,25 @@ class XYPlot extends React.Component {
     };
   }
 
-  constructor(props) {
+  private _seriesRefs: Record<number, ParentSeriesComponent | null> = {};
+
+  constructor(props: XYPlotProps) {
     super(props);
     const {stackBy} = props;
     const children = getSeriesChildren(props.children);
-    const data = getStackedData(children, stackBy);
+    const data = getStackedData(children, stackBy as string);
     this.state = {
       scaleMixins: XYPlot._getScaleMixins(data, props),
       data
     };
   }
 
-  static getDerivedStateFromProps(nextProps, state) {
+  static getDerivedStateFromProps(
+    nextProps: XYPlotProps,
+    state: XYPlotState
+  ): Partial<XYPlotState> | null {
     const children = getSeriesChildren(nextProps.children);
-    const nextData = getStackedData(children, nextProps.stackBy);
+    const nextData = getStackedData(children, nextProps.stackBy as string);
     const {scaleMixins} = state;
     const nextScaleMixins = XYPlot._getScaleMixins(nextData, nextProps);
     if (
@@ -170,7 +266,7 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Click event.
    * @private
    */
-  _clickHandler = event => {
+  _clickHandler = (event: PlotEvent): void => {
     const {onClick} = this.props;
     if (onClick) {
       onClick(event);
@@ -182,7 +278,7 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Double-click event.
    * @private
    */
-  _doubleClickHandler = event => {
+  _doubleClickHandler = (event: PlotEvent): void => {
     const {onDoubleClick} = this.props;
     if (onDoubleClick) {
       onDoubleClick(event);
@@ -194,58 +290,66 @@ class XYPlot extends React.Component {
    * @returns {Array} Array of child components.
    * @private
    */
-  _getClonedChildComponents() {
+  _getClonedChildComponents(): React.ReactElement[] {
     const props = this.props;
     const {animation} = this.props;
     const {scaleMixins, data} = this.state;
     const dimensions = getInnerDimensions(this.props, DEFAULT_MARGINS);
-    const children = React.Children.toArray(this.props.children);
-    const seriesProps = getSeriesPropsFromChildren(children);
-    const XYPlotValues = getXYPlotValues(props, children);
+    const children = React.Children.toArray(this.props.children) as React.ReactElement[];
+    const seriesProps = getSeriesPropsFromChildren(children) as SeriesPropsInfo;
+    const xyPlotValues = getXYPlotValues(props, children);
+
     return children.map((child, index) => {
-      let dataProps = null;
+      let dataProps: {data: RVDatum[] | null} | null = null;
       if (seriesProps[index]) {
-        // Get the index of the series in the list of props and retrieve
-        // the data property from it.
-        const {seriesIndex} = seriesProps[index];
+        const {seriesIndex} = seriesProps[index] as {[key: string]: any};
         dataProps = {data: data[seriesIndex]};
       }
+
+      const childType = getSeriesComponentType(child.type);
+      const supportsRef =
+        Boolean(dataProps) &&
+        Boolean(childType) &&
+        Boolean(childType?.prototype && childType.prototype.render);
+
       return React.cloneElement(child, {
         ...dimensions,
         animation,
-        ...(dataProps && child.type.prototype && child.type.prototype.render
+        ...(supportsRef
           ? {
-              ref: ref =>
-                (this[`series${seriesProps[index].seriesIndex}`] = ref)
+              ref: (ref: ParentSeriesComponent | null) => {
+                this._seriesRefs[(seriesProps[index] as {[key: string]: any}).seriesIndex] = ref;
+              }
             }
           : {}),
         ...seriesProps[index],
         ...scaleMixins,
         ...child.props,
-        ...XYPlotValues[index],
+        ...xyPlotValues[index],
         ...dataProps
       });
     });
   }
+
   /**
    * Get the list of scale-related settings that should be applied by default.
    * @param {Object} props Object of props.
    * @returns {Object} Defaults.
    * @private
    */
-  static _getDefaultScaleProps(props) {
-    const {innerWidth, innerHeight} = getInnerDimensions(
-      props,
-      DEFAULT_MARGINS
-    );
+  static _getDefaultScaleProps(props: XYPlotProps): {[key: string]: any} {
+    const {innerWidth, innerHeight} = getInnerDimensions(props, DEFAULT_MARGINS);
 
-    const colorRanges = ['color', 'fill', 'stroke'].reduce((acc, attr) => {
-      const range =
-        props[`${attr}Type`] === 'category'
-          ? EXTENDED_DISCRETE_COLOR_RANGE
-          : CONTINUOUS_COLOR_RANGE;
-      return {...acc, [`${attr}Range`]: range};
-    }, {});
+    const colorRanges = ['color', 'fill', 'stroke'].reduce(
+      (acc: {[key: string]: any}, attr) => {
+        const range =
+          props[`${attr}Type`] === 'category'
+            ? EXTENDED_DISCRETE_COLOR_RANGE
+            : CONTINUOUS_COLOR_RANGE;
+        return {...acc, [`${attr}Range`]: range};
+      },
+      {}
+    );
 
     return {
       xRange: [0, innerWidth],
@@ -264,13 +368,14 @@ class XYPlot extends React.Component {
    * @returns {Object} Map of scale-related props.
    * @private
    */
-  static _getScaleMixins(data, props) {
-    const filteredData = data.filter(d => d);
-    const allData = [].concat(...filteredData);
+  static _getScaleMixins(data: PlotData, props: XYPlotProps): ScaleMixins {
+    const filteredData = data.filter((datum): datum is RVDatum[] => Boolean(datum));
+    const allData = ([] as RVDatum[]).concat(...filteredData);
+    const attributes = ATTRIBUTES as unknown as string[];
 
     const defaultScaleProps = XYPlot._getDefaultScaleProps(props);
     const optionalScaleProps = getOptionalScaleProps(props);
-    const userScaleProps = extractScalePropsFromProps(props, ATTRIBUTES);
+    const userScaleProps = extractScalePropsFromProps(props, attributes);
     const missingScaleProps = getMissingScaleProps(
       {
         ...defaultScaleProps,
@@ -278,21 +383,24 @@ class XYPlot extends React.Component {
         ...userScaleProps
       },
       allData,
-      ATTRIBUTES
+      attributes
     );
     const children = getSeriesChildren(props.children);
-    const zeroBaseProps = {};
-    const adjustBy = new Set();
-    const adjustWhat = new Set();
+    const zeroBaseProps: {[key: string]: any} = {};
+    const adjustBy = new Set<string>();
+    const adjustWhat = new Set<number>();
+
     children.forEach((child, index) => {
       if (!child || !data[index]) {
         return;
       }
       ATTRIBUTES.forEach(attr => {
-        const {
-          isDomainAdjustmentNeeded,
-          zeroBaseValue
-        } = child.type.getParentConfig(attr, child.props);
+        const childType = getSeriesComponentType(child.type);
+        const parentConfig =
+          childType && childType.getParentConfig
+            ? childType.getParentConfig(attr, child.props)
+            : {};
+        const {isDomainAdjustmentNeeded, zeroBaseValue} = parentConfig;
         if (isDomainAdjustmentNeeded) {
           adjustBy.add(attr);
           adjustWhat.add(index);
@@ -323,7 +431,7 @@ class XYPlot extends React.Component {
    * @returns {boolean} True for empty.
    * @private
    */
-  _isPlotEmpty() {
+  _isPlotEmpty(): boolean {
     const {data} = this.state;
     return (
       !data ||
@@ -332,23 +440,35 @@ class XYPlot extends React.Component {
     );
   }
 
+  _notifySeries(
+    children: React.ReactNode,
+    handlerName: keyof ParentSeriesComponent,
+    event: PlotEvent
+  ): void {
+    const seriesChildren = getSeriesChildren(children);
+    seriesChildren.forEach((child, index) => {
+      if (!child) {
+        return;
+      }
+      const component = this._seriesRefs[index];
+      const handler = component && component[handlerName];
+      if (handler) {
+        handler.call(component, event);
+      }
+    });
+  }
+
   /**
    * Trigger mouse-down related callbacks if they are available.
    * @param {React.SyntheticEvent} event Mouse down event.
    * @private
    */
-  _mouseDownHandler = event => {
+  _mouseDownHandler = (event: PlotEvent): void => {
     const {onMouseDown, children} = this.props;
     if (onMouseDown) {
       onMouseDown(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentMouseDown) {
-        component.onParentMouseDown(event);
-      }
-    });
+    this._notifySeries(children, 'onParentMouseDown', event);
   };
 
   /**
@@ -356,18 +476,12 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Mouse enter event.
    * @private
    */
-  _mouseEnterHandler = event => {
+  _mouseEnterHandler = (event: PlotEvent): void => {
     const {onMouseEnter, children} = this.props;
     if (onMouseEnter) {
       onMouseEnter(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentMouseEnter) {
-        component.onParentMouseEnter(event);
-      }
-    });
+    this._notifySeries(children, 'onParentMouseEnter', event);
   };
 
   /**
@@ -375,18 +489,12 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Mouse leave event.
    * @private
    */
-  _mouseLeaveHandler = event => {
+  _mouseLeaveHandler = (event: PlotEvent): void => {
     const {onMouseLeave, children} = this.props;
     if (onMouseLeave) {
       onMouseLeave(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentMouseLeave) {
-        component.onParentMouseLeave(event);
-      }
-    });
+    this._notifySeries(children, 'onParentMouseLeave', event);
   };
 
   /**
@@ -394,18 +502,12 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Mouse move event.
    * @private
    */
-  _mouseMoveHandler = event => {
+  _mouseMoveHandler = (event: PlotEvent): void => {
     const {onMouseMove, children} = this.props;
     if (onMouseMove) {
       onMouseMove(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentMouseMove) {
-        component.onParentMouseMove(event);
-      }
-    });
+    this._notifySeries(children, 'onParentMouseMove', event);
   };
 
   /**
@@ -413,18 +515,12 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Mouse up event.
    * @private
    */
-  _mouseUpHandler = event => {
+  _mouseUpHandler = (event: PlotEvent): void => {
     const {onMouseUp, children} = this.props;
     if (onMouseUp) {
       onMouseUp(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentMouseUp) {
-        component.onParentMouseUp(event);
-      }
-    });
+    this._notifySeries(children, 'onParentMouseUp', event);
   };
 
   /**
@@ -432,7 +528,7 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Touch Cancel event.
    * @private
    */
-  _touchCancelHandler = event => {
+  _touchCancelHandler = (event: PlotEvent): void => {
     const {onTouchCancel} = this.props;
     if (onTouchCancel) {
       onTouchCancel(event);
@@ -444,7 +540,7 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Touch End event.
    * @private
    */
-  _touchEndHandler = event => {
+  _touchEndHandler = (event: PlotEvent): void => {
     const {onTouchEnd} = this.props;
     if (onTouchEnd) {
       onTouchEnd(event);
@@ -456,18 +552,12 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Touch move event.
    * @private
    */
-  _touchMoveHandler = event => {
+  _touchMoveHandler = (event: PlotEvent): void => {
     const {onTouchMove, children} = this.props;
     if (onTouchMove) {
       onTouchMove(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentTouchMove) {
-        component.onParentTouchMove(event);
-      }
-    });
+    this._notifySeries(children, 'onParentTouchMove', event);
   };
 
   /**
@@ -475,23 +565,19 @@ class XYPlot extends React.Component {
    * @param {React.SyntheticEvent} event Touch start event.
    * @private
    */
-  _touchStartHandler = event => {
+  _touchStartHandler = (event: PlotEvent): void => {
     const {onTouchStart, children} = this.props;
     if (onTouchStart) {
       onTouchStart(event);
     }
-    const seriesChildren = getSeriesChildren(children);
-    seriesChildren.forEach((child, index) => {
-      const component = this[`series${index}`];
-      if (component && component.onParentTouchStart) {
-        component.onParentTouchStart(event);
-      }
-    });
+    this._notifySeries(children, 'onParentTouchStart', event);
   };
 
-  renderCanvasComponents(components) {
+  renderCanvasComponents(
+    components: React.ReactElement[]
+  ): React.ReactElement | null {
     const componentsToRender = components.filter(
-      c => c && !c.type.requiresSVG && c.type.isCanvas
+      component => component && !requiresSVG(component) && isCanvasComponent(component)
     );
 
     if (componentsToRender.length === 0) {
@@ -504,7 +590,7 @@ class XYPlot extends React.Component {
       marginRight,
       innerHeight,
       innerWidth
-    } = componentsToRender[0].props;
+    } = componentsToRender[0].props as {[key: string]: any};
     return (
       <CanvasWrapper
         {...{
@@ -521,7 +607,7 @@ class XYPlot extends React.Component {
     );
   }
 
-  render() {
+  render(): React.ReactElement {
     const {
       className,
       dontCheckIfEmpty,
@@ -570,15 +656,15 @@ class XYPlot extends React.Component {
           onTouchCancel={this._touchCancelHandler}
           onWheel={onWheel}
         >
-          {components.filter(c => c && c.type.requiresSVG)}
+          {components.filter(component => component && requiresSVG(component))}
         </svg>
         {this.renderCanvasComponents(components)}
-        {components.filter(c => c && !c.type.requiresSVG && !c.type.isCanvas)}
+        {components.filter(
+          component => component && !requiresSVG(component) && !isCanvasComponent(component)
+        )}
       </div>
     );
   }
 }
-
-XYPlot.displayName = 'XYPlot';
 
 export default XYPlot;

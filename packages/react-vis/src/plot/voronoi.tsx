@@ -36,14 +36,17 @@ function getNodeIndex(evt: React.TouchEvent<SVGElement>) {
     return -1;
   }
   const {parentNode} = target;
+  if (!parentNode) {
+    return -1;
+  }
   return Array.prototype.indexOf.call(parentNode.childNodes, target);
 }
 
 function getExtent({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProps) {
   return [
-    [marginLeft, marginTop],
-    [innerWidth + marginLeft, innerHeight + marginTop]
-  ];
+    [marginLeft || 0, marginTop || 0],
+    [(innerWidth || 0) + (marginLeft || 0), (innerHeight || 0) + (marginTop || 0)]
+  ] as [[number, number], [number, number]];
 }
 
 function Voronoi(props: VoronoiProps) {
@@ -51,32 +54,41 @@ function Voronoi(props: VoronoiProps) {
     className,
     extent,
     nodes,
-    onBlur,
-    onClick,
-    onMouseUp,
-    onMouseDown,
-    onHover,
+    onBlur = NOOP,
+    onClick = NOOP,
+    onMouseUp = NOOP,
+    onMouseDown = NOOP,
+    onHover = NOOP,
     polygonStyle,
     style,
     x,
     y
   } = props;
 
-  const voronoiInstance = voronoi()
-    .x(x || getAttributeFunctor(props, 'x'))
-    .y(y || getAttributeFunctor(props, 'y'))
-    .extent(extent || getExtent(props));
+  const xAccessor = (x || getAttributeFunctor(props, 'x')) as (d: any) => number;
+  const yAccessor = (y || getAttributeFunctor(props, 'y')) as (d: any) => number;
 
-  const polygons = voronoiInstance.polygons(nodes);
+  const resolvedExtent =
+    (extent as [[number, number], [number, number]] | undefined) ||
+    getExtent(props);
 
-  const handleTouchEvent = (handler: (data: any) => void) => (evt: React.TouchEvent<SVGElement>) => {
-    evt.preventDefault();
-    const index = getNodeIndex(evt);
-    if (index > -1 && index < polygons.length) {
-      const d = polygons[index];
-      handler(d.data);
-    }
-  };
+  const voronoiInstance = voronoi<any>()
+    .x(xAccessor)
+    .y(yAccessor)
+    .extent(resolvedExtent);
+
+  const polygons = voronoiInstance.polygons(nodes as any) as any[];
+
+  const handleTouchEvent =
+    (handler: (data: any) => void) =>
+    (evt: React.TouchEvent<SVGElement>) => {
+      evt.preventDefault();
+      const index = getNodeIndex(evt);
+      if (index > -1 && index < polygons.length) {
+        const d = polygons[index];
+        handler(d.data);
+      }
+    };
 
   return (
     <g
@@ -109,9 +121,9 @@ function Voronoi(props: VoronoiProps) {
   );
 }
 
-Voronoi.requiresSVG = true;
-Voronoi.displayName = 'Voronoi';
-Voronoi.defaultProps = {
+(Voronoi as any).requiresSVG = true;
+(Voronoi as any).displayName = 'Voronoi';
+(Voronoi as any).defaultProps = {
   className: '',
   onBlur: NOOP,
   onClick: NOOP,
@@ -120,7 +132,7 @@ Voronoi.defaultProps = {
   onMouseUp: NOOP
 };
 
-Voronoi.propTypes = {
+(Voronoi as any).propTypes = {
   className: PropTypes.string,
   extent: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
   nodes: PropTypes.arrayOf(PropTypes.object).isRequired,

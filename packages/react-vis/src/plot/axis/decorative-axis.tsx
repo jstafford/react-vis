@@ -90,8 +90,8 @@ class DecorativeAxis extends AbstractSeries<RVDatum> {
       );
     }
 
-    const x = this._getAttributeFunctor('x');
-    const y = this._getAttributeFunctor('y');
+    const x = this._getAttributeFunctor('x') as (datum: any) => number;
+    const y = this._getAttributeFunctor('y') as (datum: any) => number;
 
     return (
       <g
@@ -126,7 +126,7 @@ class DecorativeAxis extends AbstractSeries<RVDatum> {
 
 const DEFAULT_FORMAT = formatTickValue;
 
-DecorativeAxis.displayName = 'DecorativeAxis';
+(DecorativeAxis as any).displayName = 'DecorativeAxis';
 (DecorativeAxis as any).defaultProps = {
   className: '',
   numberOfTicks: 10,
@@ -163,6 +163,4 @@ DecorativeAxis.displayName = 'DecorativeAxis';
     text: PropTypes.object
   })
 };
-DecorativeAxis.displayName = 'DecorativeAxis';
-
 export default DecorativeAxis;

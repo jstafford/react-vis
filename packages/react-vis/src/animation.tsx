@@ -26,10 +26,10 @@ export type AnimationParam =
   | boolean;
 
 interface AnimationStyle {
-  val: number;
+  val?: number;
   stiffness: number;
   damping: number;
-  precision: number;
+  precision?: number;
   [key: string]: any;
 }
 
@@ -51,7 +51,7 @@ interface AnimationState {}
  * @param {Object|String} animationStyle - The animation style property, either the name of a
  * presets are one of noWobble, gentle, wobbly, stiff
  */
-const VALID_PRESETS: {[key: string]: AnimationStyle} = presets as {[key: string]: AnimationStyle};
+const VALID_PRESETS = presets as unknown as {[key: string]: AnimationStyle};
 
 function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): AnimationStyle {
   if (typeof animationStyle === 'string') {
@@ -111,7 +111,7 @@ class Animation extends PureComponent<AnimationProps, AnimationState> {
    * @returns {React.Component} Rendered react element.
    * @private
    */
-  _renderChildren = ({i}: {i: number}): React.ReactElement => {
+  _renderChildren = ({i}: any): React.ReactElement => {
     const {children} = this.props;
     const interpolator = this._interpolator;
     const child = React.Children.only(children) as React.ReactElement;
@@ -151,11 +151,12 @@ class Animation extends PureComponent<AnimationProps, AnimationState> {
   _updateInterpolator(oldProps: AnimationProps, newProps?: AnimationProps): void {
     this._interpolator = interpolate(
       extractAnimatedPropValues(oldProps),
-      newProps ? extractAnimatedPropValues(newProps) : null
+      newProps ? extractAnimatedPropValues(newProps) : {}
     );
   }
 
   render(): React.ReactElement {
+    const MotionComponent = Motion as any;
     const animationStyle = getAnimationStyle(this.props.animation);
     const defaultStyle = {i: 0};
     const style = {i: spring(1, animationStyle)};
@@ -164,15 +165,18 @@ class Animation extends PureComponent<AnimationProps, AnimationState> {
     // TODO: find a better solution for the spring.
     const key = Math.random();
     return (
-      <Motion {...{defaultStyle, style, key}} onRest={this._motionEndHandler}>
+      <MotionComponent
+        {...{defaultStyle, style, key}}
+        onRest={this._motionEndHandler}
+      >
         {this._renderChildren}
-      </Motion>
+      </MotionComponent>
     );
   }
 }
 
 (Animation as any).propTypes = propTypes;
-Animation.displayName = 'Animation';
+(Animation as any).displayName = 'Animation';
 
 export default Animation;
 

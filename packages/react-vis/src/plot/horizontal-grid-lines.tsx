@@ -28,7 +28,7 @@ import GridLines from 'plot/grid-lines';
 const {HORIZONTAL} = DIRECTION;
 
 const propTypes = {
-  ...GridLines.propTypes,
+  ...(GridLines as any).propTypes,
   direction: PropTypes.oneOf([HORIZONTAL])
 };
 
@@ -42,8 +42,9 @@ function HorizontalGridLines(props: any) {
 }
 
 HorizontalGridLines.displayName = 'HorizontalGridLines';
-HorizontalGridLines.propTypes = propTypes;
-HorizontalGridLines.defaultProps = defaultProps;
-HorizontalGridLines.requiresSVG = true;
+(HorizontalGridLines as any).displayName = 'HorizontalGridLines';
+(HorizontalGridLines as any).propTypes = propTypes;
+(HorizontalGridLines as any).defaultProps = defaultProps;
+(HorizontalGridLines as any).requiresSVG = true;
 
 export default HorizontalGridLines;
