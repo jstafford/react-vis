@@ -21,77 +21,82 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
+
+import {CONTINUOUS_COLOR_RANGE} from 'theme';
 import {getCombinedClassName} from 'utils/styling-utils';
+
+type LegendTitle = number | string;
+
+export interface ContinuousColorLegendProps {
+  className?: string;
+  height?: number;
+  endColor?: string;
+  endTitle: LegendTitle;
+  midColor?: string;
+  midTitle?: LegendTitle;
+  startColor?: string;
+  startTitle: LegendTitle;
+  width?: number;
+}
 
 const propTypes = {
   className: PropTypes.string,
-  circlesTotal: PropTypes.number,
-  endSize: PropTypes.number,
+  height: PropTypes.number,
+  endColor: PropTypes.string,
   endTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
     .isRequired,
-  height: PropTypes.number,
-  startSize: PropTypes.number,
+  midColor: PropTypes.string,
+  midTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  startColor: PropTypes.string,
   startTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
     .isRequired,
   width: PropTypes.number
 };
 
 const defaultProps = {
-  circlesTotal: 10,
   className: '',
-  endSize: 20,
-  startSize: 2
+  startColor: CONTINUOUS_COLOR_RANGE[0],
+  endColor: CONTINUOUS_COLOR_RANGE[1]
 };
 
-function ContinuousSizeLegend({
+function ContinuousColorLegend({
+  startColor = CONTINUOUS_COLOR_RANGE[0],
+  midColor,
+  endColor = CONTINUOUS_COLOR_RANGE[1],
   startTitle,
+  midTitle,
   endTitle,
-  startSize,
-  endSize,
-  circlesTotal,
   height,
   width,
-  className
-}) {
-  const circles = [];
-  const step = (endSize - startSize) / (circlesTotal - 1);
-
-  for (let i = 0; i < circlesTotal; i++) {
-    const size = step * i + startSize;
-    circles.push(
-      <div
-        key={i}
-        className="rv-bubble"
-        style={{
-          width: size,
-          height: size,
-          borderRadius: size / 2
-        }}
-      />
-    );
-    // Add the separator in order to justify the content (otherwise the tags
-    // will be stacked together without any margins around).
-    circles.push(' ');
+  className = ''
+}: ContinuousColorLegendProps): JSX.Element {
+  const colors = [startColor];
+  if (midColor) {
+    colors.push(midColor);
   }
+  colors.push(endColor);
   return (
     <div
-      className={getCombinedClassName('rv-continuous-size-legend', className)}
+      className={getCombinedClassName('rv-continuous-color-legend', className)}
       style={{width, height}}
     >
-      <div className="rv-bubbles" style={{height: endSize}}>
-        {circles}
-        <div className="rv-spacer" />
-      </div>
+      <div
+        className="rv-gradient"
+        style={{background: `linear-gradient(to right, ${colors.join(',')})`}}
+      />
       <div className="rv-legend-titles">
         <span className="rv-legend-titles__left">{startTitle}</span>
         <span className="rv-legend-titles__right">{endTitle}</span>
+        {midTitle ? (
+          <span className="rv-legend-titles__center">{midTitle}</span>
+        ) : null}
       </div>
     </div>
   );
 }
 
-ContinuousSizeLegend.displayName = 'ContinuousSizeLegend';
-ContinuousSizeLegend.propTypes = propTypes;
-ContinuousSizeLegend.defaultProps = defaultProps;
+(ContinuousColorLegend as any).displayName = 'ContinuousColorLegend';
+(ContinuousColorLegend as any).propTypes = propTypes;
+(ContinuousColorLegend as any).defaultProps = defaultProps;
 
-export default ContinuousSizeLegend;
+export default ContinuousColorLegend;

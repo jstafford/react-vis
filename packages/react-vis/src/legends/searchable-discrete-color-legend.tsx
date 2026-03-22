@@ -21,11 +21,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DiscreteColorLegend from 'legends/discrete-color-legend';
+import DiscreteColorLegend, {
+  DiscreteColorLegendProps,
+  LegendItemValue
+} from 'legends/discrete-color-legend';
 import {getCombinedClassName} from 'utils/styling-utils';
 
+export interface SearchableDiscreteColorLegendProps
+  extends DiscreteColorLegendProps {
+  searchText?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
+  searchFn?: (items: LegendItemValue[], search: string) => LegendItemValue[];
+}
+
 const propTypes = {
-  ...DiscreteColorLegend.propTypes,
+  ...(DiscreteColorLegend as any).propTypes,
   searchText: PropTypes.string,
   onSearchChange: PropTypes.func,
   searchPlaceholder: PropTypes.string,
@@ -35,18 +46,23 @@ const propTypes = {
 const defaultProps = {
   className: '',
   searchText: '',
-  searchFn: (items, s) =>
-    items.filter(
-      item =>
-        String(item.title || item)
-          .toLowerCase()
-          .indexOf(s) !== -1
+  searchFn: (items: LegendItemValue[], search: string) =>
+    items.filter(item =>
+      String(
+        typeof item === 'object' && item && 'title' in item
+          ? (item as {title: React.ReactNode}).title
+          : item
+      )
+        .toLowerCase()
+        .indexOf(search) !== -1
     )
 };
 
-function SearchableDiscreteColorLegend(props) {
+function SearchableDiscreteColorLegend(
+  props: SearchableDiscreteColorLegendProps
+): JSX.Element {
   const {
-    className,
+    className = '',
     colors,
     height,
     items,
@@ -55,14 +71,15 @@ function SearchableDiscreteColorLegend(props) {
     onItemMouseLeave,
     onSearchChange,
     orientation,
-    searchFn,
+    searchFn = defaultProps.searchFn,
     searchPlaceholder,
-    searchText,
+    searchText = '',
     width
   } = props;
   const onChange = onSearchChange
-    ? ({target: {value}}) => onSearchChange(value)
-    : null;
+    ? ({target: {value}}: React.ChangeEvent<HTMLInputElement>) =>
+        onSearchChange(value)
+    : undefined;
   const filteredItems = searchFn(items, searchText);
   return (
     <div
@@ -92,8 +109,9 @@ function SearchableDiscreteColorLegend(props) {
   );
 }
 
-SearchableDiscreteColorLegend.propTypes = propTypes;
-SearchableDiscreteColorLegend.defaultProps = defaultProps;
-SearchableDiscreteColorLegend.displayName = 'SearchableDiscreteColorLegend';
+(SearchableDiscreteColorLegend as any).propTypes = propTypes;
+(SearchableDiscreteColorLegend as any).defaultProps = defaultProps;
+(SearchableDiscreteColorLegend as any).displayName =
+  'SearchableDiscreteColorLegend';
 
 export default SearchableDiscreteColorLegend;

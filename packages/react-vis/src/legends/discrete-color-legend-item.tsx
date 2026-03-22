@@ -22,7 +22,23 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-const STROKE_STYLES = {
+export type LegendOrientation = 'vertical' | 'horizontal';
+export type StrokeStyle = 'dashed' | 'solid';
+
+export interface DiscreteColorLegendItemProps {
+  color: string;
+  disabled?: boolean;
+  title: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLDivElement> | null;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement> | null;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement> | null;
+  orientation: LegendOrientation;
+  strokeDasharray?: string;
+  strokeWidth?: number;
+  strokeStyle?: StrokeStyle;
+}
+
+const STROKE_STYLES: Record<StrokeStyle, string | null> = {
   dashed: '6, 2',
   solid: null
 };
@@ -30,15 +46,15 @@ const STROKE_STYLES = {
 function DiscreteColorLegendItem({
   color,
   strokeDasharray,
-  strokeStyle,
+  strokeStyle = 'solid',
   strokeWidth,
-  disabled,
+  disabled = false,
   onClick,
   orientation,
   onMouseEnter,
   onMouseLeave,
   title
-}) {
+}: DiscreteColorLegendItemProps): JSX.Element {
   let className = `rv-discrete-color-legend-item ${orientation}`;
   if (disabled) {
     className += ' disabled';
@@ -47,8 +63,9 @@ function DiscreteColorLegendItem({
     className += ' clickable';
   }
   const strokeDasharrayStyle = STROKE_STYLES[strokeStyle] || strokeDasharray;
+  const containerProps = {className, onClick, onMouseEnter, onMouseLeave} as any;
   return (
-    <div {...{className, onClick, onMouseEnter, onMouseLeave}}>
+    <div {...containerProps}>
       <svg
         className="rv-discrete-color-legend-item__color"
         height={2}
@@ -62,7 +79,7 @@ function DiscreteColorLegendItem({
             ...(strokeDasharrayStyle
               ? {strokeDasharray: strokeDasharrayStyle}
               : {}),
-            stroke: disabled ? null : color
+            stroke: disabled ? undefined : color
           }}
         />
       </svg>
@@ -71,7 +88,7 @@ function DiscreteColorLegendItem({
   );
 }
 
-DiscreteColorLegendItem.propTypes = {
+(DiscreteColorLegendItem as any).propTypes = {
   color: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
@@ -83,10 +100,10 @@ DiscreteColorLegendItem.propTypes = {
   strokeWidth: PropTypes.number,
   strokeStyle: PropTypes.oneOf(Object.keys(STROKE_STYLES))
 };
-DiscreteColorLegendItem.defaultProps = {
+(DiscreteColorLegendItem as any).defaultProps = {
   disabled: false,
   strokeStyle: 'solid'
 };
-DiscreteColorLegendItem.displayName = 'DiscreteColorLegendItem';
+(DiscreteColorLegendItem as any).displayName = 'DiscreteColorLegendItem';
 
 export default DiscreteColorLegendItem;
