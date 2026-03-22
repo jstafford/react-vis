@@ -54,8 +54,8 @@ const DATA = [
   }
 ];
 
-const basicFormat = format('.2r');
-const wideFormat = format('.3r');
+const basicFormat = value => (value === 0 ? '0.0' : format('.2r')(value));
+const wideFormat = value => (value === 0 ? '0.00' : format('.3r')(value));
 
 const tipStyle = {
   display: 'flex',
@@ -94,7 +94,7 @@ export default class BasicRadarChart extends Component {
         width={400}
         height={300}
         onSeriesMouseOver={data => {
-          this.setState({hoveredCell: data.event[0]});
+          this.setState({hoveredCell: data.row || false});
         }}
         onSeriesMouseOut={() => this.setState({hoveredCell: false})}
       >

@@ -31,6 +31,7 @@
     "remove-unpm-rfs": "./remove-refs-to-unpm.pl"
   },
   "devDependencies": {
+    "@types/d3-contour": "^3.0.6",
     "babel-eslint": "^10.1.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "^6.11.0",
@@ -53,7 +54,9 @@
     "yarn": "1.22.4"
   },
   "resolutions": {
+    "cheerio": "1.0.0-rc.12",
+    "d3-color": "3.1.0",
     "js-beautify": "1.10.3",
-    "d3-color": "3.1.0"
+    "react-is": "^17.0.2"
   }
 }

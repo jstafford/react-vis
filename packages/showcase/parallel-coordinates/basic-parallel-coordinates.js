@@ -57,8 +57,8 @@ const DATA = [
   }
 ];
 
-const basicFormat = format('.2r');
-const wideFormat = format('.3r');
+const basicFormat = value => (value === 0 ? '0.0' : format('.2r')(value));
+const wideFormat = value => (value === 0 ? '0.00' : format('.3r')(value));
 
 export default function BasicParallelCoordinates() {
   return (
