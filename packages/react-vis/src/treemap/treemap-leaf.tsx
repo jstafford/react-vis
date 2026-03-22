@@ -22,8 +22,9 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import Animation, {AnimationPropType} from 'animation';
+import Animation, {AnimationPropType, AnimationParam} from 'animation';
 import {getFontColorFromBackground} from 'utils/scales-utils';
+import {TreemapNode, TreemapScales} from './index';
 
 const ANIMATED_PROPS = [
   'colorRange',
@@ -39,15 +40,35 @@ const ANIMATED_PROPS = [
   'r'
 ];
 
-function TreemapLeaf(props) {
+export interface TreemapLeafProps {
+  animation?: AnimationParam;
+  getLabel?: (datum: any) => any;
+  mode?: string;
+  node: TreemapNode;
+  onLeafClick?: (node: TreemapNode, event: React.MouseEvent<HTMLDivElement>) => void;
+  onLeafMouseOver?: (node: TreemapNode, event: React.MouseEvent<HTMLDivElement>) => void;
+  onLeafMouseOut?: (node: TreemapNode, event: React.MouseEvent<HTMLDivElement>) => void;
+  r: number;
+  scales: TreemapScales;
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+  style?: React.CSSProperties;
+  width: number;
+  height: number;
+  [key: string]: any;
+}
+
+function TreemapLeaf(props: TreemapLeafProps): JSX.Element {
   const {
     animation,
-    getLabel,
+    getLabel = (datum: any) => datum.title,
     mode,
     node,
-    onLeafClick,
-    onLeafMouseOver,
-    onLeafMouseOut,
+    onLeafClick = () => undefined,
+    onLeafMouseOver = () => undefined,
+    onLeafMouseOut = () => undefined,
     r,
     scales,
     x0,
@@ -60,7 +81,7 @@ function TreemapLeaf(props) {
   if (animation) {
     return (
       <Animation {...props} animatedProps={ANIMATED_PROPS}>
-        <TreemapLeaf {...props} animation={null} />
+        <TreemapLeaf {...props} animation={null as any} />
       </Animation>
     );
   }
@@ -79,8 +100,8 @@ function TreemapLeaf(props) {
     opacity,
     color,
     ...style,
-    ...node.data.style
-  };
+    ...(node.data && node.data.style)
+  } as React.CSSProperties;
 
   return (
     <div
@@ -97,7 +118,7 @@ function TreemapLeaf(props) {
   );
 }
 
-TreemapLeaf.propTypes = {
+(TreemapLeaf as any).propTypes = {
   animation: AnimationPropType,
   height: PropTypes.number.isRequired,
   mode: PropTypes.string,
@@ -113,4 +134,5 @@ TreemapLeaf.propTypes = {
   y0: PropTypes.number.isRequired,
   y1: PropTypes.number.isRequired
 };
+
 export default TreemapLeaf;

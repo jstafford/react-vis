@@ -39,9 +39,9 @@ import {
   DEFAULT_OPACITY,
   OPACITY_TYPE
 } from 'theme';
-import {AnimationPropType} from 'animation';
+import {AnimationParam, AnimationPropType} from 'animation';
 import {getAttributeFunctor, getMissingScaleProps} from 'utils/scales-utils';
-import {MarginPropType, getInnerDimensions} from 'utils/chart-utils';
+import {Margin, MarginPropType, getInnerDimensions} from 'utils/chart-utils';
 
 import TreemapDOM from './treemap-dom';
 import TreemapSVG from './treemap-svg';
@@ -55,18 +55,92 @@ const TREEMAP_TILE_MODES = {
   binary: treemapBinary
 };
 
-const TREEMAP_LAYOUT_MODES = ['circlePack', 'partition', 'partition-pivot'];
+const TREEMAP_LAYOUT_MODES = ['circlePack', 'partition', 'partition-pivot'] as const;
 
-const NOOP = d => d;
+const NOOP = (datum: any) => datum;
 
-const ATTRIBUTES = ['opacity', 'color'];
+const ATTRIBUTES = ['opacity', 'color'] as const;
 
-const DEFAULT_MARGINS = {
+const DEFAULT_MARGINS: Required<Margin> = {
   left: 40,
   right: 10,
   top: 10,
   bottom: 40
 };
+
+const DEFAULT_SORT_FUNCTION = (
+  a: any,
+  b: any,
+  accessor?: (datum: any) => number
+) => {
+  if (!accessor) {
+    return 0;
+  }
+  return accessor(a) - accessor(b);
+};
+
+const DEFAULT_GET_SIZE = (datum: any) => datum.size;
+
+export type TreemapMode = keyof typeof TREEMAP_TILE_MODES | (typeof TREEMAP_LAYOUT_MODES)[number];
+
+export interface TreemapDatum {
+  title?: string;
+  name?: string;
+  color?: string;
+  size?: number;
+  label?: string;
+  style?: React.CSSProperties;
+  children?: TreemapDatum[];
+  [key: string]: any;
+}
+
+export interface TreemapNode {
+  data: TreemapDatum;
+  parent?: TreemapNode | null;
+  children?: TreemapNode[] | null;
+  depth?: number;
+  value?: number;
+  x?: number;
+  y?: number;
+  r?: number;
+  x0?: number;
+  x1?: number;
+  y0?: number;
+  y1?: number;
+  [key: string]: any;
+}
+
+export interface TreemapScales {
+  opacity: (datum: any) => any;
+  color: (datum: any) => any;
+}
+
+export interface TreemapProps {
+  animation?: AnimationParam;
+  className?: string;
+  data: TreemapDatum;
+  height: number;
+  hideRootNode?: boolean;
+  margin?: Margin;
+  mode?: TreemapMode;
+  onLeafClick?: (node: TreemapNode, event?: React.SyntheticEvent<any>) => void;
+  onLeafMouseOver?: (node: TreemapNode, event?: React.SyntheticEvent<any>) => void;
+  onLeafMouseOut?: (node: TreemapNode, event?: React.SyntheticEvent<any>) => void;
+  useCirclePacking?: boolean;
+  padding: number;
+  sortFunction?: (a: any, b: any, accessor?: (datum: any) => number) => number;
+  width: number;
+  getSize?: (datum: any) => number;
+  getColor?: (datum: any) => any;
+  getLabel?: (datum: any) => any;
+  renderMode?: 'DOM' | 'SVG';
+  style?: React.CSSProperties;
+  colorRange?: string[];
+  opacityType?: string;
+  _colorValue?: string;
+  _opacityValue?: number;
+  [key: string]: any;
+}
 
 /**
  * Get the map of scale functions from the given props.
@@ -74,51 +148,50 @@ const DEFAULT_MARGINS = {
  * @returns {Object} Map of scale functions.
  * @private
  */
-function _getScaleFns(props) {
+function _getScaleFns(props: TreemapProps): TreemapScales {
   const {data} = props;
   const allData = data.children || [];
 
-  // Adding _allData property to the object to reuse the existing
-  // getAttributeFunctor function.
   const compatibleProps = {
     ...props,
-    ...getMissingScaleProps(props, allData, ATTRIBUTES),
+    ...getMissingScaleProps(props, allData, ATTRIBUTES as unknown as string[]),
     _allData: allData
   };
   return {
-    opacity: getAttributeFunctor(compatibleProps, 'opacity'),
-    color: getAttributeFunctor(compatibleProps, 'color')
+    opacity: getAttributeFunctor(compatibleProps, 'opacity') as (datum: any) => any,
+    color: getAttributeFunctor(compatibleProps, 'color') as (datum: any) => any
   };
 }
 
-function Treemap(props) {
+function Treemap(props: TreemapProps): JSX.Element {
   const scales = _getScaleFns(props);
-  const innerDimensions = getInnerDimensions(props, props.margin);
+  const innerDimensions = getInnerDimensions(props, props.margin || DEFAULT_MARGINS);
 
-  /**
-   * Create the list of nodes to render.
-   * @returns {Array} Array of nodes.
-   * @private
-   */
-  function _getNodesToRender() {
+  function _getNodesToRender(): TreemapNode[] {
     const {innerWidth, innerHeight} = innerDimensions;
-    const {data, mode, padding, sortFunction, getSize} = props;
+    const {
+      data,
+      mode = 'squarify',
+      padding,
+      sortFunction = DEFAULT_SORT_FUNCTION,
+      getSize = DEFAULT_GET_SIZE
+    } = props;
     if (!data) {
       return [];
     }
 
     if (mode === 'partition' || mode === 'partition-pivot') {
-      const partitionFunction = partition()
+      const partitionFunction = partition<any>()
         .size(
           mode === 'partition-pivot'
             ? [innerHeight, innerWidth]
             : [innerWidth, innerHeight]
         )
         .padding(padding);
-      const structuredInput = hierarchy(data)
+      const structuredInput = hierarchy<any>(data)
         .sum(getSize)
         .sort((a, b) => sortFunction(a, b, getSize));
-      const mappedNodes = partitionFunction(structuredInput).descendants();
+      const mappedNodes = partitionFunction(structuredInput).descendants() as any[];
       if (mode === 'partition-pivot') {
         return mappedNodes.map(node => ({
           ...node,
@@ -131,24 +204,24 @@ function Treemap(props) {
       return mappedNodes;
     }
     if (mode === 'circlePack') {
-      const packingFunction = pack()
+      const packingFunction = pack<any>()
         .size([innerWidth, innerHeight])
         .padding(padding);
-      const structuredInput = hierarchy(data)
+      const structuredInput = hierarchy<any>(data)
         .sum(getSize)
         .sort((a, b) => sortFunction(a, b, getSize));
-      return packingFunction(structuredInput).descendants();
+      return packingFunction(structuredInput).descendants() as any[];
     }
 
-    const tileFn = TREEMAP_TILE_MODES[mode];
-    const treemapingFunction = treemap(tileFn)
+    const tileFn = TREEMAP_TILE_MODES[mode as keyof typeof TREEMAP_TILE_MODES];
+    const treemapingFunction = treemap<any>()
       .tile(tileFn)
       .size([innerWidth, innerHeight])
       .padding(padding);
-    const structuredInput = hierarchy(data)
+    const structuredInput = hierarchy<any>(data)
       .sum(getSize)
       .sort((a, b) => sortFunction(a, b, getSize));
-    return treemapingFunction(structuredInput).descendants();
+    return treemapingFunction(structuredInput).descendants() as any[];
   }
 
   const {renderMode} = props;
@@ -158,8 +231,8 @@ function Treemap(props) {
   return <TreemapElement {...props} nodes={nodes} scales={scales} />;
 }
 
-Treemap.displayName = 'Treemap';
-Treemap.propTypes = {
+(Treemap as any).displayName = 'Treemap';
+(Treemap as any).propTypes = {
   animation: AnimationPropType,
   className: PropTypes.string,
   data: PropTypes.object.isRequired,
@@ -167,7 +240,7 @@ Treemap.propTypes = {
   hideRootNode: PropTypes.bool,
   margin: MarginPropType,
   mode: PropTypes.oneOf(
-    Object.keys(TREEMAP_TILE_MODES).concat(TREEMAP_LAYOUT_MODES)
+    Object.keys(TREEMAP_TILE_MODES).concat(TREEMAP_LAYOUT_MODES as unknown as string[])
   ),
   onLeafClick: PropTypes.func,
   onLeafMouseOver: PropTypes.func,
@@ -180,7 +253,7 @@ Treemap.propTypes = {
   getColor: PropTypes.func
 };
 
-Treemap.defaultProps = {
+(Treemap as any).defaultProps = {
   className: '',
   colorRange: CONTINUOUS_COLOR_RANGE,
   _colorValue: DEFAULT_COLOR,
@@ -196,14 +269,10 @@ Treemap.defaultProps = {
   opacityType: OPACITY_TYPE,
   _opacityValue: DEFAULT_OPACITY,
   padding: 1,
-  sortFunction: (a, b, accessor) => {
-    if (!accessor) {
-      return 0;
-    }
-    return accessor(a) - accessor(b);
-  },
-  getSize: d => d.size,
-  getColor: d => d.color,
-  getLabel: d => d.title
+  sortFunction: DEFAULT_SORT_FUNCTION,
+  getSize: DEFAULT_GET_SIZE,
+  getColor: (datum: any) => datum.color,
+  getLabel: (datum: any) => datum.title
 };
+
 export default Treemap;

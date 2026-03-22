@@ -25,11 +25,23 @@ import PolygonSeries from 'plot/series/polygon-series';
 import MarkSeries from 'plot/series/mark-series';
 import LabelSeries from 'plot/series/label-series';
 import {getCombinedClassName} from 'utils/styling-utils';
+import {TreemapNode, TreemapProps, TreemapScales} from './index';
 
 const MARGIN_ADJUST = 1.2;
 
-class TreemapSVG extends React.Component {
-  getCircularNodes() {
+interface TreemapSVGProps extends TreemapProps {
+  nodes: TreemapNode[];
+  scales: TreemapScales;
+}
+
+class TreemapSVG extends React.Component<TreemapSVGProps> {
+  getCircularNodes(): {
+    updatedNodes: JSX.Element;
+    minY: number;
+    maxY: number;
+    minX: number;
+    maxX: number;
+  } {
     const {
       animation,
       hideRootNode,
@@ -46,7 +58,7 @@ class TreemapSVG extends React.Component {
         if (!index && hideRootNode) {
           return acc;
         }
-        const {x, y, r} = node;
+        const {x = 0, y = 0, r = 0} = node;
         return {
           maxY: Math.max(y + r, acc.maxY),
           minY: Math.min(y - r, acc.minY),
@@ -63,7 +75,7 @@ class TreemapSVG extends React.Component {
         };
       },
       {
-        rows: [],
+        rows: [] as Array<{x: number; y: number; size: number; color: any}>,
         maxY: -Infinity,
         minY: Infinity,
         maxX: -Infinity,
@@ -75,14 +87,14 @@ class TreemapSVG extends React.Component {
         <MarkSeries
           animation={animation}
           className="rv-treemap__leaf rv-treemap__leaf--circle"
-          onSeriesMouseEnter={onLeafMouseOver}
-          onSeriesMouseLeave={onLeafMouseOut}
-          onSeriesClick={onLeafClick}
+          onSeriesMouseEnter={onLeafMouseOver as any}
+          onSeriesMouseLeave={onLeafMouseOut as any}
+          onSeriesClick={onLeafClick as any}
           data={rows}
           colorType="literal"
-          getColor={d => d.color}
+          getColor={(datum: any) => datum.color}
           sizeType="literal"
-          getSize={d => d.size}
+          getSize={(datum: any) => datum.size}
           style={style}
         />
       ),
@@ -93,7 +105,13 @@ class TreemapSVG extends React.Component {
     };
   }
 
-  getNonCircularNodes() {
+  getNonCircularNodes(): {
+    updatedNodes: JSX.Element[];
+    minY: number;
+    maxY: number;
+    minX: number;
+    maxX: number;
+  } {
     const {
       animation,
       hideRootNode,
@@ -110,7 +128,7 @@ class TreemapSVG extends React.Component {
         if (!index && hideRootNode) {
           return acc;
         }
-        const {x0, x1, y1, y0} = node;
+        const {x0 = 0, x1 = 0, y1 = 0, y0 = 0} = node;
         const x = x0;
         const y = y0;
         const nodeHeight = y1 - y0;
@@ -135,20 +153,20 @@ class TreemapSVG extends React.Component {
             key={index}
             color={color(node)}
             type="literal"
-            onSeriesMouseEnter={onLeafMouseOver}
-            onSeriesMouseLeave={onLeafMouseOut}
-            onSeriesClick={onLeafClick}
+            onSeriesMouseEnter={onLeafMouseOver as any}
+            onSeriesMouseLeave={onLeafMouseOut as any}
+            onSeriesClick={onLeafClick as any}
             data={data}
             style={{
               ...style,
-              ...node.style
+              ...(node as any).style
             }}
           />
         ]);
         return acc;
       },
       {
-        updatedNodes: [],
+        updatedNodes: [] as JSX.Element[],
         maxY: -Infinity,
         minY: Infinity,
         maxX: -Infinity,
@@ -157,7 +175,7 @@ class TreemapSVG extends React.Component {
     );
   }
 
-  render() {
+  render(): JSX.Element {
     const {className, height, mode, nodes, width} = this.props;
     const useCirclePacking = mode === 'circlePack';
 
@@ -165,7 +183,7 @@ class TreemapSVG extends React.Component {
       ? this.getCircularNodes()
       : this.getNonCircularNodes();
 
-    const labels = nodes.reduce((acc, node) => {
+    const labels = nodes.reduce((acc: any[], node) => {
       if (!node.data.title) {
         return acc;
       }
@@ -179,6 +197,7 @@ class TreemapSVG extends React.Component {
 
     return (
       <XYPlot
+        {...this.props}
         className={getCombinedClassName(
           'rv-treemap',
           useCirclePacking && 'rv-treemap-circle-paked',
@@ -190,7 +209,6 @@ class TreemapSVG extends React.Component {
         xDomain={[minX, maxX]}
         colorType="literal"
         hasTreeStructure
-        {...this.props}
       >
         {updatedNodes}
         <LabelSeries data={labels} />
@@ -199,6 +217,6 @@ class TreemapSVG extends React.Component {
   }
 }
 
-TreemapSVG.displayName = 'TreemapSVG';
+(TreemapSVG as any).displayName = 'TreemapSVG';
 
 export default TreemapSVG;

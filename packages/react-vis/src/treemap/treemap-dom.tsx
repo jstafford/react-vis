@@ -21,8 +21,14 @@ import React from 'react';
 
 import TreemapLeaf from './treemap-leaf';
 import {getCombinedClassName} from 'utils/styling-utils';
+import {TreemapNode, TreemapProps, TreemapScales} from './index';
 
-function TreemapDOM(props) {
+export interface TreemapDOMProps extends TreemapProps {
+  nodes: TreemapNode[];
+  scales: TreemapScales;
+}
+
+function TreemapDOM(props: TreemapDOMProps): JSX.Element {
   const {
     animation,
     className,
@@ -46,7 +52,6 @@ function TreemapDOM(props) {
       style={{height, width}}
     >
       {nodes.map((node, index) => {
-        // throw out the rootest node
         if (hideRootNode && !index) {
           return null;
         }
@@ -56,11 +61,11 @@ function TreemapDOM(props) {
           node,
           getLabel,
           ...props,
-          x0: useCirclePacking ? node.x : node.x0,
-          x1: useCirclePacking ? node.x : node.x1,
-          y0: useCirclePacking ? node.y : node.y0,
-          y1: useCirclePacking ? node.y : node.y1,
-          r: useCirclePacking ? node.r : 1,
+          x0: useCirclePacking ? node.x || 0 : node.x0 || 0,
+          x1: useCirclePacking ? node.x || 0 : node.x1 || 0,
+          y0: useCirclePacking ? node.y || 0 : node.y0 || 0,
+          y1: useCirclePacking ? node.y || 0 : node.y1 || 0,
+          r: useCirclePacking ? node.r || 0 : 1,
           scales,
           style
         };
@@ -70,5 +75,5 @@ function TreemapDOM(props) {
   );
 }
 
-TreemapDOM.displayName = 'TreemapDOM';
+(TreemapDOM as any).displayName = 'TreemapDOM';
 export default TreemapDOM;
