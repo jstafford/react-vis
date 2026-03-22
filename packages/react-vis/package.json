@@ -5,6 +5,7 @@
   "author": "Visualization Team <visualization@uber.com>",
   "description": "Data visualization library based on React and d3.",
   "main": "dist/dist.min.js",
+  "type": "module",
   "module": "es",
   "jsnext:main": "es",
   "files": [

@@ -5,10 +5,10 @@
   "author": "Visualization Team <visualization@uber.com>",
   "description": "Data visualization library based on React and d3.",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/showcase",
-    "packages/react-vis",
-    "packages/website"
+    "packages/react-vis"
   ],
   "repository": {
     "type": "git",

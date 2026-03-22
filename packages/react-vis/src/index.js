@@ -65,14 +65,14 @@ export {default as ContinuousSizeLegend} from 'legends/continuous-size-legend';
 export {default as DiscreteColorLegend} from 'legends/discrete-color-legend';
 export {default as SearchableDiscreteColorLegend} from 'legends/searchable-discrete-color-legend';
 
-export {default as ParallelCoordinates} from 'parallel-coordinates';
-export {default as RadarChart} from 'radar-chart';
-export {default as RadialChart} from 'radial-chart';
-export {default as Sankey} from 'sankey';
-export {default as Sunburst} from 'sunburst';
-export {default as Treemap} from 'treemap';
+export {default as ParallelCoordinates} from 'parallel-coordinates/';
+export {default as RadarChart} from 'radar-chart/';
+export {default as RadialChart} from 'radial-chart/';
+export {default as Sankey} from 'sankey/';
+export {default as Sunburst} from 'sunburst/';
+export {default as Treemap} from 'treemap/';
 
-export {default as ContentClipPath} from './plot/content-clip-path';
+export {default as ContentClipPath} from 'plot/content-clip-path';
 
 export {
   makeHeightFlexible,
@@ -81,7 +81,7 @@ export {
   FlexibleXYPlot,
   FlexibleWidthXYPlot,
   FlexibleHeightXYPlot
-} from './make-vis-flexible';
+} from 'make-vis-flexible';
 
 export {default as AxisUtils} from 'utils/axis-utils';
 export {default as ScaleUtils} from 'utils/scales-utils';
