@@ -176,15 +176,15 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
   }
 
   render(): JSX.Element {
-    const {className, height, mode, nodes, width} = this.props;
+    const {className, height, mode, nodes, width, hideRootNode} = this.props;
     const useCirclePacking = mode === 'circlePack';
 
     const {minY, maxY, minX, maxX, updatedNodes} = useCirclePacking
       ? this.getCircularNodes()
       : this.getNonCircularNodes();
 
-    const labels = nodes.reduce((acc: any[], node) => {
-      if (!node.data.title) {
+    const labels = nodes.reduce((acc: any[], node, index) => {
+      if (!node.data.title || (hideRootNode && !index)) {
         return acc;
       }
       return acc.concat({

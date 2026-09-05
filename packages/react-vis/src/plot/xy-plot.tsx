@@ -312,6 +312,8 @@ class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
         Boolean(childType) &&
         Boolean(childType?.prototype && childType.prototype.render);
 
+      const { _allData, _adjustBy, _adjustWhat, _stackBy, ...safeScaleMixins } = scaleMixins;
+
       return React.cloneElement(child, {
         ...dimensions,
         animation,
@@ -323,7 +325,7 @@ class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
             }
           : {}),
         ...seriesProps[index],
-        ...scaleMixins,
+        ...safeScaleMixins,
         ...child.props,
         ...xyPlotValues[index],
         ...dataProps

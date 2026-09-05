@@ -57,14 +57,14 @@ function SankeyLink(props: SankeyLinkProps): JSX.Element {
   if (animation) {
     return (
       <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-        <SankeyLink {...props} animation={null as any} />
+        <SankeyLink {...props} animation={undefined} />
       </Animation>
     );
   }
   return (
     <path
       d={data}
-      {...(style as any)}
+      {...(style)}
       className="rv-sankey__link"
       opacity={Number.isFinite(opacity) ? opacity : DEFAULT_LINK_OPACITY}
       stroke={color || DEFAULT_LINK_COLOR}

@@ -19,11 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
-// global/window and plot/xy-plot lack type declarations
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const window: Window = require('global/window');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const XYPlot: React.ComponentType<any> = require('plot/xy-plot').default;
+import XYPlot from 'plot/xy-plot';
 import {getDOMNode} from 'utils/react-utils';
 
 const CONTAINER_REF = 'container';

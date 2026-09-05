@@ -19,10 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
-
-// abstract-series has no TypeScript declarations, so we use require() to import it
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const AbstractSeries = require('plot/series/abstract-series').default || require('plot/series/abstract-series');
+import AbstractSeries from 'plot/series/abstract-series';
 import {DISCRETE_COLOR_RANGE, DEFAULT_OPACITY} from 'theme';
 
 export type RVDatum = {[key: string]: any};
