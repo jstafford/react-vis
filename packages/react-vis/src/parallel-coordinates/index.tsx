@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
@@ -87,6 +87,8 @@ interface ParallelCoordinatesState {
   brushFilters: {[key: string]: BrushFilter | null};
 }
 
+type BrushFilters = {[key: string]: BrushFilter | null};
+
 const DEFAULT_STYLE: ParallelStyle = {
   axes: {
     line: {},
@@ -95,7 +97,7 @@ const DEFAULT_STYLE: ParallelStyle = {
   },
   labels: {
     fontSize: 10,
-    textAnchor: 'middle' as const
+    textAnchor: 'middle'
   },
   lines: {
     strokeWidth: 1,
@@ -193,14 +195,8 @@ function getLines(
   });
 }
 
-class ParallelCoordinates extends Component<
-  ParallelCoordinatesProps,
-  ParallelCoordinatesState
-> {
-  state: ParallelCoordinatesState = {brushFilters: {}};
-
-  render(): JSX.Element {
-    const {brushFilters} = this.state;
+const ParallelCoordinates: any = (props: ParallelCoordinatesProps): JSX.Element => {
+    const [brushFilters, setBrushFilters] = useState<BrushFilters>({});
     const {
       animation,
       brushing,
@@ -217,7 +213,7 @@ class ParallelCoordinates extends Component<
       style = DEFAULT_STYLE,
       tickFormat = DEFAULT_FORMAT,
       width
-    } = this.props;
+    } = props;
 
     const axes = getAxes({
       domains,
@@ -249,7 +245,7 @@ class ParallelCoordinates extends Component<
     );
 
     const {marginLeft, marginRight} = getInnerDimensions(
-      this.props,
+      props,
       DEFAULT_MARGINS
     );
     return (
@@ -269,11 +265,9 @@ class ParallelCoordinates extends Component<
         {brushing &&
           domains.map(domain => {
             const trigger = (row: any) => {
-              this.setState({
-                brushFilters: {
-                  ...brushFilters,
-                  [domain.name]: row ? {min: row.bottom, max: row.top} : null
-                }
+              setBrushFilters({
+                ...brushFilters,
+                [domain.name]: row ? {min: row.bottom, max: row.top} : null
               });
             };
             return (
@@ -281,8 +275,8 @@ class ParallelCoordinates extends Component<
                 key={domain.name}
                 drag
                 highlightX={domain.name}
-                onBrushEnd={trigger as any}
-                onDragEnd={trigger as any}
+                onBrushEnd={trigger}
+                onDragEnd={trigger}
                 highlightWidth={(width - marginLeft - marginRight) / domains.length}
                 enableX={false}
               />
@@ -290,11 +284,10 @@ class ParallelCoordinates extends Component<
           })}
       </XYPlot>
     );
-  }
-}
+};
 
-(ParallelCoordinates as any).displayName = 'ParallelCoordinates';
-(ParallelCoordinates as any).propTypes = {
+ParallelCoordinates.displayName = 'ParallelCoordinates';
+ParallelCoordinates.propTypes = {
   animation: AnimationPropType,
   brushing: PropTypes.bool,
   className: PropTypes.string,
@@ -319,7 +312,7 @@ class ParallelCoordinates extends Component<
   tickFormat: PropTypes.func,
   width: PropTypes.number.isRequired
 };
-(ParallelCoordinates as any).defaultProps = {
+ParallelCoordinates.defaultProps = {
   className: '',
   colorType: 'category',
   colorRange: DISCRETE_COLOR_RANGE,

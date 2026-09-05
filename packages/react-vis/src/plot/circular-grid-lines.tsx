@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {PureComponent} from 'react';
+import React from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -62,38 +62,35 @@ const animatedProps = [
   'tickTotal'
 ];
 
-class CircularGridLines extends PureComponent<CircularGridLinesProps> {
-  _getDefaultProps() {
-    const {
-      innerWidth = 0,
-      innerHeight = 0,
-      marginTop = 0,
-      marginLeft = 0
-    } = this.props;
-    return {
-      left: marginLeft,
-      top: marginTop,
-      width: innerWidth,
-      height: innerHeight,
-      style: {},
-      tickTotal: getTicksTotalFromSize(Math.min(innerWidth, innerHeight))
-    };
+function CircularGridLines({
+  animation,
+  centerX,
+  centerY,
+  ...restProps
+}: CircularGridLinesProps) {
+  const defaultProps = {
+    left: restProps.marginLeft || 0,
+    top: restProps.marginTop || 0,
+    width: restProps.innerWidth || 0,
+    height: restProps.innerHeight || 0,
+    style: {},
+    tickTotal: getTicksTotalFromSize(
+      Math.min(restProps.innerWidth || 0, restProps.innerHeight || 0)
+    )
+  };
+  const inputProps = {animation, centerX, centerY, ...restProps};
+  if (animation) {
+    return (
+      <Animation {...inputProps} animatedProps={animatedProps}>
+        <CircularGridLines {...inputProps} animation={undefined} />
+      </Animation>
+    );
   }
 
-  render() {
-    const {animation, centerX, centerY} = this.props;
-    if (animation) {
-      return (
-        <Animation {...this.props} animatedProps={animatedProps}>
-          <CircularGridLines {...this.props} animation={null} />
-        </Animation>
-      );
-    }
-
-    const props = {
-      ...this._getDefaultProps(),
-      ...this.props
-    };
+  const props = {
+    ...defaultProps,
+    ...inputProps
+  };
 
     const {
       tickTotal,
@@ -130,7 +127,6 @@ class CircularGridLines extends PureComponent<CircularGridLinesProps> {
         }, [])}
       </g>
     );
-  }
 }
 
 (CircularGridLines as any).displayName = 'CircularGridLines';

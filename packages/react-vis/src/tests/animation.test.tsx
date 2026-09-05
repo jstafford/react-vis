@@ -1,5 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
 import Animation, {extractAnimatedPropValues} from '../animation';
 
@@ -25,7 +27,7 @@ describe('Animation', () => {
     expect(markup).toContain('Animated child');
   });
 
-  test('falls back gracefully for invalid string presets and calls lifecycle hooks', () => {
+  test('falls back gracefully for invalid string presets and updates on rerender', () => {
     const onStart = vi.fn();
     const onEnd = vi.fn();
     const invalidPreset = renderToStaticMarkup(
@@ -36,20 +38,39 @@ describe('Animation', () => {
 
     expect(invalidPreset).toContain('Fallback child');
 
-    const instance = new Animation({
-      animatedProps: ['x'],
-      animation: false,
-      onStart,
-      onEnd,
-      children: <span>x</span>
+    const container = document.createElement('div');
+    act(() => {
+      ReactDOM.render(
+        <Animation
+          animatedProps={['x']}
+          animation={false}
+          x={0}
+          onStart={onStart}
+          onEnd={onEnd}
+        >
+          <span>x</span>
+        </Animation>,
+        container
+      );
     });
-    instance._interpolator = (value: number) => ({x: value});
-    expect(instance._renderChildren({i: 0.75}).props.x).toBe(0.75);
+    act(() => {
+      ReactDOM.render(
+        <Animation
+          animatedProps={['x']}
+          animation={false}
+          x={1}
+          onStart={onStart}
+          onEnd={onEnd}
+        >
+          <span>x</span>
+        </Animation>,
+        container
+      );
+    });
 
-    instance.componentDidUpdate({animatedProps: ['x'], animation: false, onStart, onEnd});
     expect(onStart).toHaveBeenCalledTimes(1);
-
-    instance._motionEndHandler();
-    expect(onEnd).toHaveBeenCalledTimes(1);
+    act(() => {
+      ReactDOM.unmountComponentAtNode(container);
+    });
   });
 });

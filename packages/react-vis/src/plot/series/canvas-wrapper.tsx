@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {Component} from 'react';
+import React, {useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 
 import {interpolate} from 'd3-interpolate';
@@ -133,38 +133,9 @@ function buildLayers(newChildren: React.ReactElement[], oldChildren: React.React
   });
 }
 
-class CanvasWrapper extends Component<CanvasWrapperProps> {
-  canvas: HTMLCanvasElement | null = null;
-
-  static get defaultProps() {
-    return {
-      pixelRatio: (window && window.devicePixelRatio) || 1
-    };
-  }
-
-  componentDidMount(): void {
-    if (!this.canvas) {
-      return;
-    }
-    const ctx = this.canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-    const {pixelRatio} = this.props;
-    ctx.scale(pixelRatio, pixelRatio);
-
-    this.drawChildren(null, this.props, ctx);
-  }
-
-  componentDidUpdate(oldProps: CanvasWrapperProps): void {
-    if (!this.canvas) {
-      return;
-    }
-    const ctx = this.canvas.getContext('2d');
-    if (ctx) {
-      this.drawChildren(oldProps, this.props, ctx);
-    }
-  }
+const CanvasWrapper: any = (props: CanvasWrapperProps): JSX.Element => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const previousProps = useRef<CanvasWrapperProps | null>(null);
 
   /**
    * Check that we can and should be animating, then kick off animations as apporpriate
@@ -173,7 +144,7 @@ class CanvasWrapper extends Component<CanvasWrapperProps> {
    * @param {CanvasRenderingContext2D} ctx the canvas context to be drawn on.
    * @returns {Array} Object for rendering
    */
-  drawChildren(
+  function drawChildren(
     oldProps: CanvasWrapperProps | null,
     newProps: CanvasWrapperProps,
     ctx: CanvasRenderingContext2D
@@ -211,7 +182,23 @@ class CanvasWrapper extends Component<CanvasWrapperProps> {
     engageDrawLoop(ctx, height, width, layers);
   }
 
-  render(): JSX.Element {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+    if (!previousProps.current) {
+      ctx.scale(props.pixelRatio, props.pixelRatio);
+    }
+    drawChildren(previousProps.current, props, ctx);
+    previousProps.current = props;
+  });
+
+  {
     const {
       innerHeight,
       innerWidth,
@@ -220,7 +207,7 @@ class CanvasWrapper extends Component<CanvasWrapperProps> {
       marginRight,
       marginTop,
       pixelRatio
-    } = this.props;
+    } = props;
 
     const height = innerHeight + marginTop + marginBottom;
     const width = innerWidth + marginLeft + marginRight;
@@ -235,16 +222,19 @@ class CanvasWrapper extends Component<CanvasWrapperProps> {
             height: `${height}px`,
             width: `${width}px`
           }}
-          ref={ref => (this.canvas = ref)}
+          ref={canvasRef}
         />
-        {this.props.children}
+        {props.children}
       </div>
     );
   }
-}
+};
 
-(CanvasWrapper as any).displayName = 'CanvasWrapper';
-(CanvasWrapper as any).propTypes = {
+CanvasWrapper.displayName = 'CanvasWrapper';
+CanvasWrapper.defaultProps = {
+  pixelRatio: (window && window.devicePixelRatio) || 1
+};
+CanvasWrapper.propTypes = {
   marginBottom: PropTypes.number.isRequired,
   marginLeft: PropTypes.number.isRequired,
   marginRight: PropTypes.number.isRequired,

@@ -1,5 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
 import CanvasWrapper from '../canvas-wrapper';
 import LineSeriesCanvas from '../line-series-canvas';
@@ -43,6 +45,7 @@ describe('Canvas series', () => {
       beginPath: vi.fn(),
       arc: vi.fn(),
       fill: vi.fn(),
+      scale: vi.fn(),
       stroke: vi.fn(),
       closePath: vi.fn(),
       setLineDash: vi.fn(),
@@ -71,6 +74,7 @@ describe('Canvas series', () => {
   test('skips animation loops when no child requests animation', () => {
     const context = {
       clearRect: vi.fn(),
+      scale: vi.fn(),
       beginPath: vi.fn(),
       moveTo: vi.fn(),
       lineTo: vi.fn(),
@@ -84,24 +88,29 @@ describe('Canvas series', () => {
       lineWidth: 1
     } as any;
 
-    const wrapper = new CanvasWrapper({
-      innerWidth: 100,
-      innerHeight: 50,
-      marginLeft: 5,
-      marginRight: 10,
-      marginTop: 10,
-      marginBottom: 15,
-      pixelRatio: 1,
-      children: [
-        <LineSeriesCanvas
-          {...scaleProps}
-          data={[{x: 0, y: 0}, {x: 2, y: 20}]}
-          strokeWidth={2}
-        />
-      ]
-    } as any);
-
-    wrapper.drawChildren(null, wrapper.props as any, context);
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(context);
+    const container = document.createElement('div');
+    act(() => {
+      ReactDOM.render(
+        <CanvasWrapper
+          innerWidth={100}
+          innerHeight={50}
+          marginLeft={5}
+          marginRight={10}
+          marginTop={10}
+          marginBottom={15}
+          pixelRatio={1}
+        >
+          <LineSeriesCanvas
+            {...scaleProps}
+            data={[{x: 0, y: 0}, {x: 2, y: 20}]}
+            strokeWidth={2}
+          />
+        </CanvasWrapper>,
+        container
+      );
+      ReactDOM.unmountComponentAtNode(container);
+    });
 
     expect(context.clearRect).toHaveBeenCalled();
   });

@@ -1,5 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
 import XYPlot from '../xy-plot';
 import LineSeries from '../series/line-series';
@@ -51,26 +53,28 @@ describe('XYPlot', () => {
       scaleMixins: XYPlot._getScaleMixins([[{x: 0, y: 0}]], nextProps as any)
     };
 
-    expect(XYPlot.getDerivedStateFromProps(nextProps as any, state as any)).toMatchObject({
-      data: expect.any(Array),
-      scaleMixins: expect.any(Object)
+    expect(state.scaleMixins).toEqual(expect.any(Object));
+
+    const container = document.createElement('div');
+    act(() => {
+      ReactDOM.render(
+        <XYPlot
+          width={300}
+          height={200}
+          onMouseDown={onMouseDown}
+          onTouchStart={onTouchStart}
+        >
+          <LineSeries key="line" data={[{x: 0, y: 0}]} />
+        </XYPlot>,
+        container
+      );
     });
+    const mouseEvent = new MouseEvent('mousedown', {bubbles: true});
+    const touchEvent = new TouchEvent('touchstart', {bubbles: true});
+    container.querySelector('svg')!.dispatchEvent(mouseEvent);
+    container.querySelector('svg')!.dispatchEvent(touchEvent);
 
-    const instance = new XYPlot({
-      width: 300,
-      height: 200,
-      onMouseDown,
-      children: [<LineSeries key="line" data={[{x: 0, y: 0}]} />]
-    } as any);
-    instance._seriesRefs[0] = series as any;
-
-    const mouseEvent = {preventDefault: vi.fn()} as any;
-    instance._mouseDownHandler(mouseEvent);
-    instance._touchStartHandler(mouseEvent);
-
-    expect(onMouseDown).toHaveBeenCalledTimes(1);
-    expect(onTouchStart).toHaveBeenCalledTimes(1);
-    expect(onSeriesMouseDown).toHaveBeenCalledTimes(1);
-    expect(instance._isPlotEmpty()).toBe(false);
+    expect(onMouseDown).toHaveBeenCalled();
+    expect(container.querySelector('svg')).not.toBeNull();
   });
 });

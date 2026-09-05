@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {PureComponent} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import {transformValueToString} from 'utils/data-utils';
@@ -56,59 +56,29 @@ function defaultTitleFormat(values: any[]) {
 }
 
 function defaultItemsFormat(values: any[]) {
-  return values.map((v, i) => {
-    if (v) {
-      return {value: v.y, title: i};
-    }
-  });
+  return values
+    .map((v, i) => (v ? {value: v.y, title: i} : null))
+    .filter(Boolean) as Array<{value: any; title: any}>;
 }
 
 function getFirstNonEmptyValue(values: any[]) {
   return (values || []).find(v => Boolean(v));
 }
 
-class Crosshair extends PureComponent<CrosshairProps> {
-  static get defaultProps() {
-    return {
-      titleFormat: defaultTitleFormat,
-      itemsFormat: defaultItemsFormat,
-      style: {
-        line: {},
-        title: {},
-        box: {}
-      }
-    };
-  }
-
-  static get propTypes() {
-    return {
-      className: PropTypes.string,
-      values: PropTypes.arrayOf(
-        PropTypes.oneOfType([
-          PropTypes.number,
-          PropTypes.string,
-          PropTypes.object,
-          PropTypes.bool
-        ])
-      ),
-      series: PropTypes.object,
-      innerWidth: PropTypes.number,
-      innerHeight: PropTypes.number,
-      marginLeft: PropTypes.number,
-      marginTop: PropTypes.number,
-      orientation: PropTypes.oneOf(['left', 'right']),
-      itemsFormat: PropTypes.func,
-      titleFormat: PropTypes.func,
-      style: PropTypes.shape({
-        line: PropTypes.object,
-        title: PropTypes.object,
-        box: PropTypes.object
-      })
-    };
-  }
-
-  _renderCrosshairItems() {
-    const {values = [], itemsFormat = defaultItemsFormat} = this.props;
+function Crosshair({
+  children,
+  className,
+  values = [],
+  marginTop = 0,
+  marginLeft = 0,
+  innerWidth = 0,
+  innerHeight = 0,
+  style = {line: {}, title: {}, box: {}},
+  titleFormat = defaultTitleFormat,
+  itemsFormat = defaultItemsFormat,
+  ...restProps
+}: CrosshairProps) {
+  const renderCrosshairItems = () => {
     const items = itemsFormat(values);
     if (!items) {
       return null;
@@ -124,14 +94,9 @@ class Crosshair extends PureComponent<CrosshairProps> {
           </div>
         );
       });
-  }
+  };
 
-  _renderCrosshairTitle() {
-    const {
-      values = [],
-      titleFormat = defaultTitleFormat,
-      style = {line: {}, title: {}, box: {}}
-    } = this.props;
+  const renderCrosshairTitle = () => {
     const titleItem = titleFormat(values);
     if (!titleItem) {
       return null;
@@ -143,34 +108,36 @@ class Crosshair extends PureComponent<CrosshairProps> {
         <span className="rv-crosshair__title__value">{titleItem.value}</span>
       </div>
     );
+  };
+
+  const props = {
+    children,
+    className,
+    values,
+    marginTop,
+    marginLeft,
+    innerWidth,
+    innerHeight,
+    style,
+    titleFormat,
+    itemsFormat,
+    ...restProps
+  };
+  const value = getFirstNonEmptyValue(values);
+  if (!value) {
+    return null;
   }
+  const x = getAttributeFunctor(props, 'x') as (datum: any) => number;
+  const innerLeft = x(value);
 
-  render() {
-    const {
-      children,
-      className,
-      values = [],
-      marginTop = 0,
-      marginLeft = 0,
-      innerWidth = 0,
-      innerHeight = 0,
-      style = {line: {}, title: {}, box: {}}
-    } = this.props;
-    const value = getFirstNonEmptyValue(values);
-    if (!value) {
-      return null;
-    }
-    const x = getAttributeFunctor(this.props, 'x') as (datum: any) => number;
-    const innerLeft = x(value);
+  const {
+    orientation = innerLeft > innerWidth / 2 ? 'left' : 'right'
+  } = props;
+  const left = marginLeft + innerLeft;
+  const top = marginTop;
+  const innerClassName = `rv-crosshair__inner rv-crosshair__inner--${orientation}`;
 
-    const {
-      orientation = innerLeft > innerWidth / 2 ? 'left' : 'right'
-    } = this.props;
-    const left = marginLeft + innerLeft;
-    const top = marginTop;
-    const innerClassName = `rv-crosshair__inner rv-crosshair__inner--${orientation}`;
-
-    return (
+  return (
       <div
         className={getCombinedClassName('rv-crosshair', className)}
         style={{left: `${left}px`, top: `${top}px`}}
@@ -186,17 +153,45 @@ class Crosshair extends PureComponent<CrosshairProps> {
           ) : (
             <div className="rv-crosshair__inner__content" style={style.box}>
               <div>
-                {this._renderCrosshairTitle()}
-                {this._renderCrosshairItems()}
+                {renderCrosshairTitle()}
+                {renderCrosshairItems()}
               </div>
             </div>
           )}
         </div>
       </div>
-    );
-  }
+  );
 }
 
 (Crosshair as any).displayName = 'Crosshair';
+(Crosshair as any).defaultProps = {
+  titleFormat: defaultTitleFormat,
+  itemsFormat: defaultItemsFormat,
+  style: {line: {}, title: {}, box: {}}
+};
+(Crosshair as any).propTypes = {
+  className: PropTypes.string,
+  values: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.bool
+    ])
+  ),
+  series: PropTypes.object,
+  innerWidth: PropTypes.number,
+  innerHeight: PropTypes.number,
+  marginLeft: PropTypes.number,
+  marginTop: PropTypes.number,
+  orientation: PropTypes.oneOf(['left', 'right']),
+  itemsFormat: PropTypes.func,
+  titleFormat: PropTypes.func,
+  style: PropTypes.shape({
+    line: PropTypes.object,
+    title: PropTypes.object,
+    box: PropTypes.object
+  })
+};
 
 export default Crosshair;

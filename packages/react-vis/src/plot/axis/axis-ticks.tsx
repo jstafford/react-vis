@@ -73,24 +73,20 @@ function _getTickFormatFn(
     : tickFormat;
 }
 
-class AxisTicks extends React.Component<AxisTicksProps> {
-  static defaultProps = defaultProps;
-  static displayName = 'AxisTicks';
-  static propTypes = propTypes;
-  static requiresSVG = true;
+function AxisTicks(props: AxisTicksProps) {
 
   /**
    * Check if axis ticks should be mirrored (for the right and top positions.
    * @returns {boolean} True if mirrored.
    * @private
    */
-  _areTicksWrapped(): boolean {
-    const {orientation} = this.props;
+  function areTicksWrapped(): boolean {
+    const {orientation} = props;
     return orientation === LEFT || orientation === TOP;
   }
 
-  _getTickContainerPropsGetterFn(): (pos: number, offset?: number) => {transform: string} {
-    if (this._isAxisVertical()) {
+  function getTickContainerPropsGetterFn(): (pos: number, offset?: number) => {transform: string} {
+    if (isAxisVertical()) {
       return pos => {
         return {transform: `translate(0, ${pos})`};
       };
@@ -105,14 +101,14 @@ class AxisTicks extends React.Component<AxisTicksProps> {
    * @returns {Object} Object with properties.
    * @private
    */
-  _getTickLabelProps(): {textAnchor: string; dy: string; transform: string} {
+  function getTickLabelProps(): {textAnchor: string; dy: string; transform: string} {
     const {
       orientation,
       tickLabelAngle,
       tickSize,
       tickSizeOuter = tickSize,
       tickPadding = tickSize
-    } = this.props;
+    } = props;
 
     // Assign the text orientation inside the label of the tick mark.
     let textAnchor: string;
@@ -129,8 +125,8 @@ class AxisTicks extends React.Component<AxisTicksProps> {
 
     // The label's position is translated to the given padding and then the
     // label is rotated to the given angle.
-    const isVertical = this._isAxisVertical();
-    const wrap = this._areTicksWrapped() ? -1 : 1;
+    const isVertical = isAxisVertical();
+    const wrap = areTicksWrapped() ? -1 : 1;
 
     const labelOffset = wrap * ((tickSizeOuter as number) + (tickPadding as number));
     const transform =
@@ -160,16 +156,16 @@ class AxisTicks extends React.Component<AxisTicksProps> {
    * @returns {Object} Props.
    * @private
    */
-  _getTickLineProps(): {[key: string]: number} {
+  function getTickLineProps(): {[key: string]: number} {
     const {
       tickSize,
       tickSizeOuter = tickSize,
       tickSizeInner = tickSize
-    } = this.props;
-    const isVertical = this._isAxisVertical();
+    } = props;
+    const isVertical = isAxisVertical();
     const tickXAttr = isVertical ? 'y' : 'x';
     const tickYAttr = isVertical ? 'x' : 'y';
-    const wrap = this._areTicksWrapped() ? -1 : 1;
+    const wrap = areTicksWrapped() ? -1 : 1;
     return {
       [`${tickXAttr}1`]: 0,
       [`${tickXAttr}2`]: 0,
@@ -183,13 +179,12 @@ class AxisTicks extends React.Component<AxisTicksProps> {
    * @returns {boolean} True if vertical.
    * @private
    */
-  _isAxisVertical(): boolean {
-    const {orientation} = this.props;
+  function isAxisVertical(): boolean {
+    const {orientation} = props;
     return orientation === LEFT || orientation === RIGHT;
   }
 
-  render() {
-    const {
+  const {
       attr,
       orientation,
       width,
@@ -198,19 +193,19 @@ class AxisTicks extends React.Component<AxisTicksProps> {
       tickFormat,
       tickTotal,
       tickValues
-    } = this.props;
+    } = props;
 
     const x = orientation === LEFT ? width : 0;
     const y = orientation === TOP ? height : 0;
 
-    const scale = getAttributeScale(this.props, attr);
+    const scale = getAttributeScale(props, attr);
 
     const values = getTickValues(scale, tickTotal as number, tickValues);
     const tickFormatFn = _getTickFormatFn(scale, tickTotal, tickFormat);
 
-    const translateFn = this._getTickContainerPropsGetterFn();
-    const pathProps = this._getTickLineProps();
-    const textProps = this._getTickLabelProps();
+    const translateFn = getTickContainerPropsGetterFn();
+    const pathProps = getTickLineProps();
+    const textProps = getTickLabelProps();
 
     const ticks = values.map((v, i) => {
       const pos = scale(v);
@@ -255,15 +250,19 @@ class AxisTicks extends React.Component<AxisTicksProps> {
       );
     });
 
-    return (
+  return (
       <g
         transform={`translate(${x}, ${y})`}
         className="rv-xy-plot__axis__ticks"
       >
         {ticks}
       </g>
-    );
-  }
+  );
 }
+
+(AxisTicks as any).defaultProps = defaultProps;
+(AxisTicks as any).displayName = 'AxisTicks';
+(AxisTicks as any).propTypes = propTypes;
+(AxisTicks as any).requiresSVG = true;
 
 export default AxisTicks;

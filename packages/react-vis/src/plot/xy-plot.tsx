@@ -190,7 +190,7 @@ function checkIfMixinsAreEqual(
   return equal(newMixins, oldMixins);
 }
 
-class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
+class XYPlotImplementation extends React.Component<XYPlotProps, XYPlotState> {
   static displayName = 'XYPlot';
 
   static get defaultProps() {
@@ -232,7 +232,7 @@ class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
     const children = getSeriesChildren(props.children);
     const data = getStackedData(children, stackBy as string);
     this.state = {
-      scaleMixins: XYPlot._getScaleMixins(data, props),
+      scaleMixins: XYPlotImplementation._getScaleMixins(data, props),
       data
     };
   }
@@ -244,7 +244,7 @@ class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
     const children = getSeriesChildren(nextProps.children);
     const nextData = getStackedData(children, nextProps.stackBy as string);
     const {scaleMixins} = state;
-    const nextScaleMixins = XYPlot._getScaleMixins(nextData, nextProps);
+    const nextScaleMixins = XYPlotImplementation._getScaleMixins(nextData, nextProps);
     if (
       !checkIfMixinsAreEqual(
         nextScaleMixins,
@@ -668,5 +668,15 @@ class XYPlot extends React.Component<XYPlotProps, XYPlotState> {
     );
   }
 }
+
+const XYPlot: any = (props: XYPlotProps): React.ReactElement => (
+  <XYPlotImplementation {...props} />
+);
+
+XYPlot.displayName = 'XYPlot';
+XYPlot.defaultProps = XYPlotImplementation.defaultProps;
+XYPlot.propTypes = XYPlotImplementation.propTypes;
+XYPlot._getDefaultScaleProps = XYPlotImplementation._getDefaultScaleProps;
+XYPlot._getScaleMixins = XYPlotImplementation._getScaleMixins;
 
 export default XYPlot;

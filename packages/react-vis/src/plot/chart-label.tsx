@@ -38,43 +38,38 @@ interface ChartLabelProps {
   yPercent: number;
 }
 
-class ChartLabel extends React.PureComponent<ChartLabelProps> {
-  static get requiresSVG() {
-    return true;
-  }
+const ChartLabel: any = (props: ChartLabelProps) => {
+  const {
+    innerHeight = 0,
+    innerWidth = 0,
+    marginBottom = 0,
+    marginLeft = 0,
+    marginRight = 0,
+    marginTop = 0,
+    className,
+    includeMargin,
+    style,
+    text,
+    xPercent,
+    yPercent
+  } = props;
+  const width = innerWidth + (includeMargin ? marginLeft + marginRight : 0);
+  const height = innerHeight + (includeMargin ? marginTop + marginBottom : 0);
+  const xPos = width * xPercent + (includeMargin ? 0 : marginLeft);
+  const yPos = height * yPercent + (includeMargin ? marginTop : 0);
+  return (
+    <g
+      transform={`translate(${xPos}, ${yPos})`}
+      className={getCombinedClassName('rv-xy-plot__axis__title', className)}
+    >
+      <text {...style}>{text}</text>
+    </g>
+  );
+};
 
-  render() {
-    const {
-      innerHeight = 0,
-      innerWidth = 0,
-      marginBottom = 0,
-      marginLeft = 0,
-      marginRight = 0,
-      marginTop = 0,
-      className,
-      includeMargin,
-      style,
-      text,
-      xPercent,
-      yPercent
-    } = this.props;
-    const width = innerWidth + (includeMargin ? marginLeft + marginRight : 0);
-    const height = innerHeight + (includeMargin ? marginTop + marginBottom : 0);
-    const xPos = width * xPercent + (includeMargin ? 0 : marginLeft);
-    const yPos = height * yPercent + (includeMargin ? marginTop : 0);
-    return (
-      <g
-        transform={`translate(${xPos}, ${yPos})`}
-        className={getCombinedClassName('rv-xy-plot__axis__title', className)}
-      >
-        <text {...style}>{text}</text>
-      </g>
-    );
-  }
-}
-
-(ChartLabel as any).displayName = 'ChartLabel';
-(ChartLabel as any).propTypes = {
+ChartLabel.displayName = 'ChartLabel';
+ChartLabel.requiresSVG = true;
+ChartLabel.propTypes = {
   className: PropTypes.string,
   includeMargin: PropTypes.bool,
   style: PropTypes.object,
@@ -82,7 +77,7 @@ class ChartLabel extends React.PureComponent<ChartLabelProps> {
   xPercent: PropTypes.number.isRequired,
   yPercent: PropTypes.number.isRequired
 };
-(ChartLabel as any).defaultProps = {
+ChartLabel.defaultProps = {
   className: '',
   includeMargin: true,
   text: '',

@@ -34,8 +34,8 @@ interface TreemapSVGProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-class TreemapSVG extends React.Component<TreemapSVGProps> {
-  getCircularNodes(): {
+function TreemapSVG(props: TreemapSVGProps): JSX.Element {
+  function getCircularNodes(): {
     updatedNodes: JSX.Element;
     minY: number;
     maxY: number;
@@ -51,7 +51,7 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
       onLeafClick,
       scales,
       style
-    } = this.props;
+    } = props;
 
     const {rows, minY, maxY, minX, maxX} = nodes.reduce(
       (acc, node, index) => {
@@ -105,7 +105,7 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
     };
   }
 
-  getNonCircularNodes(): {
+  function getNonCircularNodes(): {
     updatedNodes: JSX.Element[];
     minY: number;
     maxY: number;
@@ -121,7 +121,7 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
       onLeafClick,
       scales,
       style
-    } = this.props;
+    } = props;
     const {color} = scales;
     return nodes.reduce(
       (acc, node, index) => {
@@ -175,13 +175,12 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
     );
   }
 
-  render(): JSX.Element {
-    const {className, height, mode, nodes, width, hideRootNode} = this.props;
+  const {className, height, mode, nodes, width, hideRootNode} = props;
     const useCirclePacking = mode === 'circlePack';
 
     const {minY, maxY, minX, maxX, updatedNodes} = useCirclePacking
-      ? this.getCircularNodes()
-      : this.getNonCircularNodes();
+      ? getCircularNodes()
+      : getNonCircularNodes();
 
     const labels = nodes.reduce((acc: any[], node, index) => {
       if (!node.data.title || (hideRootNode && !index)) {
@@ -197,7 +196,7 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
 
     return (
       <XYPlot
-        {...this.props}
+        {...props}
         className={getCombinedClassName(
           'rv-treemap',
           useCirclePacking && 'rv-treemap-circle-paked',
@@ -214,7 +213,6 @@ class TreemapSVG extends React.Component<TreemapSVGProps> {
         <LabelSeries data={labels} />
       </XYPlot>
     );
-  }
 }
 
 (TreemapSVG as any).displayName = 'TreemapSVG';

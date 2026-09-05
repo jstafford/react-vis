@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {PureComponent} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Animation, {AnimationParam, AnimationPropType} from 'animation';
@@ -127,13 +127,7 @@ const predefinedClassName = 'rv-xy-plot__axis';
 const VERTICAL_CLASS_NAME = 'rv-xy-plot__axis--vertical';
 const HORIZONTAL_CLASS_NAME = 'rv-xy-plot__axis--horizontal';
 
-class Axis extends PureComponent<AxisProps> {
-  static displayName = 'Axis';
-  static propTypes = propTypes;
-  static defaultProps = defaultProps;
-  static requiresSVG = true;
-
-  _getDefaultAxisProps() {
+function getDefaultAxisProps(props: AxisProps) {
     const {
       innerWidth,
       innerHeight,
@@ -142,7 +136,7 @@ class Axis extends PureComponent<AxisProps> {
       marginLeft,
       marginRight,
       orientation
-    } = this.props;
+    } = props;
     if (orientation === BOTTOM) {
       return {
         tickTotal: getTicksTotalFromSize(innerWidth!),
@@ -175,10 +169,10 @@ class Axis extends PureComponent<AxisProps> {
       width: marginRight,
       height: innerHeight
     };
-  }
+}
 
-  render() {
-    const {animation} = this.props;
+const Axis: any = (props: AxisProps) => {
+    const {animation} = props;
 
     if (animation) {
       const animatedProps = (animation as any).nonAnimatedProps
@@ -188,15 +182,15 @@ class Axis extends PureComponent<AxisProps> {
         : defaultAnimatedProps;
 
       return (
-        <Animation {...this.props} {...{animatedProps}}>
-          <Axis {...this.props} animation={null as any} />
+        <Animation {...props} {...{animatedProps}}>
+          <Axis {...props} animation={null as any} />
         </Animation>
       );
     }
 
-    const props = {
-      ...this._getDefaultAxisProps(),
-      ...this.props
+    const mergedProps = {
+      ...getDefaultAxisProps(props),
+      ...props
     };
 
     const {
@@ -214,7 +208,7 @@ class Axis extends PureComponent<AxisProps> {
       title,
       top,
       width
-    } = props;
+    } = mergedProps;
     const isVertical = [LEFT, RIGHT].indexOf(orientation!) > -1;
     const axisClassName = isVertical
       ? VERTICAL_CLASS_NAME
@@ -223,7 +217,7 @@ class Axis extends PureComponent<AxisProps> {
     let leftPos = left;
     let topPos = top;
     if (on0) {
-      const scale = getAttributeScale(props, attrAxis!);
+      const scale = getAttributeScale(mergedProps, attrAxis!);
       if (isVertical) {
         leftPos = scale(0);
       } else {
@@ -250,7 +244,7 @@ class Axis extends PureComponent<AxisProps> {
           />
         )}
         {!hideTicks && (
-          <AxisTicks {...(props as any)} style={{...style, ...(style as any).ticks}} />
+          <AxisTicks {...(mergedProps as any)} style={{...style, ...(style as any).ticks}} />
         )}
         {title ? (
           <AxisTitle
@@ -264,7 +258,11 @@ class Axis extends PureComponent<AxisProps> {
         ) : null}
       </g>
     );
-  }
-}
+  };
+
+(Axis as any).displayName = 'Axis';
+(Axis as any).propTypes = propTypes;
+(Axis as any).defaultProps = defaultProps;
+(Axis as any).requiresSVG = true;
 
 export default Axis;
