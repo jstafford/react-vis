@@ -33,8 +33,54 @@ import PolygonSeries from 'plot/series/polygon-series';
 import LabelSeries from 'plot/series/label-series';
 import DecorativeAxis from 'plot/axis/decorative-axis';
 
+export interface RadarDomain {
+  name: string;
+  domain: number[];
+  tickFormat?: (value: number) => string;
+  getValue?: (row: RadarDatum) => number;
+}
+
+export interface RadarDatum {
+  name?: string;
+  color?: string;
+  fill?: string;
+  stroke?: string;
+  [key: string]: any;
+}
+
+export interface RadarStyle {
+  axes?: React.CSSProperties;
+  labels?: React.CSSProperties;
+  polygons?: React.CSSProperties;
+}
+
+export interface RadarChartProps {
+  animation?: any;
+  className?: string;
+  children?: React.ReactNode;
+  colorRange?: string[];
+  data: RadarDatum[];
+  domains: RadarDomain[];
+  height: number;
+  hideInnerMostValues?: boolean;
+  margin?: any;
+  onMouseLeave?: (event: React.MouseEvent) => void;
+  onMouseEnter?: (event: React.MouseEvent) => void;
+  startingAngle?: number;
+  style?: RadarStyle;
+  tickFormat?: (value: number) => string;
+  width: number;
+  renderAxesOverPolygons?: boolean;
+  onValueMouseOver?: (info: any) => void;
+  onValueMouseOut?: (info: any) => void;
+  onSeriesMouseOver?: (info: any) => void;
+  onSeriesMouseOut?: (info: any) => void;
+  [key: string]: any;
+}
+
 const predefinedClassName = 'rv-radar-chart';
-const DEFAULT_FORMAT = value => (value === 0 ? '0.0' : format('.2r')(value));
+const DEFAULT_FORMAT = (value: number) =>
+  value === 0 ? '0.0' : format('.2r')(value);
 /**
  * Generate axes for each of the domains
  * @param {Object} props
@@ -45,7 +91,7 @@ const DEFAULT_FORMAT = value => (value === 0 ? '0.0' : format('.2r')(value));
  - props.startingAngle {number} the initial angle offset
  * @return {Array} the plotted axis components
  */
-function getAxes(props) {
+function getAxes(props: any): React.ReactNode[] {
   const {
     animation,
     domains,
@@ -54,11 +100,11 @@ function getAxes(props) {
     tickFormat,
     hideInnerMostValues
   } = props;
-  return domains.map((domain, index) => {
+  return domains.map((domain: RadarDomain, index: number) => {
     const angle = (index / domains.length) * Math.PI * 2 + startingAngle;
     const sortedDomain = domain.domain;
 
-    const domainTickFormat = t => {
+    const domainTickFormat = (t: number) => {
       if (hideInnerMostValues && t === sortedDomain[0]) {
         return '';
       }
@@ -90,7 +136,7 @@ function getAxes(props) {
  - to true values resulting from trigonometry functions (sin, cos) on angles
  * @return {Number} the x or y coordinate accounting for exact trig values
  */
-function getCoordinate(axisEndPoint) {
+function getCoordinate(axisEndPoint: number): number {
   const epsilon = 10e-13;
   if (Math.abs(axisEndPoint) <= epsilon) {
     axisEndPoint = 0;
@@ -114,9 +160,9 @@ function getCoordinate(axisEndPoint) {
  - props.style {object} style object for just the labels
  * @return {Array} the prepped data for the labelSeries
  */
-function getLabels(props) {
+function getLabels(props: any): any[] {
   const {domains, startingAngle, style} = props;
-  return domains.map(({name}, index) => {
+  return domains.map(({name}: RadarDomain, index: number) => {
     const angle = (index / domains.length) * Math.PI * 2 + startingAngle;
     const radius = 1.2;
     return {
@@ -138,7 +184,7 @@ function getLabels(props) {
  - props.style {object} style object for the whole chart
  * @return {Array} the plotted axis components
  */
-function getPolygons(props) {
+function getPolygons(props: any): React.ReactNode[] {
   const {
     animation,
     colorRange,
@@ -150,15 +196,15 @@ function getPolygons(props) {
     onSeriesMouseOut
   } = props;
 
-  const scales = domains.reduce((acc, {domain, name}) => {
+  const scales = domains.reduce((acc: Record<string, any>, {domain, name}: RadarDomain) => {
     acc[name] = scaleLinear()
       .domain(domain)
       .range([0, 1]);
     return acc;
   }, {});
 
-  return data.map((row, rowIndex) => {
-    const mappedData = domains.map(({name, getValue}, index) => {
+  return data.map((row: RadarDatum, rowIndex: number) => {
+    const mappedData = domains.map(({name, getValue}: RadarDomain, index: number) => {
       const dataPoint = getValue ? getValue(row) : row[name];
       // error handling if point doesn't exist
       const angle = (index / domains.length) * Math.PI * 2 + startingAngle;
@@ -171,13 +217,13 @@ function getPolygons(props) {
       };
     });
 
-    const handleSeriesMouseOver = info => {
+    const handleSeriesMouseOver = (info: any) => {
       if (onSeriesMouseOver) {
         onSeriesMouseOver({...info, row});
       }
     };
 
-    const handleSeriesMouseOut = info => {
+    const handleSeriesMouseOut = (info: any) => {
       if (onSeriesMouseOut) {
         onSeriesMouseOut({...info, row});
       }
@@ -215,7 +261,7 @@ function getPolygons(props) {
  - props.onValueMouseOver {function} function to call when mouse leaves a polygon point
  * @return {Array} the plotted axis components
  */
-function getPolygonPoints(props) {
+function getPolygonPoints(props: any): React.ReactNode[] | undefined {
   const {
     animation,
     domains,
@@ -228,14 +274,14 @@ function getPolygonPoints(props) {
   if (!onValueMouseOver) {
     return;
   }
-  const scales = domains.reduce((acc, {domain, name}) => {
+  const scales = domains.reduce((acc: Record<string, any>, {domain, name}: RadarDomain) => {
     acc[name] = scaleLinear()
       .domain(domain)
       .range([0, 1]);
     return acc;
   }, {});
-  return data.map((row, rowIndex) => {
-    const mappedData = domains.map(({name, getValue}, index) => {
+  return data.map((row: RadarDatum, rowIndex: number) => {
+    const mappedData = domains.map(({name, getValue}: RadarDomain, index: number) => {
       const dataPoint = getValue ? getValue(row) : row[name];
       // error handling if point doesn't exist
       const angle = (index / domains.length) * Math.PI * 2 + startingAngle;
@@ -269,7 +315,7 @@ function getPolygonPoints(props) {
   });
 }
 
-function RadarChart(props) {
+function RadarChart(props: RadarChartProps): JSX.Element {
   const {
     animation,
     className,
@@ -329,7 +375,7 @@ function RadarChart(props) {
       animation={animation}
       key={className}
       className={`${predefinedClassName}-label`}
-      data={getLabels({domains, style: style.labels, startingAngle})}
+      data={getLabels({domains, style: style?.labels, startingAngle})}
     />
   );
   return (
@@ -339,8 +385,8 @@ function RadarChart(props) {
       margin={margin}
       dontCheckIfEmpty
       className={getCombinedClassName(className, predefinedClassName)}
-      onMouseLeave={onMouseLeave}
-      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave as any}
+      onMouseEnter={onMouseEnter as any}
       xDomain={[-1, 1]}
       yDomain={[-1, 1]}
     >
@@ -359,8 +405,8 @@ function RadarChart(props) {
   );
 }
 
-RadarChart.displayName = 'RadarChart';
-RadarChart.propTypes = {
+(RadarChart as any).displayName = 'RadarChart';
+(RadarChart as any).propTypes = {
   animation: AnimationPropType,
   className: PropTypes.string,
   colorType: PropTypes.string,
@@ -390,7 +436,7 @@ RadarChart.propTypes = {
   onSeriesMouseOver: PropTypes.func,
   onSeriesMouseOut: PropTypes.func
 };
-RadarChart.defaultProps = {
+(RadarChart as any).defaultProps = {
   className: '',
   colorType: 'category',
   colorRange: DISCRETE_COLOR_RANGE,

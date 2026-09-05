@@ -31,6 +31,44 @@ import {MarginPropType, getRadialLayoutMargin} from 'utils/chart-utils';
 import {getRadialDomain} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
+export interface RadialDatum {
+  angle?: number;
+  angle0?: number;
+  innerRadius?: number;
+  radius?: number;
+  color?: string | number;
+  label?: string;
+  subLabel?: string;
+  [key: string]: any;
+}
+
+export interface RadialChartProps {
+  animation?: any;
+  className?: string;
+  children?: React.ReactNode;
+  colorType?: string;
+  colorRange?: string[];
+  data: RadialDatum[];
+  getAngle?: (datum: RadialDatum) => number;
+  getAngle0?: (datum: RadialDatum) => number;
+  getLabel?: (datum: RadialDatum) => string | undefined;
+  getSubLabel?: (datum: RadialDatum) => string | undefined;
+  height: number;
+  hideRootNode?: boolean;
+  innerRadius?: number;
+  labelsAboveChildren?: boolean;
+  labelsRadiusMultiplier?: number;
+  labelsStyle?: React.CSSProperties;
+  margin?: any;
+  onMouseLeave?: (event: React.MouseEvent) => void;
+  onMouseEnter?: (event: React.MouseEvent) => void;
+  radius?: number;
+  showLabels?: boolean;
+  style?: React.CSSProperties;
+  width: number;
+  [key: string]: any;
+}
+
 const predefinedClassName = 'rv-radial-chart';
 
 const DEFAULT_RADIUS_MARGIN = 15;
@@ -41,8 +79,8 @@ const DEFAULT_RADIUS_MARGIN = 15;
    props.data {Object} - tree structured data (each node has a name anc an array of children)
  * @returns {Array} Array of nodes.
  */
-function getWedgesToRender({data, getAngle}) {
-  const pie = pieBuilder()
+function getWedgesToRender({data, getAngle}: any): any[] {
+  const pie = pieBuilder<any>()
     .sort(null)
     .value(getAngle);
   const pieData = pie(data).reverse();
@@ -58,9 +96,13 @@ function getWedgesToRender({data, getAngle}) {
   });
 }
 
-function generateLabels(mappedData, accessors, labelsRadiusMultiplier = 1.1) {
+function generateLabels(
+  mappedData: RadialDatum[],
+  accessors: any,
+  labelsRadiusMultiplier = 1.1
+): any[] {
   const {getLabel, getSubLabel} = accessors;
-  return mappedData.reduce((res, row) => {
+  return mappedData.reduce((res: any[], row: any) => {
     const {angle, angle0, radius} = row;
     const centeredAngle = (angle + angle0) / 2;
 
@@ -96,11 +138,11 @@ function generateLabels(mappedData, accessors, labelsRadiusMultiplier = 1.1) {
  * @param  {Number} height - container height
  * @return {Number} radius
  */
-function getMaxRadius(width, height) {
+function getMaxRadius(width: number, height: number): number {
   return Math.min(width, height) / 2 - DEFAULT_RADIUS_MARGIN;
 }
 
-function RadialChart(props) {
+function RadialChart(props: RadialChartProps): JSX.Element {
   const {
     animation,
     className,
@@ -132,7 +174,7 @@ function RadialChart(props) {
     getAngle
   });
   const radialDomain = getRadialDomain(mappedData);
-  const arcProps = {
+  const arcProps: any = {
     colorType,
     ...props,
     animation,
@@ -167,12 +209,12 @@ function RadialChart(props) {
         ...margin
       }}
       className={getCombinedClassName(className, predefinedClassName)}
-      onMouseLeave={onMouseLeave}
-      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave as any}
+      onMouseEnter={onMouseEnter as any}
       xDomain={[-radialDomain, radialDomain]}
       yDomain={[-radialDomain, radialDomain]}
     >
-      <ArcSeries {...arcProps} getAngle={d => d.angle} />
+      <ArcSeries {...arcProps} getAngle={(d: any) => d.angle} />
       {showLabels && !labelsAboveChildren && (
         <LabelSeries data={labels} style={labelsStyle} />
       )}
@@ -184,8 +226,8 @@ function RadialChart(props) {
   );
 }
 
-RadialChart.displayName = 'RadialChart';
-RadialChart.propTypes = {
+(RadialChart as any).displayName = 'RadialChart';
+(RadialChart as any).propTypes = {
   animation: AnimationPropType,
   className: PropTypes.string,
   colorType: PropTypes.string,
@@ -216,17 +258,17 @@ RadialChart.propTypes = {
   subLabel: PropTypes.func,
   width: PropTypes.number.isRequired
 };
-RadialChart.defaultProps = {
+(RadialChart as any).defaultProps = {
   className: '',
   colorType: 'category',
   colorRange: DISCRETE_COLOR_RANGE,
   padAngle: 0,
-  getAngle: d => d.angle,
-  getAngle0: d => d.angle0,
-  getRadius: d => d.radius,
-  getRadius0: d => d.radius0,
-  getLabel: d => d.label,
-  getSubLabel: d => d.subLabel
+  getAngle: (d: any) => d.angle,
+  getAngle0: (d: any) => d.angle0,
+  getRadius: (d: any) => d.radius,
+  getRadius0: (d: any) => d.radius0,
+  getLabel: (d: any) => d.label,
+  getSubLabel: (d: any) => d.subLabel
 };
 
 export default RadialChart;

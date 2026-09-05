@@ -31,6 +31,34 @@ import {getRadialDomain} from 'utils/series-utils';
 import {getRadialLayoutMargin} from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
+export interface SunburstDatum {
+  angle?: number;
+  angle0?: number;
+  radius?: number;
+  radius0?: number;
+  label?: string;
+  size?: number;
+  color?: string | number;
+  children?: SunburstDatum[];
+  [key: string]: any;
+}
+
+export interface SunburstProps {
+  animation?: any;
+  className?: string;
+  children?: React.ReactNode;
+  colorType?: string;
+  data: SunburstDatum;
+  height: number;
+  hideRootNode?: boolean;
+  getAngle?: (datum: SunburstDatum) => number;
+  getAngle0?: (datum: SunburstDatum) => number;
+  getLabel?: (datum: SunburstDatum) => string | undefined;
+  getSize?: (datum: SunburstDatum) => number | undefined;
+  width: number;
+  [key: string]: any;
+}
+
 const predefinedClassName = 'rv-sunburst';
 
 const LISTENERS_TO_OVERWRITE = [
@@ -54,7 +82,13 @@ const LISTENERS_TO_OVERWRITE = [
    props.getSize {function} - accessor for the size
  * @returns {Array} Array of nodes.
  */
-function getNodesToRender({data, height, hideRootNode, width, getSize}) {
+function getNodesToRender({
+  data,
+  height,
+  hideRootNode,
+  width,
+  getSize
+}: any): SunburstDatum[] {
   const partitionFunction = partition();
   const structuredInput = hierarchy(data).sum(getSize);
   const radius = Math.min(width, height) / 2 - 10;
@@ -63,7 +97,7 @@ function getNodesToRender({data, height, hideRootNode, width, getSize}) {
 
   return partitionFunction(structuredInput)
     .descendants()
-    .reduce((res, cell, index) => {
+    .reduce((res: any[], cell: any, index: number) => {
       if (hideRootNode && index === 0) {
         return res;
       }
@@ -89,7 +123,7 @@ function getNodesToRender({data, height, hideRootNode, width, getSize}) {
  * @param {Object} accessors - object of accessors
  * @returns {Array} array of node for rendering as labels
  */
-function buildLabels(mappedData, accessors) {
+function buildLabels(mappedData: SunburstDatum[], accessors: any): any[] {
   const {getAngle, getAngle0, getLabel, getRadius0} = accessors;
 
   return mappedData.filter(getLabel).map(row => {
@@ -123,7 +157,7 @@ function buildLabels(mappedData, accessors) {
 
 const NOOP = () => {};
 
-function Sunburst(props) {
+function Sunburst(props: SunburstProps): JSX.Element {
   const {
     getAngle,
     getAngle0,
@@ -152,10 +186,11 @@ function Sunburst(props) {
     getAngle,
     getAngle0,
     getLabel,
-    getRadius0: d => d.radius0
+    getRadius0: (d: any) => d.radius0
   });
 
-  const hofBuilder = f => (e, i) => (f ? f(mappedData[e.index], i) : NOOP);
+  const hofBuilder = (f: any) => (e: any, i: number) =>
+    f ? f(mappedData[e.index], i) : NOOP;
   return (
     <XYPlot
       height={height}
@@ -183,7 +218,7 @@ function Sunburst(props) {
             : mappedData,
           _data: animation ? mappedData : null,
           arcClassName: `${predefinedClassName}__series--radial__arc`,
-          ...LISTENERS_TO_OVERWRITE.reduce((acc, propName) => {
+          ...LISTENERS_TO_OVERWRITE.reduce((acc: Record<string, any>, propName: string) => {
             const prop = props[propName];
             acc[propName] = animation ? hofBuilder(prop) : prop;
             return acc;
@@ -198,8 +233,8 @@ function Sunburst(props) {
   );
 }
 
-Sunburst.displayName = 'Sunburst';
-Sunburst.propTypes = {
+(Sunburst as any).displayName = 'Sunburst';
+(Sunburst as any).propTypes = {
   animation: AnimationPropType,
   getAngle: PropTypes.func,
   getAngle0: PropTypes.func,
@@ -216,15 +251,15 @@ Sunburst.propTypes = {
   width: PropTypes.number.isRequired,
   padAngle: PropTypes.oneOfType([PropTypes.func, PropTypes.number])
 };
-Sunburst.defaultProps = {
-  getAngle: d => d.angle,
-  getAngle0: d => d.angle0,
+(Sunburst as any).defaultProps = {
+  getAngle: (d: any) => d.angle,
+  getAngle0: (d: any) => d.angle0,
   className: '',
   colorType: 'literal',
-  getColor: d => d.color,
+  getColor: (d: any) => d.color,
   hideRootNode: false,
-  getLabel: d => d.label,
-  getSize: d => d.size,
+  getLabel: (d: any) => d.label,
+  getSize: (d: any) => d.size,
   padAngle: 0
 };
 
