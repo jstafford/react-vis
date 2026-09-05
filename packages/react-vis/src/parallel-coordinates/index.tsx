@@ -23,10 +23,11 @@ import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
-import {AnimationPropType} from 'animation';
+import {AnimationParam, AnimationPropType} from 'animation';
 import XYPlot from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {
+  Margin,
   MarginPropType,
   getInnerDimensions,
   DEFAULT_MARGINS
@@ -36,28 +37,80 @@ import LineSeries from 'plot/series/line-series';
 import LineMarkSeries from 'plot/series/line-mark-series';
 import LabelSeries from 'plot/series/label-series';
 import DecorativeAxis from 'plot/axis/decorative-axis';
-
 import Highlight from 'plot/highlight';
 
 const predefinedClassName = 'rv-parallel-coordinates-chart';
-const DEFAULT_FORMAT = value => (value === 0 ? '0.0' : format('.2r')(value));
-/**
- * Generate axes for each of the domains
- * @param {Object} props
- - props.animation {Boolean}
- - props.domains {Array} array of object specifying the way each axis is to be plotted
- - props.style {object} style object for the whole chart
- - props.tickFormat {Function} formatting function for axes
- * @return {Array} the plotted axis components
- */
-function getAxes(props) {
-  const {animation, domains, style, tickFormat} = props;
-  return domains.map((domain, index) => {
-    const sortedDomain = domain.domain;
+const DEFAULT_FORMAT = (value: number) =>
+  value === 0 ? '0.0' : format('.2r')(value);
 
-    const domainTickFormat = t => {
-      return domain.tickFormat ? domain.tickFormat(t) : tickFormat(t);
-    };
+interface ParallelDomain {
+  domain: number[];
+  getValue?: (row: any) => number;
+  name: string;
+  tickFormat?: (value: number) => string;
+}
+
+interface ParallelStyle {
+  axes?: {[key: string]: any};
+  labels?: React.CSSProperties;
+  lines?: React.CSSProperties;
+  deselectedLineStyle?: React.CSSProperties;
+}
+
+interface BrushFilter {
+  min: number;
+  max: number;
+}
+
+export interface ParallelCoordinatesProps {
+  animation?: AnimationParam;
+  brushing?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  colorRange?: string[];
+  colorType?: string;
+  data: any[];
+  domains: ParallelDomain[];
+  height: number;
+  hideInnerMostValues?: boolean;
+  margin?: Margin;
+  onMouseEnter?: (event?: React.SyntheticEvent<any>) => void;
+  onMouseLeave?: (event?: React.SyntheticEvent<any>) => void;
+  showMarks?: boolean;
+  style?: ParallelStyle;
+  tickFormat?: (value: number) => string;
+  width: number;
+  [key: string]: any;
+}
+
+interface ParallelCoordinatesState {
+  brushFilters: {[key: string]: BrushFilter | null};
+}
+
+const DEFAULT_STYLE: ParallelStyle = {
+  axes: {
+    line: {},
+    ticks: {},
+    text: {}
+  },
+  labels: {
+    fontSize: 10,
+    textAnchor: 'middle' as const
+  },
+  lines: {
+    strokeWidth: 1,
+    strokeOpacity: 1
+  },
+  deselectedLineStyle: {
+    strokeOpacity: 0.1
+  }
+};
+
+function getAxes(props: ParallelCoordinatesProps): JSX.Element[] {
+  const {animation, domains, style = {}, tickFormat = DEFAULT_FORMAT} = props;
+  return domains.map((domain, index) => {
+    const domainTickFormat = (tick: number) =>
+      domain.tickFormat ? domain.tickFormat(tick) : tickFormat(tick);
 
     return (
       <DecorativeAxis
@@ -65,7 +118,7 @@ function getAxes(props) {
         key={`${index}-axis`}
         axisStart={{x: domain.name, y: 0}}
         axisEnd={{x: domain.name, y: 1}}
-        axisDomain={sortedDomain}
+        axisDomain={domain.domain}
         numberOfTicks={5}
         tickValue={domainTickFormat}
         style={style.axes}
@@ -74,84 +127,64 @@ function getAxes(props) {
   });
 }
 
-/**
- * Generate labels for the ends of the axes
- * @param {Object} props
- - props.domains {Array} array of object specifying the way each axis is to be plotted
- - props.style {object} style object for just the labels
- * @return {Array} the prepped data for the labelSeries
- */
-function getLabels(props) {
+function getLabels(props: {
+  domains: ParallelDomain[];
+  style?: React.CSSProperties;
+}): any[] {
   const {domains, style} = props;
-  return domains.map(domain => {
-    return {
-      x: domain.name,
-      y: 1.1,
-      label: domain.name,
-      style
-    };
-  });
+  return domains.map(domain => ({
+    x: domain.name,
+    y: 1.1,
+    label: domain.name,
+    style
+  }));
 }
 
-/**
- * Generate the actual lines to be plotted
- * @param {Object} props
- - props.animation {Boolean}
- - props.data {Array} array of object specifying what values are to be plotted
- - props.domains {Array} array of object specifying the way each axis is to be plotted
- - props.style {object} style object for the whole chart
- - props.showMarks {Bool} whether or not to use the line mark series
- * @return {Array} the plotted axis components
- */
-function getLines(props) {
+function getLines(
+  props: ParallelCoordinatesProps & ParallelCoordinatesState
+): JSX.Element[] {
   const {
     animation,
     brushFilters,
-    colorRange,
-    domains,
+    colorRange = DISCRETE_COLOR_RANGE,
     data,
-    style,
-    showMarks
+    domains,
+    showMarks,
+    style = {}
   } = props;
-  const scales = domains.reduce((acc, {domain, name}) => {
-    acc[name] = scaleLinear()
-      .domain(domain)
-      .range([0, 1]);
-    return acc;
+  const scales = domains.reduce((result: {[key: string]: any}, domain) => {
+    result[domain.name] = scaleLinear().domain(domain.domain).range([0, 1]);
+    return result;
   }, {});
-  // const
 
   return data.map((row, rowIndex) => {
     let withinFilteredRange = true;
     const mappedData = domains.map(domain => {
-      const {getValue, name} = domain;
-
-      // watch out! Gotcha afoot
-      // yVal after being scale is in [0, 1] range
-      const yVal = scales[name](getValue ? getValue(row) : row[name]);
-      const filter = brushFilters[name];
-      // filter value after being scale back from pixel space is also in [0, 1]
-      if (filter && (yVal < filter.min || yVal > filter.max)) {
+      const yValue = scales[domain.name](
+        domain.getValue ? domain.getValue(row) : row[domain.name]
+      );
+      const filter = brushFilters[domain.name];
+      if (filter && (yValue < filter.min || yValue > filter.max)) {
         withinFilteredRange = false;
       }
-      return {x: name, y: yVal};
+      return {x: domain.name, y: yValue};
     });
+
     const selectedName = `${predefinedClassName}-line`;
-    const unselectedName = `${selectedName} ${predefinedClassName}-line-unselected`;
-    const lineProps = {
+    const lineProps: {[key: string]: any} = {
       animation,
-      className: withinFilteredRange ? selectedName : unselectedName,
+      className: withinFilteredRange
+        ? selectedName
+        : `${selectedName} ${predefinedClassName}-line-unselected`,
       key: `${rowIndex}-polygon`,
       data: mappedData,
       color: row.color || colorRange[rowIndex % colorRange.length],
       style: {...style.lines, ...(row.style || {})}
     };
     if (!withinFilteredRange) {
-      lineProps.style = {
-        ...lineProps.style,
-        ...style.deselectedLineStyle
-      };
+      lineProps.style = {...lineProps.style, ...style.deselectedLineStyle};
     }
+
     return showMarks ? (
       <LineMarkSeries {...lineProps} />
     ) : (
@@ -160,12 +193,13 @@ function getLines(props) {
   });
 }
 
-class ParallelCoordinates extends Component {
-  state = {
-    brushFilters: {}
-  };
+class ParallelCoordinates extends Component<
+  ParallelCoordinatesProps,
+  ParallelCoordinatesState
+> {
+  state: ParallelCoordinatesState = {brushFilters: {}};
 
-  render() {
+  render(): JSX.Element {
     const {brushFilters} = this.state;
     const {
       animation,
@@ -176,24 +210,24 @@ class ParallelCoordinates extends Component {
       data,
       domains,
       height,
-      hideInnerMostValues,
       margin,
       onMouseLeave,
       onMouseEnter,
       showMarks,
-      style,
-      tickFormat,
+      style = DEFAULT_STYLE,
+      tickFormat = DEFAULT_FORMAT,
       width
     } = this.props;
 
     const axes = getAxes({
       domains,
       animation,
-      hideInnerMostValues,
       style,
-      tickFormat
+      tickFormat,
+      data,
+      height,
+      width
     });
-
     const lines = getLines({
       animation,
       brushFilters,
@@ -201,7 +235,9 @@ class ParallelCoordinates extends Component {
       domains,
       data,
       showMarks,
-      style
+      style,
+      height,
+      width
     });
     const labelSeries = (
       <LabelSeries
@@ -231,25 +267,23 @@ class ParallelCoordinates extends Component {
         {children}
         {axes.concat(lines).concat(labelSeries)}
         {brushing &&
-          domains.map(d => {
-            const trigger = row => {
+          domains.map(domain => {
+            const trigger = (row: any) => {
               this.setState({
                 brushFilters: {
                   ...brushFilters,
-                  [d.name]: row ? {min: row.bottom, max: row.top} : null
+                  [domain.name]: row ? {min: row.bottom, max: row.top} : null
                 }
               });
             };
             return (
               <Highlight
-                key={d.name}
+                key={domain.name}
                 drag
-                highlightX={d.name}
-                onBrushEnd={trigger}
-                onDragEnd={trigger}
-                highlightWidth={
-                  (width - marginLeft - marginRight) / domains.length
-                }
+                highlightX={domain.name}
+                onBrushEnd={trigger as any}
+                onDragEnd={trigger as any}
+                highlightWidth={(width - marginLeft - marginRight) / domains.length}
                 enableX={false}
               />
             );
@@ -259,8 +293,8 @@ class ParallelCoordinates extends Component {
   }
 }
 
-ParallelCoordinates.displayName = 'ParallelCoordinates';
-ParallelCoordinates.propTypes = {
+(ParallelCoordinates as any).displayName = 'ParallelCoordinates';
+(ParallelCoordinates as any).propTypes = {
   animation: AnimationPropType,
   brushing: PropTypes.bool,
   className: PropTypes.string,
@@ -285,28 +319,11 @@ ParallelCoordinates.propTypes = {
   tickFormat: PropTypes.func,
   width: PropTypes.number.isRequired
 };
-ParallelCoordinates.defaultProps = {
+(ParallelCoordinates as any).defaultProps = {
   className: '',
   colorType: 'category',
   colorRange: DISCRETE_COLOR_RANGE,
-  style: {
-    axes: {
-      line: {},
-      ticks: {},
-      text: {}
-    },
-    labels: {
-      fontSize: 10,
-      textAnchor: 'middle'
-    },
-    lines: {
-      strokeWidth: 1,
-      strokeOpacity: 1
-    },
-    deselectedLineStyle: {
-      strokeOpacity: 0.1
-    }
-  },
+  style: DEFAULT_STYLE,
   tickFormat: DEFAULT_FORMAT
 };
 
