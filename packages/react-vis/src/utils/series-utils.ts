@@ -43,8 +43,13 @@ interface SeriesTypeInfo {
  * @returns {boolean} True if the child is series, false otherwise.
  */
 export function isSeriesChild(child: React.ReactElement): boolean {
-  const {prototype} = (child.type as any);
-  return prototype instanceof AbstractSeries;
+  const childType = child.type as any;
+  const {prototype} = childType;
+  return (
+    prototype instanceof AbstractSeries ||
+    typeof childType.getParentConfig === 'function' ||
+    Boolean(childType.propTypes && childType.propTypes.data)
+  );
 }
 
 /**

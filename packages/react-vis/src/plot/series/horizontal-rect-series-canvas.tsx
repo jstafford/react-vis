@@ -23,25 +23,24 @@ import RectSeriesCanvas from './rect-series-canvas';
 
 export interface HorizontalRectSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class HorizontalRectSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface HorizontalRectSeriesCanvasComponent {
+  (props: HorizontalRectSeriesCanvasProps): null;
+  renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const HorizontalRectSeriesCanvas = ((props: HorizontalRectSeriesCanvasProps): null => null) as HorizontalRectSeriesCanvasComponent;
 
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
+(HorizontalRectSeriesCanvas as any).requiresSVG = false;
+(HorizontalRectSeriesCanvas as any).isCanvas = true;
+(HorizontalRectSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = false;
     const zeroBaseValue = attr === 'x';
     return {
       isDomainAdjustmentNeeded,
       zeroBaseValue
     };
-  }
-
-  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+};
+(HorizontalRectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     RectSeriesCanvas.renderLayer(
       {
         ...props,
@@ -52,14 +51,10 @@ class HorizontalRectSeriesCanvas extends AbstractSeries<any> {
       },
       ctx
     );
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (HorizontalRectSeriesCanvas as any).displayName = 'HorizontalRectSeriesCanvas';
+(HorizontalRectSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
 (HorizontalRectSeriesCanvas as any).propTypes = {
   ...(AbstractSeries as any).propTypes
 };

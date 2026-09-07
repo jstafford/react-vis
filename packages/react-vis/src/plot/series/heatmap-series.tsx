@@ -25,46 +25,39 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--heatmap';
 
 export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {}
 
-class HeatmapSeries extends AbstractSeries<any> {
-  static getParentConfig(attr: string): {isDomainAdjustmentNeeded: boolean} {
-    const isDomainAdjustmentNeeded = attr === 'x' || attr === 'y';
-    return {isDomainAdjustmentNeeded};
-  }
-
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      data,
-      marginLeft,
-      marginTop,
-      style
-    } = this.props as HeatmapSeriesProps;
+function HeatmapSeries(props: HeatmapSeriesProps): JSX.Element | null {
+  const {
+    animation, className, data, marginLeft, marginTop, style,
+    getAttributeFunctor, getScaleDistance,
+    onValueClickHandler, onValueRightClickHandler, onValueMouseOverHandler,
+    onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
     if (!data) {
       return null;
     }
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <HeatmapSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <HeatmapSeries {...props} animation={false} />
         </Animation>
       );
     }
     const rectStyle: {[key: string]: any} = ((style as any) || {}).rectStyle || {};
-    const x = this._getAttributeFunctor('x')!;
-    const y = this._getAttributeFunctor('y')!;
-    const opacity = this._getAttributeFunctor('opacity');
+    const x = getAttributeFunctor('x')!;
+    const y = getAttributeFunctor('y')!;
+    const opacity = getAttributeFunctor('opacity');
     const fill =
-      this._getAttributeFunctor('fill') || this._getAttributeFunctor('color');
+      getAttributeFunctor('fill') || getAttributeFunctor('color');
     const stroke =
-      this._getAttributeFunctor('stroke') || this._getAttributeFunctor('color');
-    const xDistance = this._getScaleDistance('x');
-    const yDistance = this._getScaleDistance('y');
+      getAttributeFunctor('stroke') || getAttributeFunctor('color');
+    const xDistance = getScaleDistance('x');
+    const yDistance = getScaleDistance('y');
     return (
       <g
         className={getCombinedClassName(predefinedClassName, className)}
@@ -83,17 +76,20 @@ class HeatmapSeries extends AbstractSeries<any> {
             y: y(d) - yDistance / 2,
             width: xDistance,
             height: yDistance,
-            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
-            onContextMenu: (e: React.MouseEvent<SVGElement>) =>
-              this._valueRightClickHandler(d, e),
-            onMouseOver: (e: React.MouseEvent<SVGElement>) =>
-              this._valueMouseOverHandler(d, e),
-            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e)
+            onClick: (e: React.MouseEvent<SVGElement>) => onValueClickHandler?.(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) => onValueRightClickHandler?.(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) => onValueMouseOverHandler?.(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => onValueMouseOutHandler?.(d, e)
           };
           return <rect key={i} {...attrs} />;
         })}
       </g>
     );
+  }
+
+namespace HeatmapSeries {
+  export function getParentConfig(attr: string): {isDomainAdjustmentNeeded: boolean} {
+    return {isDomainAdjustmentNeeded: attr === 'x' || attr === 'y'};
   }
 }
 

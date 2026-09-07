@@ -32,16 +32,17 @@ export interface RectSeriesCanvasProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
 }
 
-class RectSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface RectSeriesCanvasComponent {
+  (props: RectSeriesCanvasProps): null;
+  renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const RectSeriesCanvas = ((props: RectSeriesCanvasProps): null => null) as RectSeriesCanvasComponent;
 
-  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+(RectSeriesCanvas as any).requiresSVG = false;
+(RectSeriesCanvas as any).isCanvas = true;
+(RectSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(RectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     const {
       data,
       linePosAttr,
@@ -87,12 +88,7 @@ class RectSeriesCanvas extends AbstractSeries<any> {
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (RectSeriesCanvas as any).displayName = 'RectSeriesCanvas';
 (RectSeriesCanvas as any).defaultProps = {

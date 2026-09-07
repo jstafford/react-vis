@@ -22,6 +22,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -30,7 +31,7 @@ const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--label';
 
 export interface LabelSeriesProps extends AbstractSeriesProps<any> {
   allowOffsetToBeReversed?: boolean;
-  getLabel?: (d: any) => string;
+  getLabel?: (d: any) => string | undefined;
   rotation?: number;
   xRange?: number[];
   yRange?: number[];
@@ -50,38 +51,27 @@ const getDominantBaseline = (labelAnchorY: string | undefined, aboveMiddle: bool
     : 'text-after-edge';
 };
 
-class LabelSeries extends AbstractSeries<any> {
-  render(): JSX.Element | null {
-    const {
-      animation,
-      allowOffsetToBeReversed,
-      className,
-      data,
-      _data,
-      getLabel,
-      marginLeft,
-      marginTop,
-      rotation,
-      style,
-      xRange,
-      yRange,
-      labelAnchorX,
-      labelAnchorY
-    } = this.props as LabelSeriesProps;
+function LabelSeries(props: LabelSeriesProps): JSX.Element | null {
+  const {
+    animation, allowOffsetToBeReversed, className, data, _data, getLabel,
+    marginLeft, marginTop, rotation, style, xRange, yRange, labelAnchorX,
+    labelAnchorY, getAttributeFunctor, onValueClickHandler,
+    onValueRightClickHandler, onValueMouseOverHandler, onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
     if (!data) {
       return null;
     }
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <LabelSeries {...this.props} animation={false} _data={data} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <LabelSeries {...props} animation={false} _data={data} />
         </Animation>
       );
     }
 
-    const xFunctor = this._getAttributeFunctor('x')!;
-    const yFunctor = this._getAttributeFunctor('y')!;
+    const xFunctor = getAttributeFunctor('x')!;
+    const yFunctor = getAttributeFunctor('y')!;
 
     return (
       <g
@@ -111,12 +101,10 @@ class LabelSeries extends AbstractSeries<any> {
           const attrs = {
             dominantBaseline: getDominantBaseline(labelAnchorY, aboveMiddle),
             className: 'rv-xy-plot__series--label-text',
-            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
-            onContextMenu: (e: React.MouseEvent<SVGElement>) =>
-              this._valueRightClickHandler(d, e),
-            onMouseOver: (e: React.MouseEvent<SVGElement>) =>
-              this._valueMouseOverHandler(d, e),
-            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e),
+            onClick: (e: React.MouseEvent<SVGElement>) => onValueClickHandler?.(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) => onValueRightClickHandler?.(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) => onValueMouseOverHandler?.(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => onValueMouseOutHandler?.(d, e),
             textAnchor: getTextAnchor(labelAnchorX, leftOfMiddle),
             x,
             y,
@@ -133,7 +121,6 @@ class LabelSeries extends AbstractSeries<any> {
       </g>
     );
   }
-}
 
 (LabelSeries as any).propTypes = {
   animation: PropTypes.bool,

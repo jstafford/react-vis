@@ -26,6 +26,7 @@ import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--bar';
 
@@ -38,39 +39,14 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   barWidth?: number;
 }
 
-class BarSeries extends AbstractSeries<any> {
-  static get propTypes() {
-    return {
-      ...(AbstractSeries as any).propTypes,
-      linePosAttr: PropTypes.string,
-      valuePosAttr: PropTypes.string,
-      lineSizeAttr: PropTypes.string,
-      valueSizeAttr: PropTypes.string,
-      cluster: PropTypes.string,
-      barWidth: PropTypes.number
-    };
-  }
-
-  static get defaultProps() {
-    return {
-      barWidth: 0.85
-    };
-  }
-
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      data,
-      linePosAttr,
-      lineSizeAttr,
-      marginLeft,
-      marginTop,
-      style,
-      valuePosAttr,
-      valueSizeAttr,
-      barWidth
-    } = this.props as BarSeriesProps;
+function BarSeries(props: BarSeriesProps): JSX.Element | null {
+  const {
+    animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
+    marginTop, style, valuePosAttr, valueSizeAttr, barWidth,
+    getScaleDistance, getAttributeFunctor, getAttr0Functor,
+    onValueClickHandler, onValueRightClickHandler, onValueMouseOverHandler,
+    onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
 
     if (!data) {
       return null;
@@ -78,23 +54,23 @@ class BarSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <BarSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <BarSeries {...props} animation={false} />
         </Animation>
       );
     }
 
-    const {sameTypeTotal, sameTypeIndex} = getStackParams(this.props as any);
+    const {sameTypeTotal, sameTypeIndex} = getStackParams(props as any);
 
-    const distance = this._getScaleDistance(linePosAttr as string);
-    const lineFunctor = this._getAttributeFunctor(linePosAttr as string);
-    const valueFunctor = this._getAttributeFunctor(valuePosAttr as string);
-    const value0Functor = this._getAttr0Functor(valuePosAttr as string);
+    const distance = getScaleDistance(linePosAttr as string);
+    const lineFunctor = getAttributeFunctor(linePosAttr as string);
+    const valueFunctor = getAttributeFunctor(valuePosAttr as string);
+    const value0Functor = getAttr0Functor(valuePosAttr as string);
     const fillFunctor =
-      this._getAttributeFunctor('fill') || this._getAttributeFunctor('color');
+      getAttributeFunctor('fill') || getAttributeFunctor('color');
     const strokeFunctor =
-      this._getAttributeFunctor('stroke') || this._getAttributeFunctor('color');
-    const opacityFunctor = this._getAttributeFunctor('opacity');
+      getAttributeFunctor('stroke') || getAttributeFunctor('color');
+    const opacityFunctor = getAttributeFunctor('opacity');
 
     const halfSpace = (distance / 2) * (barWidth as number);
 
@@ -133,17 +109,27 @@ class BarSeries extends AbstractSeries<any> {
             [lineSizeAttr as string]: spacePerBar,
             [valuePosAttr as string]: Math.min(value0Functor!(d), valueFunctor!(d)),
             [valueSizeAttr as string]: Math.abs(-value0Functor!(d) + valueFunctor!(d)),
-            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
-            onContextMenu: (e: React.MouseEvent<SVGElement>) => this._valueRightClickHandler(d, e),
-            onMouseOver: (e: React.MouseEvent<SVGElement>) => this._valueMouseOverHandler(d, e),
-            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e)
+            onClick: (e: React.MouseEvent<SVGElement>) => onValueClickHandler?.(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) => onValueRightClickHandler?.(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) => onValueMouseOverHandler?.(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => onValueMouseOutHandler?.(d, e)
           };
           return <rect key={`${i}`} {...attrs} />;
         })}
       </g>
     );
   }
-}
+
+(BarSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
+  linePosAttr: PropTypes.string,
+  valuePosAttr: PropTypes.string,
+  lineSizeAttr: PropTypes.string,
+  valueSizeAttr: PropTypes.string,
+  cluster: PropTypes.string,
+  barWidth: PropTypes.number
+};
+(BarSeries as any).defaultProps = {barWidth: 0.85};
 
 (BarSeries as any).displayName = 'BarSeries';
 

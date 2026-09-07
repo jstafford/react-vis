@@ -33,16 +33,17 @@ export interface LineSeriesCanvasProps extends AbstractSeriesProps<any> {
   curve?: string | ((arg: any) => any);
 }
 
-class LineSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface LineSeriesCanvasComponent {
+  (props: LineSeriesCanvasProps): JSX.Element;
+  renderLayer: (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const LineSeriesCanvas = ((props: LineSeriesCanvasProps): JSX.Element => <div />) as LineSeriesCanvasComponent;
 
-  static renderLayer(props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
+(LineSeriesCanvas as any).requiresSVG = false;
+(LineSeriesCanvas as any).isCanvas = true;
+(LineSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(LineSeriesCanvas as any).renderLayer = (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       curve,
       data,
@@ -86,12 +87,7 @@ class LineSeriesCanvas extends AbstractSeries<any> {
     // set back to default
     ctx.lineWidth = 1;
     ctx.setLineDash([]);
-  }
-
-  render(): JSX.Element {
-    return <div />;
-  }
-}
+};
 
 (LineSeriesCanvas as any).displayName = 'LineSeriesCanvas';
 (LineSeriesCanvas as any).defaultProps = {

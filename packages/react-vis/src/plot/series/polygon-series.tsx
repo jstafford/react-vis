@@ -25,6 +25,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--polygon';
 const DEFAULT_COLOR = '#12939A';
@@ -42,23 +43,12 @@ const generatePath = (
 
 export interface PolygonSeriesProps extends AbstractSeriesProps<any> {}
 
-class PolygonSeries extends AbstractSeries<any> {
-  static get propTypes(): {[key: string]: any} {
-    return {
-      ...(AbstractSeries as any).propTypes
-    };
-  }
-
-  render(): JSX.Element | null {
-    const {
-      animation,
-      color,
-      className,
-      data,
-      marginLeft,
-      marginTop,
-      style
-    } = this.props as PolygonSeriesProps;
+function PolygonSeries(props: PolygonSeriesProps): JSX.Element | null {
+  const {
+    animation, className, data, marginLeft, marginTop, style,
+    getAttributeFunctor, onSeriesMouseOverHandler, onSeriesMouseOutHandler,
+    onSeriesClickHandler, onSeriesRightClickHandler
+  } = {...props, ...useAbstractSeries(props)};
 
     if (!data) {
       return null;
@@ -66,23 +56,23 @@ class PolygonSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <PolygonSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <PolygonSeries {...props} animation={false} />
         </Animation>
       );
     }
-    const xFunctor = this._getAttributeFunctor('x')!;
-    const yFunctor = this._getAttributeFunctor('y')!;
+    const xFunctor = getAttributeFunctor('x')!;
+    const yFunctor = getAttributeFunctor('y')!;
 
     return (
       <path
         {...{
           className: getCombinedClassName(predefinedClassName, className),
-          onMouseOver: this._seriesMouseOverHandler,
-          onMouseOut: this._seriesMouseOutHandler,
-          onClick: this._seriesClickHandler,
-          onContextMenu: this._seriesRightClickHandler,
-          fill: (color as string) || DEFAULT_COLOR,
+          onMouseOver: onSeriesMouseOverHandler,
+          onMouseOut: onSeriesMouseOutHandler,
+          onClick: onSeriesClickHandler,
+          onContextMenu: onSeriesRightClickHandler,
+          fill: (props.color as string) || DEFAULT_COLOR,
           style,
           d: generatePath(data, xFunctor, yFunctor),
           transform: `translate(${marginLeft},${marginTop})`
@@ -90,8 +80,10 @@ class PolygonSeries extends AbstractSeries<any> {
       />
     );
   }
-}
 
+  (PolygonSeries as any).propTypes = {
+    ...(AbstractSeries as any).propTypes
+  };
 (PolygonSeries as any).displayName = 'PolygonSeries';
 
 export default PolygonSeries;

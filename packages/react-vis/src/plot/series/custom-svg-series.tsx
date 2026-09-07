@@ -22,6 +22,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -137,35 +138,27 @@ function getInnerComponent({
   );
 }
 
-class CustomSVGSeries extends AbstractSeries<any> {
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      customComponent,
-      data,
-      innerHeight,
-      innerWidth,
-      marginLeft,
-      marginTop,
-      style,
-      size
-    } = this.props as CustomSVGSeriesProps;
+function CustomSVGSeries(props: CustomSVGSeriesProps): JSX.Element | null {
+  const {
+    animation, className, customComponent, data,
+    marginLeft, marginTop, style, size, getAttributeFunctor,
+    onValueMouseOverHandler, onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
 
-    if (!data || !innerWidth || !innerHeight) {
+    if (!data || !props.innerWidth || !props.innerHeight) {
       return null;
     }
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <CustomSVGSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <CustomSVGSeries {...props} animation={false} />
         </Animation>
       );
     }
 
-    const x = this._getAttributeFunctor('x')!;
-    const y = this._getAttributeFunctor('y')!;
+    const x = getAttributeFunctor('x')!;
+    const y = getAttributeFunctor('y')!;
     const contents = data.map((seriesComponent: any, index: number) => {
       const positionInPixels = {
         x: x(seriesComponent),
@@ -184,8 +177,8 @@ class CustomSVGSeries extends AbstractSeries<any> {
           className="rv-xy-plot__series--custom-svg"
           key={`rv-xy-plot__series--custom-svg-${index}`}
           transform={`translate(${positionInPixels.x},${positionInPixels.y})`}
-          onMouseEnter={e => this._valueMouseOverHandler(seriesComponent, e)}
-          onMouseLeave={e => this._valueMouseOutHandler(seriesComponent, e)}
+          onMouseEnter={e => onValueMouseOverHandler?.(seriesComponent, e)}
+          onMouseLeave={e => onValueMouseOutHandler?.(seriesComponent, e)}
         >
           {innerComponent}
         </g>
@@ -200,7 +193,6 @@ class CustomSVGSeries extends AbstractSeries<any> {
       </g>
     );
   }
-}
 
 (CustomSVGSeries as any).propTypes = {
   animation: PropTypes.bool,

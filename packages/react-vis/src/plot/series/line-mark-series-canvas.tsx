@@ -24,26 +24,23 @@ import LineSeriesCanvas from './line-series-canvas';
 
 export interface LineMarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class LineMarkSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
-
-  static get isCanvas(): boolean {
-    return true;
-  }
-
-  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
-    LineSeriesCanvas.renderLayer(props, ctx);
-    MarkSeriesCanvas.renderLayer(props, ctx);
-  }
-
-  render(): null {
-    return null;
-  }
+interface LineMarkSeriesCanvasComponent {
+  (props: LineMarkSeriesCanvasProps): null;
+  renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
+const LineMarkSeriesCanvas = ((props: LineMarkSeriesCanvasProps): null => null) as LineMarkSeriesCanvasComponent;
+
+(LineMarkSeriesCanvas as any).requiresSVG = false;
+(LineMarkSeriesCanvas as any).isCanvas = true;
+(LineMarkSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(LineMarkSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
+    LineSeriesCanvas.renderLayer(props, ctx);
+    MarkSeriesCanvas.renderLayer(props, ctx);
+};
+
 (LineMarkSeriesCanvas as any).displayName = 'LineMarkSeriesCanvas';
+(LineMarkSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
 (LineMarkSeriesCanvas as any).propTypes = {
   ...(AbstractSeries as any).propTypes
 };

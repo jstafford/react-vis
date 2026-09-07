@@ -27,6 +27,7 @@ import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_OPACITY} from 'theme';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--whisker';
 const DEFAULT_STROKE_WIDTH = 1;
@@ -189,44 +190,37 @@ const renderWhiskerMark = (whiskerMarkProps: WhiskerMarkProps) => (
   );
 };
 
-class WhiskerSeries extends AbstractSeries<any> {
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      crossBarWidth,
-      data,
-      marginLeft,
-      marginTop,
-      strokeWidth,
-      style
-    } = this.props as WhiskerSeriesProps;
+function WhiskerSeries(props: WhiskerSeriesProps): JSX.Element | null {
+  const {
+    animation, className, crossBarWidth, data, marginLeft, marginTop,
+    strokeWidth, style, getAttributeFunctor, onValueClickHandler,
+    onValueRightClickHandler, onValueMouseOverHandler, onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
     if (!data) {
       return null;
     }
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <WhiskerSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <WhiskerSeries {...props} animation={false} />
         </Animation>
       );
     }
 
     const whiskerMarkProps: WhiskerMarkProps = {
       crossBarWidth: crossBarWidth ?? DEFAULT_CROSS_BAR_WIDTH,
-      opacityFunctor: this._getAttributeFunctor('opacity'),
-      sizeFunctor: this._getAttributeFunctor('size'),
+      opacityFunctor: getAttributeFunctor('opacity'),
+      sizeFunctor: getAttributeFunctor('size'),
       strokeFunctor:
-        this._getAttributeFunctor('stroke') ||
-        this._getAttributeFunctor('color'),
+        getAttributeFunctor('stroke') || getAttributeFunctor('color'),
       strokeWidth: strokeWidth ?? DEFAULT_STROKE_WIDTH,
       style: style as React.CSSProperties,
-      xFunctor: this._getAttributeFunctor('x'),
-      yFunctor: this._getAttributeFunctor('y'),
-      valueClickHandler: this._valueClickHandler,
-      valueRightClickHandler: this._valueRightClickHandler,
-      valueMouseOverHandler: this._valueMouseOverHandler,
-      valueMouseOutHandler: this._valueMouseOutHandler
+      xFunctor: getAttributeFunctor('x'),
+      yFunctor: getAttributeFunctor('y'),
+      valueClickHandler: (d, e) => onValueClickHandler?.(d, e),
+      valueRightClickHandler: (d, e) => onValueRightClickHandler?.(d, e),
+      valueMouseOverHandler: (d, e) => onValueMouseOverHandler?.(d, e),
+      valueMouseOutHandler: (d, e) => onValueMouseOutHandler?.(d, e)
     };
 
     return (
@@ -238,7 +232,6 @@ class WhiskerSeries extends AbstractSeries<any> {
       </g>
     );
   }
-}
 
 (WhiskerSeries as any).displayName = 'WhiskerSeries';
 (WhiskerSeries as any).propTypes = {

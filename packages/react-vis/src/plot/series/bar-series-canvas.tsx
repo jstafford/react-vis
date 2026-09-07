@@ -43,16 +43,17 @@ function getScaleDistance(props: BarSeriesCanvasProps, attr: string): number {
   return scaleObject ? scaleObject.distance : 0;
 }
 
-class BarSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface BarSeriesCanvasComponent {
+  (props: BarSeriesCanvasProps): null;
+  renderLayer: (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const BarSeriesCanvas = ((props: BarSeriesCanvasProps) => null) as BarSeriesCanvasComponent;
 
-  static renderLayer(props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
+(BarSeriesCanvas as any).requiresSVG = false;
+(BarSeriesCanvas as any).isCanvas = true;
+(BarSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(BarSeriesCanvas as any).renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       data,
       linePosAttr,
@@ -115,12 +116,7 @@ class BarSeriesCanvas extends AbstractSeries<any> {
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (BarSeriesCanvas as any).displayName = 'BarSeriesCanvas';
 (BarSeriesCanvas as any).defaultProps = {

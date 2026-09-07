@@ -25,6 +25,7 @@ import {geoPath} from 'd3-geo';
 import {scaleLinear} from 'd3-scale';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -49,9 +50,12 @@ function getDomain(data: Array<{value: number}>): {min: number; max: number} {
   );
 }
 
-class ContourSeries extends AbstractSeries<any> {
-  render(): JSX.Element | null {
-    const {
+function ContourSeries(props: ContourSeriesProps): JSX.Element | null {
+  const {
+    getAttributeFunctor,
+    ...series
+  } = {...props, ...useAbstractSeries(props)};
+  const {
       animation,
       bandwidth,
       className,
@@ -62,7 +66,7 @@ class ContourSeries extends AbstractSeries<any> {
       marginLeft,
       marginTop,
       style
-    } = this.props as ContourSeriesProps;
+    } = series as ContourSeriesProps;
 
     if (!data || !innerWidth || !innerHeight) {
       return null;
@@ -70,14 +74,14 @@ class ContourSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <ContourSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <ContourSeries {...props} animation={false} />
         </Animation>
       );
     }
 
-    const x = this._getAttributeFunctor('x')!;
-    const y = this._getAttributeFunctor('y')!;
+    const x = getAttributeFunctor('x')!;
+    const y = getAttributeFunctor('y')!;
 
     const contouredData = contourDensity()
       .x((d: any) => x(d))
@@ -111,7 +115,6 @@ class ContourSeries extends AbstractSeries<any> {
       </g>
     );
   }
-}
 
 (ContourSeries as any).propTypes = {
   ...(AbstractSeries as any).propTypes,

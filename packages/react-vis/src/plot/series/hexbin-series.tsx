@@ -28,6 +28,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {CONTINUOUS_COLOR_RANGE} from 'theme';
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--hexbin';
 
@@ -50,9 +51,12 @@ function getColorDomain(
   return [0, Math.max(...hexes.map(row => row.length))];
 }
 
-class HexbinSeries extends AbstractSeries<any> {
-  render(): JSX.Element | null {
-    const {
+function HexbinSeries(props: HexbinSeriesProps): JSX.Element | null {
+  const {
+    getAttributeFunctor,
+    ...series
+  } = {...props, ...useAbstractSeries(props)};
+  const {
       animation,
       className,
       colorRange,
@@ -66,7 +70,7 @@ class HexbinSeries extends AbstractSeries<any> {
       style,
       xOffset,
       yOffset
-    } = this.props as HexbinSeriesProps;
+    } = series as HexbinSeriesProps;
 
     if (!data) {
       return null;
@@ -74,13 +78,13 @@ class HexbinSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <HexbinSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <HexbinSeries {...props} animation={false} />
         </Animation>
       );
     }
-    const x = this._getAttributeFunctor('x')!;
-    const y = this._getAttributeFunctor('y')!;
+    const x = getAttributeFunctor('x')!;
+    const y = getAttributeFunctor('y')!;
 
     const hex = hexbin()
       .x((d: any) => x(d) + (xOffset ?? 0))
@@ -91,7 +95,7 @@ class HexbinSeries extends AbstractSeries<any> {
     const hexagonPath = hex.hexagon();
     const hexes = hex(data);
 
-    const countDomain = getColorDomain(this.props as HexbinSeriesProps, hexes);
+    const countDomain = getColorDomain(props, hexes);
     const color = scaleLinear<string>()
       .domain(countDomain)
       .range((colorRange || CONTINUOUS_COLOR_RANGE) as string[]);
@@ -111,19 +115,16 @@ class HexbinSeries extends AbstractSeries<any> {
               : hexagonPath,
             fill: color(d.length),
             transform: `translate(${d.x}, ${d.y})`,
-            onClick: (e: React.MouseEvent<SVGElement>) => this._valueClickHandler(d, e),
-            onContextMenu: (e: React.MouseEvent<SVGElement>) =>
-              this._valueRightClickHandler(d, e),
-            onMouseOver: (e: React.MouseEvent<SVGElement>) =>
-              this._valueMouseOverHandler(d, e),
-            onMouseOut: (e: React.MouseEvent<SVGElement>) => this._valueMouseOutHandler(d, e)
+            onClick: (e: React.MouseEvent<SVGElement>) => series.onValueClickHandler?.(d, e),
+            onContextMenu: (e: React.MouseEvent<SVGElement>) => series.onValueRightClickHandler?.(d, e),
+            onMouseOver: (e: React.MouseEvent<SVGElement>) => series.onValueMouseOverHandler?.(d, e),
+            onMouseOut: (e: React.MouseEvent<SVGElement>) => series.onValueMouseOutHandler?.(d, e)
           };
           return <path key={String(i)} {...attrs} />;
         })}
       </g>
     );
   }
-}
 
 (HexbinSeries as any).propTypes = {
   ...(AbstractSeries as any).propTypes,

@@ -36,26 +36,22 @@ const propTypes = {
   markStyle: PropTypes.object
 };
 
-class LineMarkSeries extends AbstractSeries<any> {
-  static get defaultProps() {
-    return {
-      ...(LineSeries as any).defaultProps,
-      lineStyle: {},
-      markStyle: {}
-    };
-  }
-
-  render(): JSX.Element {
-    const {lineStyle, markStyle, style} = this.props;
-    return (
-      <g className="rv-xy-plot__series rv-xy-plot__series--linemark">
-        <LineSeries {...this.props} style={{...style, ...lineStyle}} />
-        <MarkSeries {...this.props} style={{...style, ...markStyle}} />
-      </g>
-    );
-  }
+function LineMarkSeries(props: LineMarkSeriesProps): JSX.Element {
+  const {lineStyle, markStyle, style} = props;
+  return (
+    <g className="rv-xy-plot__series rv-xy-plot__series--linemark">
+      <LineSeries {...props} style={{...style, ...lineStyle}} />
+      <MarkSeries {...props} style={{...style, ...markStyle}} />
+    </g>
+  );
 }
 
+(LineMarkSeries as any).requiresSVG = true;
+(LineMarkSeries as any).defaultProps = {
+  ...(LineSeries as any).defaultProps,
+  lineStyle: {},
+  markStyle: {}
+};
 (LineMarkSeries as any).displayName = 'LineMarkSeries';
 (LineMarkSeries as any).propTypes = propTypes;
 

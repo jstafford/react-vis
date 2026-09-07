@@ -29,6 +29,7 @@ import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--line';
 
@@ -38,15 +39,14 @@ export interface AreaSeriesProps extends AbstractSeriesProps<any> {
   nullAccessor?: (d: any) => boolean;
 }
 
-class AreaSeries extends AbstractSeries<any> {
-  _renderArea(
-    data: any[],
-    x: (d: any) => any,
-    y0: (d: any) => any,
-    y: (d: any) => any,
-    curve: string | ((arg: any) => any) | null,
-    getNull: (d: any) => boolean
-  ): string | null {
+function renderArea(
+  data: any[],
+  x: (d: any) => any,
+  y0: (d: any) => any,
+  y: (d: any) => any,
+  curve: string | ((arg: any) => any) | null,
+  getNull: (d: any) => boolean
+): string | null {
     let area = d3Shape.area<any>();
     if (curve !== null) {
       if (typeof curve === 'string' && (d3Shape as any)[curve]) {
@@ -63,18 +63,25 @@ class AreaSeries extends AbstractSeries<any> {
     return area(data);
   }
 
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      curve,
-      data,
-      marginLeft,
-      marginTop,
-      style
-    } = this.props as AreaSeriesProps;
+function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
+  const {
+    animation,
+    className,
+    curve,
+    data,
+    marginLeft,
+    marginTop,
+    style,
+    getAttributeFunctor,
+    getAttr0Functor,
+    getAttributeValue,
+    onSeriesMouseOverHandler,
+    onSeriesMouseOutHandler,
+    onSeriesClickHandler,
+    onSeriesRightClickHandler
+  } = {...props, ...useAbstractSeries(props)};
 
-    if ((this.props as AreaSeriesProps).nullAccessor) {
+    if (props.nullAccessor) {
       warning('nullAccessor has been renamed to getNull', true);
     }
 
@@ -84,36 +91,36 @@ class AreaSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <AreaSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <AreaSeries {...props} animation={false} />
         </Animation>
       );
     }
 
-    const x = this._getAttributeFunctor('x');
-    const y = this._getAttributeFunctor('y');
-    const y0 = this._getAttr0Functor('y');
+    const x = getAttributeFunctor('x');
+    const y = getAttributeFunctor('y');
+    const y0 = getAttr0Functor('y');
     const stroke =
-      this._getAttributeValue('stroke') || this._getAttributeValue('color');
+      getAttributeValue('stroke') || getAttributeValue('color');
     const fill =
-      this._getAttributeValue('fill') || this._getAttributeValue('color');
-    const newOpacity = this._getAttributeValue('opacity');
+      getAttributeValue('fill') || getAttributeValue('color');
+    const newOpacity = getAttributeValue('opacity');
     const opacity = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
     const getNull =
-      (this.props as AreaSeriesProps).nullAccessor ||
-      (this.props as AreaSeriesProps).getNull ||
+      props.nullAccessor ||
+      props.getNull ||
       (() => true);
-    const d = this._renderArea(data, x as (d: any) => any, y0 as (d: any) => any, y as (d: any) => any, curve ?? null, getNull);
+    const d = renderArea(data, x as (d: any) => any, y0 as (d: any) => any, y as (d: any) => any, curve ?? null, getNull);
 
     return (
       <path
         d={d ?? undefined}
         className={getCombinedClassName(predefinedClassName, className)}
         transform={`translate(${marginLeft},${marginTop})`}
-        onMouseOver={this._seriesMouseOverHandler}
-        onMouseOut={this._seriesMouseOutHandler}
-        onClick={this._seriesClickHandler}
-        onContextMenu={this._seriesRightClickHandler}
+        onMouseOver={onSeriesMouseOverHandler}
+        onMouseOut={onSeriesMouseOutHandler}
+        onClick={onSeriesClickHandler}
+        onContextMenu={onSeriesRightClickHandler}
         style={{
           opacity,
           stroke,
@@ -123,7 +130,6 @@ class AreaSeries extends AbstractSeries<any> {
       />
     );
   }
-}
 
 (AreaSeries as any).displayName = 'AreaSeries';
 (AreaSeries as any).propTypes = {

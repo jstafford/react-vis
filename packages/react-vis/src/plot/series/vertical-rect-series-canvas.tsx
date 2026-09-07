@@ -23,25 +23,24 @@ import RectSeriesCanvas from './rect-series-canvas';
 
 export interface VerticalRectSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class VerticalRectSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface VerticalRectSeriesCanvasComponent {
+  (props: VerticalRectSeriesCanvasProps): null;
+  renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const VerticalRectSeriesCanvas = ((props: VerticalRectSeriesCanvasProps): null => null) as VerticalRectSeriesCanvasComponent;
 
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
+(VerticalRectSeriesCanvas as any).requiresSVG = false;
+(VerticalRectSeriesCanvas as any).isCanvas = true;
+(VerticalRectSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = false;
     const zeroBaseValue = attr === 'y';
     return {
       isDomainAdjustmentNeeded,
       zeroBaseValue
     };
-  }
-
-  static renderLayer(props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void {
+};
+(VerticalRectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     RectSeriesCanvas.renderLayer(
       {
         ...props,
@@ -52,14 +51,10 @@ class VerticalRectSeriesCanvas extends AbstractSeries<any> {
       },
       ctx
     );
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (VerticalRectSeriesCanvas as any).displayName = 'VerticalRectSeriesCanvas';
+(VerticalRectSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
 (VerticalRectSeriesCanvas as any).propTypes = {
   ...(AbstractSeries as any).propTypes
 };

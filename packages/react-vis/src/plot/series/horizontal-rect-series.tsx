@@ -25,29 +25,29 @@ import RectSeries from './rect-series';
 
 export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {}
 
-class HorizontalRectSeries extends AbstractSeries<any> {
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
-    const isDomainAdjustmentNeeded = false;
-    const zeroBaseValue = attr === 'x';
-    return {
-      isDomainAdjustmentNeeded,
-      zeroBaseValue
-    };
-  }
-
-  render(): JSX.Element {
-    return (
-      <RectSeries
-        {...this.props}
-        linePosAttr="y"
-        valuePosAttr="x"
-        lineSizeAttr="height"
-        valueSizeAttr="width"
-      />
-    );
-  }
+function HorizontalRectSeries(props: HorizontalRectSeriesProps): JSX.Element {
+  return (
+    <RectSeries
+      {...props}
+      linePosAttr="y"
+      valuePosAttr="x"
+      lineSizeAttr="height"
+      valueSizeAttr="width"
+    />
+  );
 }
 
+(HorizontalRectSeries as any).requiresSVG = true;
+(HorizontalRectSeries as any).getParentConfig = (attr?: string) => {
+  const isDomainAdjustmentNeeded = false;
+  const zeroBaseValue = attr === 'x';
+  return {
+    isDomainAdjustmentNeeded,
+    zeroBaseValue
+  };
+};
+(HorizontalRectSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
+(HorizontalRectSeries as any).propTypes = (AbstractSeries as any).propTypes;
 (HorizontalRectSeries as any).displayName = 'HorizontalRectSeries';
 
 export default HorizontalRectSeries;

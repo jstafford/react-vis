@@ -26,6 +26,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--rect';
 
@@ -36,30 +37,13 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
 }
 
-class RectSeries extends AbstractSeries<any> {
-  static get propTypes() {
-    return {
-      ...(AbstractSeries as any).propTypes,
-      linePosAttr: PropTypes.string,
-      valuePosAttr: PropTypes.string,
-      lineSizeAttr: PropTypes.string,
-      valueSizeAttr: PropTypes.string
-    };
-  }
-
-  render(): JSX.Element | null {
-    const {
-      animation,
-      className,
-      data,
-      linePosAttr,
-      lineSizeAttr,
-      marginLeft,
-      marginTop,
-      style,
-      valuePosAttr,
-      valueSizeAttr
-    } = this.props;
+function RectSeries(props: RectSeriesProps): JSX.Element | null {
+  const {
+    animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
+    marginTop, style, valuePosAttr, valueSizeAttr, getAttributeFunctor,
+    getAttr0Functor, onValueClickHandler, onValueRightClickHandler,
+    onValueMouseOverHandler, onValueMouseOutHandler
+  } = {...props, ...useAbstractSeries(props)};
 
     if (!data) {
       return null;
@@ -67,21 +51,21 @@ class RectSeries extends AbstractSeries<any> {
 
     if (animation) {
       return (
-        <Animation {...this.props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <RectSeries {...this.props} animation={false} />
+        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
+          <RectSeries {...props} animation={false} />
         </Animation>
       );
     }
 
-    const lineFunctor = this._getAttributeFunctor(linePosAttr);
-    const line0Functor = this._getAttr0Functor(linePosAttr);
-    const valueFunctor = this._getAttributeFunctor(valuePosAttr);
-    const value0Functor = this._getAttr0Functor(valuePosAttr);
+    const lineFunctor = getAttributeFunctor(linePosAttr!);
+    const line0Functor = getAttr0Functor(linePosAttr!);
+    const valueFunctor = getAttributeFunctor(valuePosAttr!);
+    const value0Functor = getAttr0Functor(valuePosAttr!);
     const fillFunctor =
-      this._getAttributeFunctor('fill') || this._getAttributeFunctor('color');
+      getAttributeFunctor('fill') || getAttributeFunctor('color');
     const strokeFunctor =
-      this._getAttributeFunctor('stroke') || this._getAttributeFunctor('color');
-    const opacityFunctor = this._getAttributeFunctor('opacity');
+      getAttributeFunctor('stroke') || getAttributeFunctor('color');
+    const opacityFunctor = getAttributeFunctor('opacity');
 
     return (
       <g
@@ -100,17 +84,24 @@ class RectSeries extends AbstractSeries<any> {
             [lineSizeAttr as string]: Math.abs(lineFunctor!(d) - line0Functor!(d)),
             [valuePosAttr as string]: Math.min(value0Functor!(d), valueFunctor!(d)),
             [valueSizeAttr as string]: Math.abs(-value0Functor!(d) + valueFunctor!(d)),
-            onClick: (e: React.MouseEvent) => this._valueClickHandler(d, e as any),
-            onContextMenu: (e: React.MouseEvent) => this._valueRightClickHandler(d, e as any),
-            onMouseOver: (e: React.MouseEvent) => this._valueMouseOverHandler(d, e as any),
-            onMouseOut: (e: React.MouseEvent) => this._valueMouseOutHandler(d, e as any)
+            onClick: (e: React.MouseEvent) => onValueClickHandler?.(d, e as any),
+            onContextMenu: (e: React.MouseEvent) => onValueRightClickHandler?.(d, e as any),
+            onMouseOver: (e: React.MouseEvent) => onValueMouseOverHandler?.(d, e as any),
+            onMouseOut: (e: React.MouseEvent) => onValueMouseOutHandler?.(d, e as any)
           };
           return <rect key={String(i)} {...attrs} />;
         })}
       </g>
     );
   }
-}
+
+(RectSeries as any).propTypes = {
+  ...(AbstractSeries as any).propTypes,
+  linePosAttr: PropTypes.string,
+  valuePosAttr: PropTypes.string,
+  lineSizeAttr: PropTypes.string,
+  valueSizeAttr: PropTypes.string
+};
 
 (RectSeries as any).displayName = 'RectSeries';
 

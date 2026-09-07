@@ -25,29 +25,29 @@ import BarSeries from './bar-series';
 
 export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {}
 
-class VerticalBarSeries extends AbstractSeries<any> {
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
-    const isDomainAdjustmentNeeded = attr === 'x';
-    const zeroBaseValue = attr === 'y';
-    return {
-      isDomainAdjustmentNeeded,
-      zeroBaseValue
-    };
-  }
-
-  render(): JSX.Element {
-    return (
-      <BarSeries
-        {...this.props}
-        linePosAttr="x"
-        valuePosAttr="y"
-        lineSizeAttr="width"
-        valueSizeAttr="height"
-      />
-    );
-  }
+function VerticalBarSeries(props: VerticalBarSeriesProps): JSX.Element {
+  return (
+    <BarSeries
+      {...props}
+      linePosAttr="x"
+      valuePosAttr="y"
+      lineSizeAttr="width"
+      valueSizeAttr="height"
+    />
+  );
 }
 
+(VerticalBarSeries as any).requiresSVG = true;
+(VerticalBarSeries as any).getParentConfig = (attr?: string) => {
+  const isDomainAdjustmentNeeded = attr === 'x';
+  const zeroBaseValue = attr === 'y';
+  return {
+    isDomainAdjustmentNeeded,
+    zeroBaseValue
+  };
+};
+(VerticalBarSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
+(VerticalBarSeries as any).propTypes = (AbstractSeries as any).propTypes;
 (VerticalBarSeries as any).displayName = 'VerticalBarSeries';
 
 export default VerticalBarSeries;

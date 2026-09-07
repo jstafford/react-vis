@@ -25,29 +25,29 @@ import RectSeries from './rect-series';
 
 export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {}
 
-class VerticalRectSeries extends AbstractSeries<any> {
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
-    const isDomainAdjustmentNeeded = false;
-    const zeroBaseValue = attr === 'y';
-    return {
-      isDomainAdjustmentNeeded,
-      zeroBaseValue
-    };
-  }
-
-  render(): JSX.Element {
-    return (
-      <RectSeries
-        {...this.props}
-        linePosAttr="x"
-        valuePosAttr="y"
-        lineSizeAttr="width"
-        valueSizeAttr="height"
-      />
-    );
-  }
+function VerticalRectSeries(props: VerticalRectSeriesProps): JSX.Element {
+  return (
+    <RectSeries
+      {...props}
+      linePosAttr="x"
+      valuePosAttr="y"
+      lineSizeAttr="width"
+      valueSizeAttr="height"
+    />
+  );
 }
 
+(VerticalRectSeries as any).requiresSVG = true;
+(VerticalRectSeries as any).getParentConfig = (attr?: string) => {
+  const isDomainAdjustmentNeeded = false;
+  const zeroBaseValue = attr === 'y';
+  return {
+    isDomainAdjustmentNeeded,
+    zeroBaseValue
+  };
+};
+(VerticalRectSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
+(VerticalRectSeries as any).propTypes = (AbstractSeries as any).propTypes;
 (VerticalRectSeries as any).displayName = 'VerticalRectSeries';
 
 export default VerticalRectSeries;

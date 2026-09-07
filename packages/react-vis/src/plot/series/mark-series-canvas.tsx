@@ -27,16 +27,17 @@ import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 
 export interface MarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class MarkSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface MarkSeriesCanvasComponent {
+  (props: MarkSeriesCanvasProps): null;
+  renderLayer: (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const MarkSeriesCanvas = ((props: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
 
-  static renderLayer(props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
+(MarkSeriesCanvas as any).requiresSVG = false;
+(MarkSeriesCanvas as any).isCanvas = true;
+(MarkSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(MarkSeriesCanvas as any).renderLayer = (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {data, marginLeft, marginTop} = props;
 
     const x = getAttributeFunctor(props, 'x');
@@ -66,14 +67,10 @@ class MarkSeriesCanvas extends AbstractSeries<any> {
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (MarkSeriesCanvas as any).displayName = 'MarkSeriesCanvas';
+(MarkSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
 
 (MarkSeriesCanvas as any).propTypes = {
   ...(AbstractSeries as any).propTypes

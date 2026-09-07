@@ -23,25 +23,24 @@ import BarSeriesCanvas from './bar-series-canvas';
 
 export interface HorizontalBarSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
-class HorizontalBarSeriesCanvas extends AbstractSeries<any> {
-  static get requiresSVG(): boolean {
-    return false;
-  }
+interface HorizontalBarSeriesCanvasComponent {
+  (props: HorizontalBarSeriesCanvasProps): null;
+  renderLayer: (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
+}
 
-  static get isCanvas(): boolean {
-    return true;
-  }
+const HorizontalBarSeriesCanvas = ((props: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
 
-  static getParentConfig(attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} {
+(HorizontalBarSeriesCanvas as any).requiresSVG = false;
+(HorizontalBarSeriesCanvas as any).isCanvas = true;
+(HorizontalBarSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = attr === 'y';
     const zeroBaseValue = attr === 'x';
     return {
       isDomainAdjustmentNeeded,
       zeroBaseValue
     };
-  }
-
-  static renderLayer(props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void {
+};
+(HorizontalBarSeriesCanvas as any).renderLayer = (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     BarSeriesCanvas.renderLayer(
       {
         ...props,
@@ -52,14 +51,10 @@ class HorizontalBarSeriesCanvas extends AbstractSeries<any> {
       },
       ctx
     );
-  }
-
-  render(): null {
-    return null;
-  }
-}
+};
 
 (HorizontalBarSeriesCanvas as any).displayName = 'HorizontalBarSeriesCanvas';
+(HorizontalBarSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
 (HorizontalBarSeriesCanvas as any).propTypes = {
   ...(AbstractSeries as any).propTypes
 };
