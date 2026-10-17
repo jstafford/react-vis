@@ -19,14 +19,12 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {useAbstractSeries, AbstractSeriesProps} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--rect';
 
@@ -35,15 +33,19 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
   valuePosAttr?: string;
   lineSizeAttr?: string;
   valueSizeAttr?: string;
+  _displayName?: string;
 }
 
-function RectSeries(props: RectSeriesProps): JSX.Element | null {
+export function RectSeries({
+  _displayName = 'RectSeries',
+  ...rest
+}: RectSeriesProps): JSX.Element | null {
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
     marginTop, style, valuePosAttr, valueSizeAttr, getAttributeFunctor,
     getAttr0Functor, onValueClickHandler, onValueRightClickHandler,
     onValueMouseOverHandler, onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...rest, ...useAbstractSeries(rest)};
 
     if (!data) {
       return null;
@@ -51,8 +53,8 @@ function RectSeries(props: RectSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <RectSeries {...props} animation={false} />
+        <Animation {...rest} animatedProps={ANIMATED_SERIES_PROPS}>
+          <RectSeries {...rest} animation={false} />
         </Animation>
       );
     }
@@ -94,15 +96,3 @@ function RectSeries(props: RectSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(RectSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  linePosAttr: PropTypes.string,
-  valuePosAttr: PropTypes.string,
-  lineSizeAttr: PropTypes.string,
-  valueSizeAttr: PropTypes.string
-};
-
-(RectSeries as any).displayName = 'RectSeries';
-
-export default RectSeries;

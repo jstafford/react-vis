@@ -38,11 +38,28 @@ export interface SankeyLinkProps {
   opacity?: number;
   strokeWidth: number;
   style?: React.SVGProps<SVGPathElement> | React.CSSProperties;
+  _displayName?: string;
+  _requiresSVG?: boolean;
   [key: string]: any;
 }
 
-function SankeyLink(props: SankeyLinkProps): JSX.Element {
-  const {
+function SankeyLink({
+  animation,
+  data,
+  node,
+  opacity,
+  color,
+  strokeWidth,
+  style,
+  onLinkClick = () => undefined,
+  onLinkMouseOver = () => undefined,
+  onLinkMouseOut = () => undefined,
+  _displayName = 'SankeyLink',
+  _requiresSVG = true,
+  ...rest
+}:SankeyLinkProps): JSX.Element {
+  if (animation) {
+    const allProps = {
     animation,
     data,
     node,
@@ -50,21 +67,22 @@ function SankeyLink(props: SankeyLinkProps): JSX.Element {
     color,
     strokeWidth,
     style,
-    onLinkClick = () => undefined,
-    onLinkMouseOver = () => undefined,
-    onLinkMouseOut = () => undefined
-  } = props;
-  if (animation) {
+    onLinkClick,
+    onLinkMouseOver,
+    onLinkMouseOut,
+    _requiresSVG,
+    ...rest
+  }
     return (
-      <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-        <SankeyLink {...props} animation={undefined} />
+      <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+        <SankeyLink {...allProps} animation={undefined} />
       </Animation>
     );
   }
   return (
     <path
       d={data}
-      {...(style)}
+      {...(style as React.SVGProps<SVGPathElement>)}
       className="rv-sankey__link"
       opacity={Number.isFinite(opacity) ? opacity : DEFAULT_LINK_OPACITY}
       stroke={color || DEFAULT_LINK_COLOR}
@@ -76,8 +94,3 @@ function SankeyLink(props: SankeyLinkProps): JSX.Element {
     />
   );
 }
-
-(SankeyLink as any).displayName = 'SankeyLink';
-(SankeyLink as any).requiresSVG = true;
-
-export default SankeyLink;

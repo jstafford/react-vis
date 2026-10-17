@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -65,6 +64,7 @@ interface HintProps {
   getAlignStyle?: (align: AlignShape, x: number, y: number) => React.CSSProperties;
   orientation?: string;
   children?: React.ReactNode;
+  _displayName?: string;
   [key: string]: any;
 }
 
@@ -74,7 +74,14 @@ function defaultFormat(value: {[key: string]: any}) {
   });
 }
 
-const Hint: any = (props: HintProps) => {
+export const Hint: any = ({
+  format = defaultFormat,
+  align = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO},
+  style = {},
+  _displayName = 'Hint',
+  ...restProps
+}: HintProps) => {
+  const allProps = {...restProps, format, align, style};
 
   function getAlign(x: number, y: number): AlignShape {
     const {
@@ -82,7 +89,7 @@ const Hint: any = (props: HintProps) => {
       innerHeight = 0,
       orientation,
       align: alignProp = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO}
-    } = props;
+    } = allProps;
     const {horizontal, vertical} = alignProp;
     const align: AlignShape = orientation
       ? mapOrientationToAlign(orientation)
@@ -97,7 +104,7 @@ const Hint: any = (props: HintProps) => {
   }
 
   function getAlignClassNames(align: AlignShape) {
-    const {orientation} = props;
+    const {orientation} = allProps;
     const orientationClass = orientation
       ? `rv-hint--orientation-${orientation}`
       : '';
@@ -116,7 +123,7 @@ const Hint: any = (props: HintProps) => {
     if (y === undefined || y === null) {
       return {bottom: 0};
     }
-    const {innerHeight = 0, marginBottom = 0} = props;
+    const {innerHeight = 0, marginBottom = 0} = allProps;
     return {bottom: marginBottom + innerHeight - y};
   }
 
@@ -124,7 +131,7 @@ const Hint: any = (props: HintProps) => {
     if (x === undefined || x === null) {
       return {left: 0};
     }
-    const {marginLeft = 0} = props;
+    const {marginLeft = 0} = allProps;
     return {left: marginLeft + x};
   }
 
@@ -132,7 +139,7 @@ const Hint: any = (props: HintProps) => {
     if (x === undefined || x === null) {
       return {right: 0};
     }
-    const {innerWidth = 0, marginRight = 0} = props;
+    const {innerWidth = 0, marginRight = 0} = allProps;
     return {right: marginRight + innerWidth - x};
   }
 
@@ -140,15 +147,15 @@ const Hint: any = (props: HintProps) => {
     if (y === undefined || y === null) {
       return {top: 0};
     }
-    const {marginTop = 0} = props;
+    const {marginTop = 0} = allProps;
     return {top: marginTop + y};
   }
 
   function getPositionInfo() {
-    const {value = {}, getAlignStyle: customAlignStyle} = props;
+    const {value = {}, getAlignStyle: customAlignStyle} = allProps;
 
-    const xFunctor = getAttributeFunctor(props, 'x') as (datum: any) => number;
-    const yFunctor = getAttributeFunctor(props, 'y') as (datum: any) => number;
+    const xFunctor = getAttributeFunctor(allProps, 'x') as (datum: any) => number;
+    const yFunctor = getAttributeFunctor(allProps, 'y') as (datum: any) => number;
     const x = xFunctor(value);
     const y = yFunctor(value);
 
@@ -207,11 +214,9 @@ const Hint: any = (props: HintProps) => {
 
   const {
     value = {},
-    format = defaultFormat,
     children,
-    style = {},
     className
-  } = props;
+  } = allProps;
 
   const {position, positionClassName} = getPositionInfo();
   return (
@@ -247,49 +252,3 @@ const Hint: any = (props: HintProps) => {
     </div>
   );
 };
-
-(Hint as any).displayName = 'Hint';
-(Hint as any).defaultProps = {
-  format: defaultFormat,
-  align: {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO},
-  style: {}
-};
-(Hint as any).propTypes = {
-  marginTop: PropTypes.number,
-  marginLeft: PropTypes.number,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number,
-  scales: PropTypes.object,
-  value: PropTypes.object,
-  format: PropTypes.func,
-  style: PropTypes.object,
-  className: PropTypes.string,
-  align: PropTypes.shape({
-    horizontal: PropTypes.oneOf([
-      ALIGN.AUTO,
-      ALIGN.LEFT,
-      ALIGN.RIGHT,
-      ALIGN.LEFT_EDGE,
-      ALIGN.RIGHT_EDGE
-    ]),
-    vertical: PropTypes.oneOf([
-      ALIGN.AUTO,
-      ALIGN.BOTTOM,
-      ALIGN.TOP,
-      ALIGN.BOTTOM_EDGE,
-      ALIGN.TOP_EDGE
-    ])
-  }),
-  getAlignStyle: PropTypes.func,
-  orientation: PropTypes.oneOf([
-    ORIENTATION.BOTTOM_LEFT,
-    ORIENTATION.BOTTOM_RIGHT,
-    ORIENTATION.TOP_LEFT,
-    ORIENTATION.TOP_RIGHT
-  ])
-};
-
- (Hint as any).ORIENTATION = ORIENTATION;
- (Hint as any).ALIGN = ALIGN;
-
-export default Hint;

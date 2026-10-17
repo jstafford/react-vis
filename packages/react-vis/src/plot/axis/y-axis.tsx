@@ -20,32 +20,19 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {ORIENTATION} from 'utils/axis-utils';
 
 import Axis, {AxisProps} from './axis';
 
 const {LEFT, RIGHT} = ORIENTATION;
 
-const propTypes = {
-  ...Axis.propTypes,
-  orientation: PropTypes.oneOf([LEFT, RIGHT])
-};
-
-const defaultProps = {
-  orientation: LEFT,
-  attr: 'y',
-  attrAxis: 'x'
-};
-
-function YAxis(props: AxisProps) {
-  return <Axis {...props} />;
+export function YAxis({
+  orientation = LEFT,
+  attr = 'y',
+  attrAxis = 'x',
+  _displayName = 'YAxis',
+  _requiresSVG = true,
+  ...restProps
+}: AxisProps & {_displayName?: string}) {
+  return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 }
-
-YAxis.displayName = 'YAxis';
-YAxis.propTypes = propTypes;
-YAxis.defaultProps = defaultProps;
-YAxis.requiresSVG = true;
-
-export default YAxis;

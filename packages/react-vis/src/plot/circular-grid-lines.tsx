@@ -20,10 +20,8 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {getAttributeScale} from 'utils/scales-utils';
-import Animation, {AnimationPropType} from 'animation';
+import Animation from 'animation';
 
 import {getTicksTotalFromSize, getTickValues} from '../utils/axis-utils';
 
@@ -45,7 +43,9 @@ interface CircularGridLinesProps {
   marginRight?: number;
   innerWidth?: number;
   innerHeight?: number;
-  [key: string]: any;
+  // [key: string]: any;
+  _displayName?: string;
+  _requiresSVG?: boolean;
 }
 
 const animatedProps = [
@@ -62,10 +62,12 @@ const animatedProps = [
   'tickTotal'
 ];
 
-function CircularGridLines({
+export function CircularGridLines({
   animation,
-  centerX,
-  centerY,
+  centerX = 0,
+  centerY = 0,
+  _displayName = 'CircularGridLines',
+  _requiresSVG = true,
   ...restProps
 }: CircularGridLinesProps) {
   const defaultProps = {
@@ -128,31 +130,3 @@ function CircularGridLines({
       </g>
     );
 }
-
-(CircularGridLines as any).displayName = 'CircularGridLines';
-(CircularGridLines as any).propTypes = {
-  centerX: PropTypes.number,
-  centerY: PropTypes.number,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  top: PropTypes.number,
-  left: PropTypes.number,
-  rRange: PropTypes.arrayOf(PropTypes.number),
-  style: PropTypes.object,
-  tickValues: PropTypes.arrayOf(PropTypes.number),
-  tickTotal: PropTypes.number,
-  animation: AnimationPropType,
-  marginTop: PropTypes.number,
-  marginBottom: PropTypes.number,
-  marginLeft: PropTypes.number,
-  marginRight: PropTypes.number,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number
-};
-(CircularGridLines as any).defaultProps = {
-  centerX: 0,
-  centerY: 0
-};
-(CircularGridLines as any).requiresSVG = true;
-
-export default CircularGridLines;

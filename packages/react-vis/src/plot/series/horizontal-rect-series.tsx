@@ -20,15 +20,26 @@
 
 import React from 'react';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import RectSeries from './rect-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
-export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {}
+export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {
+  
+}
 
-function HorizontalRectSeries(props: HorizontalRectSeriesProps): JSX.Element {
+function HorizontalRectSeries({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'HorizontalRectSeries',
+  ...props
+}: HorizontalRectSeriesProps): JSX.Element {
   return (
     <RectSeries
       {...props}
+      className={className}
+      stack={stack}
+      style={style}
       linePosAttr="y"
       valuePosAttr="x"
       lineSizeAttr="height"
@@ -46,8 +57,3 @@ function HorizontalRectSeries(props: HorizontalRectSeriesProps): JSX.Element {
     zeroBaseValue
   };
 };
-(HorizontalRectSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
-(HorizontalRectSeries as any).propTypes = (AbstractSeries as any).propTypes;
-(HorizontalRectSeries as any).displayName = 'HorizontalRectSeries';
-
-export default HorizontalRectSeries;

@@ -19,10 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -38,6 +36,7 @@ export interface LabelSeriesProps extends AbstractSeriesProps<any> {
   labelAnchorX?: string;
   labelAnchorY?: string;
   _data?: any[];
+  _displayName?: string;
 }
 
 const getTextAnchor = (labelAnchorX: string | undefined, leftOfMiddle: boolean): string => {
@@ -51,21 +50,39 @@ const getDominantBaseline = (labelAnchorY: string | undefined, aboveMiddle: bool
     : 'text-after-edge';
 };
 
-function LabelSeries(props: LabelSeriesProps): JSX.Element | null {
+export function LabelSeries({
+  className = '',
+  stack = false,
+  style = {},
+  animation = false,
+  rotation = 0,
+  getLabel = (d: any) => d.label,
+  _displayName = 'LabelSeries',
+  ...restProps
+}: LabelSeriesProps): JSX.Element | null {
+  const allProps = {
+    ...restProps,
+    className,
+    stack,
+    style,
+    animation,
+    rotation,
+    getLabel
+  };
   const {
-    animation, allowOffsetToBeReversed, className, data, _data, getLabel,
-    marginLeft, marginTop, rotation, style, xRange, yRange, labelAnchorX,
+    allowOffsetToBeReversed, data, _data,
+    marginLeft, marginTop, xRange, yRange, labelAnchorX,
     labelAnchorY, getAttributeFunctor, onValueClickHandler,
     onValueRightClickHandler, onValueMouseOverHandler, onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
     if (!data) {
       return null;
     }
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <LabelSeries {...props} animation={false} _data={data} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <LabelSeries {...allProps} animation={false} _data={data} />
         </Animation>
       );
     }
@@ -121,37 +138,3 @@ function LabelSeries(props: LabelSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(LabelSeries as any).propTypes = {
-  animation: PropTypes.bool,
-  allowOffsetToBeReversed: PropTypes.bool,
-  className: PropTypes.string,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      y: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      angle: PropTypes.number,
-      radius: PropTypes.number,
-      label: PropTypes.string,
-      xOffset: PropTypes.number,
-      yOffset: PropTypes.number,
-      style: PropTypes.object
-    })
-  ).isRequired,
-  marginLeft: PropTypes.number,
-  marginTop: PropTypes.number,
-  rotation: PropTypes.number,
-  style: PropTypes.object,
-  xRange: PropTypes.arrayOf(PropTypes.number),
-  yRange: PropTypes.arrayOf(PropTypes.number),
-  labelAnchorX: PropTypes.string,
-  labelAnchorY: PropTypes.string
-};
-(LabelSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  animation: false,
-  rotation: 0,
-  getLabel: (d: any) => d.label
-};
-(LabelSeries as any).displayName = 'LabelSeries';
-export default LabelSeries;

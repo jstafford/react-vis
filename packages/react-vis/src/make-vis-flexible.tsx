@@ -113,14 +113,6 @@ function makeFlexible<P extends {height?: number; width?: number}>(
     Omit<P, 'height' | 'width'>,
     FlexibleState
   > {
-    static get propTypes() {
-      const {
-        height, // eslint-disable-line no-unused-vars
-        width, // eslint-disable-line no-unused-vars
-        ...otherPropTypes
-      } = (Component as any).propTypes || {};
-      return otherPropTypes;
-    }
 
     [CONTAINER_REF]: Element | null = null;
     cancelSubscription!: () => void;

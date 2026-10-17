@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import DiscreteColorLegendItem, {
   DiscreteColorLegendItemProps,
@@ -62,6 +61,7 @@ export interface DiscreteColorLegendProps {
   orientation?: LegendOrientation;
   style?: React.CSSProperties;
   width?: number;
+  _displayName?: string;
 }
 
 function getItemTitle(item: LegendItemValue): React.ReactNode {
@@ -95,7 +95,8 @@ function DiscreteColorLegend({
   onItemMouseLeave,
   orientation = 'vertical',
   style,
-  width
+  width,
+  _displayName = 'DiscreteColorLegendItem'
 }: DiscreteColorLegendProps): JSX.Element {
   return (
     <div
@@ -134,33 +135,5 @@ function DiscreteColorLegend({
     </div>
   );
 }
-
-(DiscreteColorLegend as any).displayName = 'DiscreteColorLegendItem';
-(DiscreteColorLegend as any).propTypes = {
-  className: PropTypes.string,
-  items: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.shape({
-        title: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
-          .isRequired,
-        color: PropTypes.string,
-        disabled: PropTypes.bool
-      }),
-      PropTypes.string.isRequired,
-      PropTypes.element
-    ])
-  ).isRequired,
-  onItemClick: PropTypes.func,
-  onItemMouseEnter: PropTypes.func,
-  onItemMouseLeave: PropTypes.func,
-  height: PropTypes.number,
-  width: PropTypes.number,
-  orientation: PropTypes.oneOf(['vertical', 'horizontal'])
-};
-(DiscreteColorLegend as any).defaultProps = {
-  className: '',
-  colors: DISCRETE_COLOR_RANGE,
-  orientation: 'vertical'
-};
 
 export default DiscreteColorLegend;

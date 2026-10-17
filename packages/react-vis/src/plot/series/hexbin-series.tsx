@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import Animation from 'animation';
 import {hexbin} from 'd3-hexbin';
 import {scaleLinear} from 'd3-scale';
@@ -27,8 +26,7 @@ import {scaleLinear} from 'd3-scale';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {CONTINUOUS_COLOR_RANGE} from 'theme';
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {useAbstractSeries, AbstractSeriesProps} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--hexbin';
 
@@ -39,6 +37,7 @@ export interface HexbinSeriesProps extends AbstractSeriesProps<any> {
   sizeHexagonsWithCount?: boolean;
   xOffset?: number;
   yOffset?: number;
+  _displayName?: string;
 }
 
 function getColorDomain(
@@ -51,25 +50,35 @@ function getColorDomain(
   return [0, Math.max(...hexes.map(row => row.length))];
 }
 
-function HexbinSeries(props: HexbinSeriesProps): JSX.Element | null {
+export function HexbinSeries({
+  radius = 20,
+  colorRange = CONTINUOUS_COLOR_RANGE,
+  xOffset = 0,
+  yOffset = 0,
+  _displayName = 'HexbinSeries',
+  ...restProps
+}: HexbinSeriesProps): JSX.Element | null {
+  const allProps = {
+    ...restProps,
+    radius,
+    colorRange,
+    xOffset,
+    yOffset
+  };
   const {
     getAttributeFunctor,
     ...series
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
   const {
       animation,
       className,
-      colorRange,
       data,
       innerHeight,
       innerWidth,
       marginLeft,
       marginTop,
-      radius,
       sizeHexagonsWithCount,
       style,
-      xOffset,
-      yOffset
     } = series as HexbinSeriesProps;
 
     if (!data) {
@@ -78,8 +87,8 @@ function HexbinSeries(props: HexbinSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <HexbinSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <HexbinSeries {...allProps} animation={false} />
         </Animation>
       );
     }
@@ -95,7 +104,7 @@ function HexbinSeries(props: HexbinSeriesProps): JSX.Element | null {
     const hexagonPath = hex.hexagon();
     const hexes = hex(data);
 
-    const countDomain = getColorDomain(props, hexes);
+    const countDomain = getColorDomain(allProps, hexes);
     const color = scaleLinear<string>()
       .domain(countDomain)
       .range((colorRange || CONTINUOUS_COLOR_RANGE) as string[]);
@@ -125,19 +134,3 @@ function HexbinSeries(props: HexbinSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(HexbinSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  radius: PropTypes.number
-};
-
-(HexbinSeries as any).defaultProps = {
-  radius: 20,
-  colorRange: CONTINUOUS_COLOR_RANGE,
-  xOffset: 0,
-  yOffset: 0
-};
-
-(HexbinSeries as any).displayName = 'HexbinSeries';
-
-export default HexbinSeries;

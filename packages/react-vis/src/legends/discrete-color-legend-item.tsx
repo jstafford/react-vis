@@ -20,8 +20,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 export type LegendOrientation = 'vertical' | 'horizontal';
 export type StrokeStyle = 'dashed' | 'solid';
 
@@ -36,6 +34,7 @@ export interface DiscreteColorLegendItemProps {
   strokeDasharray?: string;
   strokeWidth?: number;
   strokeStyle?: StrokeStyle;
+  _displayName?: string;
 }
 
 const STROKE_STYLES: Record<StrokeStyle, string | null> = {
@@ -53,7 +52,8 @@ function DiscreteColorLegendItem({
   orientation,
   onMouseEnter,
   onMouseLeave,
-  title
+  title,
+  _displayName = 'DiscreteColorLegendItem'
 }: DiscreteColorLegendItemProps): JSX.Element {
   let className = `rv-discrete-color-legend-item ${orientation}`;
   if (disabled) {
@@ -87,23 +87,5 @@ function DiscreteColorLegendItem({
     </div>
   );
 }
-
-(DiscreteColorLegendItem as any).propTypes = {
-  color: PropTypes.string.isRequired,
-  disabled: PropTypes.bool,
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
-  onClick: PropTypes.func,
-  onMouseEnter: PropTypes.func,
-  onMouseLeave: PropTypes.func,
-  orientation: PropTypes.oneOf(['vertical', 'horizontal']).isRequired,
-  strokeDasharray: PropTypes.string,
-  strokeWidth: PropTypes.number,
-  strokeStyle: PropTypes.oneOf(Object.keys(STROKE_STYLES))
-};
-(DiscreteColorLegendItem as any).defaultProps = {
-  disabled: false,
-  strokeStyle: 'solid'
-};
-(DiscreteColorLegendItem as any).displayName = 'DiscreteColorLegendItem';
 
 export default DiscreteColorLegendItem;

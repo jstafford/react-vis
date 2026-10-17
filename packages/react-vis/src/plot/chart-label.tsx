@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -36,23 +35,26 @@ interface ChartLabelProps {
   text: string;
   xPercent: number;
   yPercent: number;
+  _displayName?: string;
+  _requiresSVG?: boolean;
 }
 
-const ChartLabel: any = (props: ChartLabelProps) => {
-  const {
-    innerHeight = 0,
-    innerWidth = 0,
-    marginBottom = 0,
-    marginLeft = 0,
-    marginRight = 0,
-    marginTop = 0,
-    className,
-    includeMargin,
-    style,
-    text,
-    xPercent,
-    yPercent
-  } = props;
+const ChartLabel: any = ({
+  innerHeight = 0,
+  innerWidth = 0,
+  marginBottom = 0,
+  marginLeft = 0,
+  marginRight = 0,
+  marginTop = 0,
+  className = '',
+  includeMargin = true,
+  style = {},
+  text = '',
+  xPercent = 0,
+  yPercent = 0,
+  _displayName = 'ChartLabel',
+  _requiresSVG = true
+}: ChartLabelProps) => {
   const width = innerWidth + (includeMargin ? marginLeft + marginRight : 0);
   const height = innerHeight + (includeMargin ? marginTop + marginBottom : 0);
   const xPos = width * xPercent + (includeMargin ? 0 : marginLeft);
@@ -66,23 +68,3 @@ const ChartLabel: any = (props: ChartLabelProps) => {
     </g>
   );
 };
-
-ChartLabel.displayName = 'ChartLabel';
-ChartLabel.requiresSVG = true;
-ChartLabel.propTypes = {
-  className: PropTypes.string,
-  includeMargin: PropTypes.bool,
-  style: PropTypes.object,
-  text: PropTypes.string.isRequired,
-  xPercent: PropTypes.number.isRequired,
-  yPercent: PropTypes.number.isRequired
-};
-ChartLabel.defaultProps = {
-  className: '',
-  includeMargin: true,
-  text: '',
-  xPercent: 0,
-  yPercent: 0,
-  style: {}
-};
-export default ChartLabel;

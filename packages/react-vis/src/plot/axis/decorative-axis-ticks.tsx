@@ -49,7 +49,7 @@ export interface DecorativeAxisTicksProps {
  - props.style {Object} The style object for the axis
  * @return {Component} the plotted axis
  */
-export default function decorativeAxisTick(props: DecorativeAxisTicksProps) {
+export function decorativeAxisTick(props: DecorativeAxisTicksProps) {
   const {
     axisDomain,
     numberOfTicks,

@@ -20,31 +20,18 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import GridLines from 'plot/grid-lines';
 import {DIRECTION} from 'utils/axis-utils';
 
 const {VERTICAL} = DIRECTION;
 
-const propTypes = {
-  ...(GridLines as any).propTypes,
-  direction: PropTypes.oneOf([VERTICAL])
-};
-
-const defaultProps = {
-  direction: VERTICAL,
-  attr: 'x'
-};
-
-function VerticalGridLines(props: any) {
-  return <GridLines {...props} />;
+export function VerticalGridLines({
+  direction = VERTICAL,
+  attr = 'x',
+  _displayName = 'VerticalGridLines',
+  _requiresSVG = true,
+  ...restProps
+}: any) {
+  return <GridLines {...restProps} direction={direction} attr={attr} />;
 }
 
-VerticalGridLines.displayName = 'VerticalGridLines';
-(VerticalGridLines as any).displayName = 'VerticalGridLines';
-(VerticalGridLines as any).propTypes = propTypes;
-(VerticalGridLines as any).defaultProps = defaultProps;
-(VerticalGridLines as any).requiresSVG = true;
-
-export default VerticalGridLines;

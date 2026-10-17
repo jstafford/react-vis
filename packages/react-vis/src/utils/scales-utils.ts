@@ -30,8 +30,6 @@ import {extent} from 'd3-array';
 import {set} from 'd3-collection';
 import {hsl} from 'd3-color';
 
-import PropTypes from 'prop-types';
-
 import {warning} from './react-utils';
 import {getUniquePropertyValues, addValueToArray} from './data-utils';
 
@@ -798,27 +796,6 @@ export function getAttributeValue(
 }
 
 /**
- * Get prop types by the attribute.
- * @param {string} attr Attribute.
- * @returns {Object} Object of xDomain, xRange, xType, xDistance and _xValue,
- * where x is an attribute passed to the function.
- */
-export function getScalePropTypesByAttribute(
-  attr: string
-): {[key: string]: any} {
-  return {
-    [`_${attr}Value`]: PropTypes.any,
-    [`${attr}Domain`]: PropTypes.array,
-    [`get${toTitleCase(attr)}`]: PropTypes.func,
-    [`get${toTitleCase(attr)}0`]: PropTypes.func,
-    [`${attr}Range`]: PropTypes.array,
-    [`${attr}Type`]: PropTypes.oneOf(Object.keys(SCALE_FUNCTIONS)),
-    [`${attr}Distance`]: PropTypes.number,
-    [`${attr}BaseValue`]: PropTypes.any
-  };
-}
-
-/**
  * Extract the list of scale properties from the entire props object.
  * @param {Object} props Props.
  * @param {Array<String>} attributes Array of attributes for the given
@@ -997,19 +974,3 @@ export function getOptionalScaleProps(props: {
     return acc;
   }, {});
 }
-
-export default {
-  extractScalePropsFromProps,
-  getAttributeScale,
-  getAttributeFunctor,
-  getAttr0Functor,
-  getAttributeValue,
-  getDomainByAccessor,
-  getFontColorFromBackground,
-  getMissingScaleProps,
-  getOptionalScaleProps,
-  getScaleObjectFromProps,
-  getScalePropTypesByAttribute,
-  getXYPlotValues,
-  literalScale
-};

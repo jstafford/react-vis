@@ -19,19 +19,16 @@
 // THE SOFTWARE.
 
 import React, {useMemo} from 'react';
-import PropTypes from 'prop-types';
 import Animation from 'animation';
 import {arc as arcBuilder} from 'd3-shape';
 
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import {
   getAttributeFunctor as getScaleAttributeFunctor,
   getAttr0Functor,
   extractScalePropsFromProps,
-  getMissingScaleProps,
-  getScalePropTypesByAttribute
+  getMissingScaleProps
 } from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -42,16 +39,8 @@ export interface ArcSeriesProps extends AbstractSeriesProps<any> {
   center?: {x: number; y: number};
   arcClassName?: string;
   padAngle?: number | ((d: any) => number);
+  _displayName?: string;
 }
-
-const defaultProps: Partial<ArcSeriesProps> = {
-  ...(AbstractSeries as any).defaultProps,
-  center: {x: 0, y: 0},
-  arcClassName: '',
-  className: '',
-  style: {},
-  padAngle: 0
-};
 
 /**
  * Prepare the internal representation of row for real use.
@@ -103,20 +92,33 @@ function getAllScaleProps(props: ArcSeriesProps): {[key: string]: any} {
   };
 }
 
-function ArcSeries(props: ArcSeriesProps): JSX.Element | null {
-    const {
-      arcClassName,
-      animation,
-      className,
+function ArcSeries({
+  center = {x: 0, y: 0},
+  arcClassName = '',
+  className = '',
+  stack = false,
+  style = {},
+  padAngle = 0,
+  _displayName = 'ArcSeries',
+  ...restProps
+}: ArcSeriesProps): JSX.Element | null {
+    const allProps: ArcSeriesProps = {
+      ...restProps,
       center,
+      arcClassName,
+      className,
+      stack,
+      style,
+      padAngle
+    };
+    const {
+      animation,
       data,
       disableSeries,
       hideSeries,
       marginLeft,
       marginTop,
-      padAngle,
-      style
-    } = props;
+    } = allProps;
     const {
       getAttributeFunctor,
       onSeriesMouseOverHandler,
@@ -127,8 +129,8 @@ function ArcSeries(props: ArcSeriesProps): JSX.Element | null {
       onValueRightClickHandler,
       onValueMouseOverHandler,
       onValueMouseOutHandler
-    } = useAbstractSeries(props);
-    const scaleProps = useMemo(() => getAllScaleProps(props), [props]);
+    } = useAbstractSeries(allProps);
+    const scaleProps = useMemo(() => getAllScaleProps(allProps), [allProps]);
 
     if (!data) {
       return null;
@@ -139,19 +141,19 @@ function ArcSeries(props: ArcSeriesProps): JSX.Element | null {
       return (
         <g className="rv-xy-plot__series--arc__animation-wrapper">
           <Animation
-            {...props}
+            {...allProps}
             animatedProps={ANIMATED_SERIES_PROPS}
             data={cloneData}
           >
             <ArcSeries
-              {...props}
+              {...allProps}
               animation={false}
               disableSeries={true}
               data={cloneData}
             />
           </Animation>
           <ArcSeries
-            {...props}
+            {...allProps}
             animation={false}
             hideSeries
             style={{stroke: 'red'}}
@@ -222,19 +224,3 @@ function ArcSeries(props: ArcSeriesProps): JSX.Element | null {
       </g>
     );
 }
-
-(ArcSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  ...getScalePropTypesByAttribute('radius'),
-  ...getScalePropTypesByAttribute('angle'),
-  center: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number
-  }),
-  arcClassName: PropTypes.string,
-  padAngle: PropTypes.oneOfType([PropTypes.func, PropTypes.number])
-};
-(ArcSeries as any).defaultProps = defaultProps;
-(ArcSeries as any).displayName = 'ArcSeries';
-
-export default ArcSeries;

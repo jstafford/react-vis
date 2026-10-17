@@ -20,32 +20,21 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {ORIENTATION} from 'utils/axis-utils';
 
 import Axis, {AxisProps} from './axis';
 
-const {TOP, BOTTOM} = ORIENTATION;
+const {BOTTOM} = ORIENTATION;
 
-const propTypes = {
-  ...Axis.propTypes,
-  orientation: PropTypes.oneOf([TOP, BOTTOM])
-};
-
-const defaultProps = {
-  orientation: BOTTOM,
-  attr: 'x',
-  attrAxis: 'y'
-};
-
-function XAxis(props: AxisProps) {
-  return <Axis {...props} />;
+export function XAxis({
+  orientation = BOTTOM,
+  attr = 'x',
+  attrAxis = 'y',
+  _displayName = 'XAxis',
+  _requiresSVG = true,
+  ...restProps
+}: AxisProps & {_displayName?: string}) {
+  return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 }
 
-XAxis.displayName = 'XAxis';
-XAxis.propTypes = propTypes;
-XAxis.defaultProps = defaultProps;
 XAxis.requiresSVG = true;
-
-export default XAxis;

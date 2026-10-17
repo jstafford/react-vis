@@ -20,15 +20,26 @@
 
 import React from 'react';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import RectSeries from './rect-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
-export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {}
+export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {
+}
 
-function VerticalRectSeries(props: VerticalRectSeriesProps): JSX.Element {
+export function VerticalRectSeries({
+  className = '',
+  stack = false,
+  style = {},
+  _requiresSVG = true,
+  _displayName = 'VerticalRectSeries',
+  ...rest
+}: VerticalRectSeriesProps): JSX.Element {
   return (
     <RectSeries
-      {...props}
+      {...rest}
+      className={className}
+      stack={stack}
+      style={style}
       linePosAttr="x"
       valuePosAttr="y"
       lineSizeAttr="width"
@@ -37,7 +48,6 @@ function VerticalRectSeries(props: VerticalRectSeriesProps): JSX.Element {
   );
 }
 
-(VerticalRectSeries as any).requiresSVG = true;
 (VerticalRectSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = false;
   const zeroBaseValue = attr === 'y';
@@ -46,8 +56,3 @@ function VerticalRectSeries(props: VerticalRectSeriesProps): JSX.Element {
     zeroBaseValue
   };
 };
-(VerticalRectSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
-(VerticalRectSeries as any).propTypes = (AbstractSeries as any).propTypes;
-(VerticalRectSeries as any).displayName = 'VerticalRectSeries';
-
-export default VerticalRectSeries;

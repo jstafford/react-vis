@@ -19,14 +19,11 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
-import {AnimationPropType} from 'animation';
 import XYPlot from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
-import {MarginPropType} from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import MarkSeries from 'plot/series/mark-series';
 import PolygonSeries from 'plot/series/polygon-series';
@@ -75,6 +72,7 @@ export interface RadarChartProps {
   onValueMouseOut?: (info: any) => void;
   onSeriesMouseOver?: (info: any) => void;
   onSeriesMouseOut?: (info: any) => void;
+  _displayName?: string;
   [key: string]: any;
 }
 
@@ -315,28 +313,33 @@ function getPolygonPoints(props: any): React.ReactNode[] | undefined {
   });
 }
 
-function RadarChart(props: RadarChartProps): JSX.Element {
+export function RadarChart(props: RadarChartProps): JSX.Element {
   const {
     animation,
-    className,
+    className = '',
     children,
-    colorRange,
+    colorRange = DISCRETE_COLOR_RANGE,
     data,
     domains,
     height,
-    hideInnerMostValues,
+    hideInnerMostValues = true,
     margin,
     onMouseLeave,
     onMouseEnter,
-    startingAngle,
-    style,
-    tickFormat,
+    startingAngle = Math.PI / 2,
+    style = {
+      axes: {line: {}, ticks: {}, text: {}},
+      labels: {fontSize: 10, textAnchor: 'middle'},
+      polygons: {strokeWidth: 0.5, strokeOpacity: 1, fillOpacity: 0.1}
+    },
+    tickFormat = DEFAULT_FORMAT,
     width,
-    renderAxesOverPolygons,
+    renderAxesOverPolygons = false,
     onValueMouseOver,
     onValueMouseOut,
     onSeriesMouseOver,
-    onSeriesMouseOut
+    onSeriesMouseOut,
+    _displayName = 'RadarChart'
   } = props;
 
   const axes = getAxes({
@@ -404,62 +407,3 @@ function RadarChart(props: RadarChartProps): JSX.Element {
     </XYPlot>
   );
 }
-
-(RadarChart as any).displayName = 'RadarChart';
-(RadarChart as any).propTypes = {
-  animation: AnimationPropType,
-  className: PropTypes.string,
-  colorType: PropTypes.string,
-  colorRange: PropTypes.arrayOf(PropTypes.string),
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  domains: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      domain: PropTypes.arrayOf(PropTypes.number).isRequired,
-      tickFormat: PropTypes.func
-    })
-  ).isRequired,
-  height: PropTypes.number.isRequired,
-  hideInnerMostValues: PropTypes.bool,
-  margin: MarginPropType,
-  startingAngle: PropTypes.number,
-  style: PropTypes.shape({
-    axes: PropTypes.object,
-    labels: PropTypes.object,
-    polygons: PropTypes.object
-  }),
-  tickFormat: PropTypes.func,
-  width: PropTypes.number.isRequired,
-  renderAxesOverPolygons: PropTypes.bool,
-  onValueMouseOver: PropTypes.func,
-  onValueMouseOut: PropTypes.func,
-  onSeriesMouseOver: PropTypes.func,
-  onSeriesMouseOut: PropTypes.func
-};
-(RadarChart as any).defaultProps = {
-  className: '',
-  colorType: 'category',
-  colorRange: DISCRETE_COLOR_RANGE,
-  hideInnerMostValues: true,
-  startingAngle: Math.PI / 2,
-  style: {
-    axes: {
-      line: {},
-      ticks: {},
-      text: {}
-    },
-    labels: {
-      fontSize: 10,
-      textAnchor: 'middle'
-    },
-    polygons: {
-      strokeWidth: 0.5,
-      strokeOpacity: 1,
-      fillOpacity: 0.1
-    }
-  },
-  tickFormat: DEFAULT_FORMAT,
-  renderAxesOverPolygons: false
-};
-
-export default RadarChart;

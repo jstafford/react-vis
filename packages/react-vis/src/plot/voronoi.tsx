@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {voronoi} from 'd3-voronoi';
 
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -24,6 +23,8 @@ interface VoronoiProps {
   innerHeight?: number;
   marginLeft?: number;
   marginTop?: number;
+  _displayName?: string;
+  _requiresSVG?: boolean;
   [key: string]: any;
 }
 
@@ -49,28 +50,44 @@ function getExtent({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProp
   ] as [[number, number], [number, number]];
 }
 
-function Voronoi(props: VoronoiProps) {
-  const {
+export function Voronoi({
+  className,
+  extent,
+  nodes,
+  onBlur = NOOP,
+  onClick = NOOP,
+  onMouseUp = NOOP,
+  onMouseDown = NOOP,
+  onHover = NOOP,
+  polygonStyle,
+  style,
+  x,
+  y,
+  _displayName = 'Voronoi',
+  _requiresSVG = true,
+  ...restProps
+}: VoronoiProps) {
+  const allProps = {
+    ...restProps,
     className,
     extent,
     nodes,
-    onBlur = NOOP,
-    onClick = NOOP,
-    onMouseUp = NOOP,
-    onMouseDown = NOOP,
-    onHover = NOOP,
+    onBlur,
+    onClick,
+    onMouseUp,
+    onMouseDown,
+    onHover,
     polygonStyle,
     style,
     x,
-    y
-  } = props;
-
-  const xAccessor = (x || getAttributeFunctor(props, 'x')) as (d: any) => number;
-  const yAccessor = (y || getAttributeFunctor(props, 'y')) as (d: any) => number;
+    y,
+  }
+  const xAccessor = (x || getAttributeFunctor(allProps, 'x')) as (d: any) => number;
+  const yAccessor = (y || getAttributeFunctor(allProps, 'y')) as (d: any) => number;
 
   const resolvedExtent =
     (extent as [[number, number], [number, number]] | undefined) ||
-    getExtent(props);
+    getExtent(allProps);
 
   const voronoiInstance = voronoi<any>()
     .x(xAccessor)
@@ -120,29 +137,3 @@ function Voronoi(props: VoronoiProps) {
     </g>
   );
 }
-
-(Voronoi as any).requiresSVG = true;
-(Voronoi as any).displayName = 'Voronoi';
-(Voronoi as any).defaultProps = {
-  className: '',
-  onBlur: NOOP,
-  onClick: NOOP,
-  onHover: NOOP,
-  onMouseDown: NOOP,
-  onMouseUp: NOOP
-};
-
-(Voronoi as any).propTypes = {
-  className: PropTypes.string,
-  extent: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
-  nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onBlur: PropTypes.func,
-  onClick: PropTypes.func,
-  onHover: PropTypes.func,
-  onMouseDown: PropTypes.func,
-  onMouseUp: PropTypes.func,
-  x: PropTypes.func,
-  y: PropTypes.func
-};
-
-export default Voronoi;

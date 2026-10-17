@@ -19,10 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -38,6 +36,7 @@ const DEFAULT_STYLE: React.CSSProperties = {
 export interface CustomSVGSeriesProps extends AbstractSeriesProps<any> {
   customComponent?: string | ((d: any, pos: any, style: any, funcs: any) => JSX.Element);
   size?: number;
+  _displayName?: string;
 }
 
 function predefinedComponents(
@@ -138,21 +137,40 @@ function getInnerComponent({
   );
 }
 
-function CustomSVGSeries(props: CustomSVGSeriesProps): JSX.Element | null {
+export function CustomSVGSeries({
+  className = '',
+  stack = false,
+  style = {},
+  animation = false,
+  customComponent = 'circle',
+  size = 2,
+  _displayName = 'CustomSVGSeries',
+  _requiresSVG = true,
+  ...restProps
+}: CustomSVGSeriesProps): JSX.Element | null {
+  const allProps: CustomSVGSeriesProps = {
+    ...restProps,
+    className,
+    stack,
+    style,
+    animation,
+    customComponent,
+    size
+  };
   const {
-    animation, className, customComponent, data,
-    marginLeft, marginTop, style, size, getAttributeFunctor,
+    data,
+    marginLeft, marginTop, getAttributeFunctor,
     onValueMouseOverHandler, onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
 
-    if (!data || !props.innerWidth || !props.innerHeight) {
+    if (!data || !allProps.innerWidth || !allProps.innerHeight) {
       return null;
     }
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <CustomSVGSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <CustomSVGSeries {...allProps} animation={false} />
         </Animation>
       );
     }
@@ -193,31 +211,3 @@ function CustomSVGSeries(props: CustomSVGSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(CustomSVGSeries as any).propTypes = {
-  animation: PropTypes.bool,
-  className: PropTypes.string,
-  customComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      x: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      y: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
-    })
-  ).isRequired,
-  marginLeft: PropTypes.number,
-  marginTop: PropTypes.number,
-  style: PropTypes.object,
-  size: PropTypes.number,
-  onValueMouseOver: PropTypes.func,
-  onValueMouseOut: PropTypes.func
-};
-
-(CustomSVGSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  animation: false,
-  customComponent: 'circle',
-  style: {},
-  size: 2
-};
-
-export default CustomSVGSeries;

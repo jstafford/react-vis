@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import AbstractSeries from './series/abstract-series';
 import {getAttributeScale} from 'utils/scales-utils';
@@ -305,20 +304,5 @@ class Highlight extends AbstractSeries<any> {
   opacity: 0.3
 };
 
-(Highlight as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  enableX: PropTypes.bool,
-  enableY: PropTypes.bool,
-  highlightHeight: PropTypes.number,
-  highlightWidth: PropTypes.number,
-  highlightX: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  highlightY: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onBrushStart: PropTypes.func,
-  onDragStart: PropTypes.func,
-  onBrush: PropTypes.func,
-  onDrag: PropTypes.func,
-  onBrushEnd: PropTypes.func,
-  onDragEnd: PropTypes.func
-};
 
 export default Highlight;

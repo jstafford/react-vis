@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import PropTypes from 'prop-types';
-
 export interface Margin {
   left?: number;
   top?: number;
@@ -103,16 +101,6 @@ export function getRadialLayoutMargin(
     top: marginY
   };
 }
-
-export const MarginPropType = PropTypes.oneOfType([
-  PropTypes.shape({
-    left: PropTypes.number,
-    top: PropTypes.number,
-    right: PropTypes.number,
-    bottom: PropTypes.number
-  }),
-  PropTypes.number
-]);
 
 export const DEFAULT_MARGINS: Required<Margin> = {
   left: 40,

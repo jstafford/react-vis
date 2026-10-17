@@ -20,7 +20,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 type LegendTitle = number | string;
@@ -34,27 +33,8 @@ export interface ContinuousSizeLegendProps {
   startSize?: number;
   startTitle: LegendTitle;
   width?: number;
+  _displayName?: string;
 }
-
-const propTypes = {
-  className: PropTypes.string,
-  circlesTotal: PropTypes.number,
-  endSize: PropTypes.number,
-  endTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    .isRequired,
-  height: PropTypes.number,
-  startSize: PropTypes.number,
-  startTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    .isRequired,
-  width: PropTypes.number
-};
-
-const defaultProps = {
-  circlesTotal: 10,
-  className: '',
-  endSize: 20,
-  startSize: 2
-};
 
 function ContinuousSizeLegend({
   startTitle,
@@ -64,7 +44,8 @@ function ContinuousSizeLegend({
   circlesTotal = 10,
   height,
   width,
-  className = ''
+  className = '',
+  _displayName = 'ContinuousSizeLegend'
 }: ContinuousSizeLegendProps): JSX.Element {
   const circles: React.ReactNode[] = [];
   const step = (endSize - startSize) / (circlesTotal - 1);
@@ -102,9 +83,5 @@ function ContinuousSizeLegend({
     </div>
   );
 }
-
-(ContinuousSizeLegend as any).displayName = 'ContinuousSizeLegend';
-(ContinuousSizeLegend as any).propTypes = propTypes;
-(ContinuousSizeLegend as any).defaultProps = defaultProps;
 
 export default ContinuousSizeLegend;

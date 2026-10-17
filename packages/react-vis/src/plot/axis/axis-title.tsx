@@ -20,8 +20,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {ORIENTATION} from 'utils/axis-utils';
 
 // Assuming that 16px = 1em
@@ -36,6 +34,7 @@ export interface AxisTitleProps {
   style?: React.CSSProperties | {[key: string]: any};
   title: string;
   position?: 'start' | 'middle' | 'end';
+  _displayName?: string;
 }
 
 interface TransformEntry {
@@ -50,10 +49,6 @@ interface TransformMap {
   middle: TransformEntry;
   end: TransformEntry;
 }
-
-const defaultProps = {
-  position: 'end' as const
-};
 
 /**
  * Compute transformations, keyed by orientation
@@ -147,21 +142,14 @@ const transformation = (
   }
 });
 
-const propTypes = {
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]).isRequired,
-  style: PropTypes.object,
-  title: PropTypes.string.isRequired
-};
-
-function AxisTitle({
+export function AxisTitle({
   orientation,
-  position,
   width,
   height,
   style,
-  title
+  title,
+  position = 'end',
+  _displayName = 'AxisTitle'
 }: AxisTitleProps) {
   const outerGroupTranslateX = orientation === LEFT ? width : 0;
   const outerGroupTranslateY = orientation === TOP ? height : 0;
@@ -179,9 +167,3 @@ function AxisTitle({
     </g>
   );
 }
-
-AxisTitle.displayName = 'AxisTitle';
-AxisTitle.propTypes = propTypes;
-AxisTitle.defaultProps = defaultProps;
-
-export default AxisTitle;

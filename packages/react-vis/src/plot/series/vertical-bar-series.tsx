@@ -20,15 +20,26 @@
 
 import React from 'react';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import BarSeries from './bar-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
-export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {}
+export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {
+}
 
-function VerticalBarSeries(props: VerticalBarSeriesProps): JSX.Element {
+export function VerticalBarSeries({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'VerticalBarSeries',
+  _requiresSVG = true,
+  ...rest
+}: VerticalBarSeriesProps): JSX.Element {
   return (
     <BarSeries
-      {...props}
+      {...rest}
+      className={className}
+      stack={stack}
+      style={style}
       linePosAttr="x"
       valuePosAttr="y"
       lineSizeAttr="width"
@@ -37,7 +48,6 @@ function VerticalBarSeries(props: VerticalBarSeriesProps): JSX.Element {
   );
 }
 
-(VerticalBarSeries as any).requiresSVG = true;
 (VerticalBarSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'x';
   const zeroBaseValue = attr === 'y';
@@ -46,8 +56,3 @@ function VerticalBarSeries(props: VerticalBarSeriesProps): JSX.Element {
     zeroBaseValue
   };
 };
-(VerticalBarSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
-(VerticalBarSeries as any).propTypes = (AbstractSeries as any).propTypes;
-(VerticalBarSeries as any).displayName = 'VerticalBarSeries';
-
-export default VerticalBarSeries;

@@ -20,15 +20,25 @@
 
 import React from 'react';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
 import BarSeries from './bar-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface HorizontalBarSeriesProps extends AbstractSeriesProps<any> {}
 
-function HorizontalBarSeries(props: HorizontalBarSeriesProps): JSX.Element {
+export function HorizontalBarSeries({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'HorizontalBarSeries',
+  _requiresSVG = true,
+  ...props
+}: HorizontalBarSeriesProps): JSX.Element {
   return (
     <BarSeries
       {...props}
+      className={className}
+      stack={stack}
+      style={style}
       linePosAttr="y"
       valuePosAttr="x"
       lineSizeAttr="height"
@@ -37,7 +47,6 @@ function HorizontalBarSeries(props: HorizontalBarSeriesProps): JSX.Element {
   );
 }
 
-(HorizontalBarSeries as any).requiresSVG = true;
 (HorizontalBarSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'y';
   const zeroBaseValue = attr === 'x';
@@ -46,8 +55,3 @@ function HorizontalBarSeries(props: HorizontalBarSeriesProps): JSX.Element {
     zeroBaseValue
   };
 };
-(HorizontalBarSeries as any).defaultProps = (AbstractSeries as any).defaultProps;
-(HorizontalBarSeries as any).propTypes = (AbstractSeries as any).propTypes;
-(HorizontalBarSeries as any).displayName = 'HorizontalBarSeries';
-
-export default HorizontalBarSeries;

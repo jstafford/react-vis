@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -42,6 +41,7 @@ interface CrosshairProps {
     box?: React.CSSProperties;
   };
   children?: React.ReactNode;
+  _displayName?: string;
   [key: string]: any;
 }
 
@@ -55,17 +55,17 @@ function defaultTitleFormat(values: any[]) {
   }
 }
 
-function defaultItemsFormat(values: any[]) {
-  return values
-    .map((v, i) => (v ? {value: v.y, title: i} : null))
-    .filter(Boolean) as Array<{value: any; title: any}>;
+function defaultItemsFormat(values: any[]): { title: any; value: number; }[] {
+  return values.filter((v) => Boolean(v)).map((v, i) => {
+      return {value: v.y, title: i};
+  });
 }
 
 function getFirstNonEmptyValue(values: any[]) {
   return (values || []).find(v => Boolean(v));
 }
 
-function Crosshair({
+export function Crosshair({
   children,
   className,
   values = [],
@@ -76,6 +76,7 @@ function Crosshair({
   style = {line: {}, title: {}, box: {}},
   titleFormat = defaultTitleFormat,
   itemsFormat = defaultItemsFormat,
+  _displayName = 'Crosshair',
   ...restProps
 }: CrosshairProps) {
   const renderCrosshairItems = () => {
@@ -162,36 +163,3 @@ function Crosshair({
       </div>
   );
 }
-
-(Crosshair as any).displayName = 'Crosshair';
-(Crosshair as any).defaultProps = {
-  titleFormat: defaultTitleFormat,
-  itemsFormat: defaultItemsFormat,
-  style: {line: {}, title: {}, box: {}}
-};
-(Crosshair as any).propTypes = {
-  className: PropTypes.string,
-  values: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-      PropTypes.object,
-      PropTypes.bool
-    ])
-  ),
-  series: PropTypes.object,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number,
-  marginLeft: PropTypes.number,
-  marginTop: PropTypes.number,
-  orientation: PropTypes.oneOf(['left', 'right']),
-  itemsFormat: PropTypes.func,
-  titleFormat: PropTypes.func,
-  style: PropTypes.shape({
-    line: PropTypes.object,
-    title: PropTypes.object,
-    box: PropTypes.object
-  })
-};
-
-export default Crosshair;

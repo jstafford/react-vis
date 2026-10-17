@@ -1,24 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {interpolate} from 'd3-interpolate';
-import {spring, Motion, presets} from 'react-motion';
-
-const ANIMATION_PROPTYPES = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.shape({
-    stiffness: PropTypes.number,
-    nonAnimatedProps: PropTypes.arrayOf(PropTypes.string),
-    damping: PropTypes.number
-  }),
-  PropTypes.bool
-]);
-
-const propTypes = {
-  animatedProps: PropTypes.arrayOf(PropTypes.string).isRequired,
-  animation: ANIMATION_PROPTYPES,
-  onStart: PropTypes.func,
-  onEnd: PropTypes.func
-};
+import {spring, Motion, presets, Presets} from 'react-motion';
 
 export type AnimationParam =
   | string
@@ -26,7 +8,7 @@ export type AnimationParam =
   | boolean;
 
 interface AnimationStyle {
-  val?: number;
+  val: number;
   stiffness: number;
   damping: number;
   precision?: number;
@@ -51,16 +33,16 @@ interface AnimationState {}
  * @param {Object|String} animationStyle - The animation style property, either the name of a
  * presets are one of noWobble, gentle, wobbly, stiff
  */
-const VALID_PRESETS = presets as unknown as {[key: string]: AnimationStyle};
+const VALID_PRESETS: Presets = presets;
 
 function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): AnimationStyle {
-  if (typeof animationStyle === 'string') {
+  if (typeof animationStyle === 'string' && animationStyle in VALID_PRESETS) {
     return VALID_PRESETS[animationStyle] || presets.noWobble;
   }
   if (typeof animationStyle === 'boolean') {
     return presets.noWobble;
   }
-  const {damping, stiffness} = animationStyle;
+  const {damping, stiffness} = animationStyle as AnimationStyle;
   return {
     ...animationStyle,
     damping: damping || presets.noWobble.damping,
@@ -153,9 +135,4 @@ const Animation: any = (props: AnimationProps): React.ReactElement => {
   );
 };
 
-Animation.propTypes = propTypes;
-Animation.displayName = 'Animation';
-
 export default Animation;
-
-export const AnimationPropType = ANIMATION_PROPTYPES;

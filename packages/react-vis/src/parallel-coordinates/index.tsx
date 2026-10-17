@@ -19,16 +19,14 @@
 // THE SOFTWARE.
 
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
-import {AnimationParam, AnimationPropType} from 'animation';
+import {AnimationParam} from 'animation';
 import XYPlot from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {
   Margin,
-  MarginPropType,
   getInnerDimensions,
   DEFAULT_MARGINS
 } from 'utils/chart-utils';
@@ -80,11 +78,8 @@ export interface ParallelCoordinatesProps {
   style?: ParallelStyle;
   tickFormat?: (value: number) => string;
   width: number;
-  [key: string]: any;
-}
-
-interface ParallelCoordinatesState {
-  brushFilters: {[key: string]: BrushFilter | null};
+  _displayName?: string;
+  // [key: string]: any;
 }
 
 type BrushFilters = {[key: string]: BrushFilter | null};
@@ -108,8 +103,12 @@ const DEFAULT_STYLE: ParallelStyle = {
   }
 };
 
-function getAxes(props: ParallelCoordinatesProps): JSX.Element[] {
-  const {animation, domains, style = {}, tickFormat = DEFAULT_FORMAT} = props;
+function getAxes({
+  animation,
+  domains,
+  style = {},
+  tickFormat = DEFAULT_FORMAT
+}: ParallelCoordinatesProps): JSX.Element[] {
   return domains.map((domain, index) => {
     const domainTickFormat = (tick: number) =>
       domain.tickFormat ? domain.tickFormat(tick) : tickFormat(tick);
@@ -129,11 +128,12 @@ function getAxes(props: ParallelCoordinatesProps): JSX.Element[] {
   });
 }
 
-function getLabels(props: {
+type GetLabelsProps = {
   domains: ParallelDomain[];
   style?: React.CSSProperties;
-}): any[] {
-  const {domains, style} = props;
+};
+
+function getLabels({domains, style}: GetLabelsProps): any[] {
   return domains.map(domain => ({
     x: domain.name,
     y: 1.1,
@@ -142,18 +142,25 @@ function getLabels(props: {
   }));
 }
 
-function getLines(
-  props: ParallelCoordinatesProps & ParallelCoordinatesState
-): JSX.Element[] {
-  const {
-    animation,
-    brushFilters,
-    colorRange = DISCRETE_COLOR_RANGE,
-    data,
-    domains,
-    showMarks,
-    style = {}
-  } = props;
+type GetLinesProps = {
+  animation?: AnimationParam;
+  brushFilters: {[key: string]: BrushFilter | null};
+  colorRange?: string[];
+  data: any[];
+  domains: ParallelDomain[];
+  showMarks?: boolean;
+  style?: ParallelStyle;
+};
+
+function getLines({
+  animation,
+  brushFilters,
+  colorRange = DISCRETE_COLOR_RANGE,
+  data,
+  domains,
+  showMarks,
+  style = {},
+}: GetLinesProps): JSX.Element[] {
   const scales = domains.reduce((result: {[key: string]: any}, domain) => {
     result[domain.name] = scaleLinear().domain(domain.domain).range([0, 1]);
     return result;
@@ -195,129 +202,97 @@ function getLines(
   });
 }
 
-const ParallelCoordinates: any = (props: ParallelCoordinatesProps): JSX.Element => {
-    const [brushFilters, setBrushFilters] = useState<BrushFilters>({});
-    const {
-      animation,
-      brushing,
-      className,
-      children,
-      colorRange,
-      data,
-      domains,
-      height,
+const ParallelCoordinates: any = ({
+  animation,
+  brushing,
+  className = '',
+  children,
+  colorRange = DISCRETE_COLOR_RANGE,
+  data,
+  domains,
+  height,
+  margin,
+  onMouseLeave,
+  onMouseEnter,
+  showMarks,
+  style = DEFAULT_STYLE,
+  tickFormat = DEFAULT_FORMAT,
+  width,
+  _displayName = 'ParallelCoordinates'
+}: ParallelCoordinatesProps): JSX.Element => {
+  const [brushFilters, setBrushFilters] = useState<BrushFilters>({});
+
+  const axes = getAxes({
+    domains,
+    animation,
+    style,
+    tickFormat,
+    data,
+    height,
+    width
+  });
+  const lines = getLines({
+    animation,
+    brushFilters,
+    colorRange,
+    domains,
+    data,
+    showMarks,
+    style
+  });
+  const labelSeries = (
+    <LabelSeries
+      animation
+      key={className}
+      className={`${predefinedClassName}-label`}
+      data={getLabels({domains, style: style.labels})}
+    />
+  );
+
+  const {marginLeft, marginRight} = getInnerDimensions(
+    {
       margin,
-      onMouseLeave,
-      onMouseEnter,
-      showMarks,
-      style = DEFAULT_STYLE,
-      tickFormat = DEFAULT_FORMAT,
-      width
-    } = props;
-
-    const axes = getAxes({
-      domains,
-      animation,
-      style,
-      tickFormat,
-      data,
-      height,
-      width
-    });
-    const lines = getLines({
-      animation,
-      brushFilters,
-      colorRange,
-      domains,
-      data,
-      showMarks,
-      style,
-      height,
-      width
-    });
-    const labelSeries = (
-      <LabelSeries
-        animation
-        key={className}
-        className={`${predefinedClassName}-label`}
-        data={getLabels({domains, style: style.labels})}
-      />
-    );
-
-    const {marginLeft, marginRight} = getInnerDimensions(
-      props,
-      DEFAULT_MARGINS
-    );
-    return (
-      <XYPlot
-        height={height}
-        width={width}
-        margin={margin}
-        dontCheckIfEmpty
-        className={getCombinedClassName(className, predefinedClassName)}
-        onMouseLeave={onMouseLeave}
-        onMouseEnter={onMouseEnter}
-        xType="ordinal"
-        yDomain={[0, 1]}
-      >
-        {children}
-        {axes.concat(lines).concat(labelSeries)}
-        {brushing &&
-          domains.map(domain => {
-            const trigger = (row: any) => {
-              setBrushFilters({
-                ...brushFilters,
-                [domain.name]: row ? {min: row.bottom, max: row.top} : null
-              });
-            };
-            return (
-              <Highlight
-                key={domain.name}
-                drag
-                highlightX={domain.name}
-                onBrushEnd={trigger}
-                onDragEnd={trigger}
-                highlightWidth={(width - marginLeft - marginRight) / domains.length}
-                enableX={false}
-              />
-            );
-          })}
-      </XYPlot>
-    );
-};
-
-ParallelCoordinates.displayName = 'ParallelCoordinates';
-ParallelCoordinates.propTypes = {
-  animation: AnimationPropType,
-  brushing: PropTypes.bool,
-  className: PropTypes.string,
-  colorType: PropTypes.string,
-  colorRange: PropTypes.arrayOf(PropTypes.string),
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  domains: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      domain: PropTypes.arrayOf(PropTypes.number).isRequired,
-      tickFormat: PropTypes.func
-    })
-  ).isRequired,
-  height: PropTypes.number.isRequired,
-  margin: MarginPropType,
-  style: PropTypes.shape({
-    axes: PropTypes.object,
-    labels: PropTypes.object,
-    lines: PropTypes.object
-  }),
-  showMarks: PropTypes.bool,
-  tickFormat: PropTypes.func,
-  width: PropTypes.number.isRequired
-};
-ParallelCoordinates.defaultProps = {
-  className: '',
-  colorType: 'category',
-  colorRange: DISCRETE_COLOR_RANGE,
-  style: DEFAULT_STYLE,
-  tickFormat: DEFAULT_FORMAT
+      width,
+      height
+    },
+    DEFAULT_MARGINS
+  );
+  return (
+    <XYPlot
+      height={height}
+      width={width}
+      margin={margin}
+      dontCheckIfEmpty
+      className={getCombinedClassName(className, predefinedClassName)}
+      onMouseLeave={onMouseLeave}
+      onMouseEnter={onMouseEnter}
+      xType="ordinal"
+      yDomain={[0, 1]}
+    >
+      {children}
+      {axes.concat(lines).concat(labelSeries)}
+      {brushing &&
+        domains.map(domain => {
+          const trigger = (row: any) => {
+            setBrushFilters({
+              ...brushFilters,
+              [domain.name]: row ? {min: row.bottom, max: row.top} : null
+            });
+          };
+          return (
+            <Highlight
+              key={domain.name}
+              drag
+              highlightX={domain.name}
+              onBrushEnd={trigger}
+              onDragEnd={trigger}
+              highlightWidth={(width - marginLeft - marginRight) / domains.length}
+              enableX={false}
+            />
+          );
+        })}
+    </XYPlot>
+  );
 };
 
 export default ParallelCoordinates;

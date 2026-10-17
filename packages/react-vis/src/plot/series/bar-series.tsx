@@ -19,13 +19,12 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series';
 import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--bar';
@@ -37,16 +36,22 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
   cluster?: string;
   barWidth?: number;
+  _displayName?: string;
 }
 
-function BarSeries(props: BarSeriesProps): JSX.Element | null {
+export function BarSeries({
+  barWidth = 0.85,
+  _displayName = 'BarSeries',
+  ...restProps
+}: BarSeriesProps): JSX.Element | null {
+  const allProps = {...restProps, barWidth};
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
-    marginTop, style, valuePosAttr, valueSizeAttr, barWidth,
+    marginTop, style, valuePosAttr, valueSizeAttr,
     getScaleDistance, getAttributeFunctor, getAttr0Functor,
     onValueClickHandler, onValueRightClickHandler, onValueMouseOverHandler,
     onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
 
     if (!data) {
       return null;
@@ -54,13 +59,13 @@ function BarSeries(props: BarSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <BarSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <BarSeries {...allProps} animation={false} />
         </Animation>
       );
     }
 
-    const {sameTypeTotal, sameTypeIndex} = getStackParams(props as any);
+    const {sameTypeTotal, sameTypeIndex} = getStackParams(allProps as any);
 
     const distance = getScaleDistance(linePosAttr as string);
     const lineFunctor = getAttributeFunctor(linePosAttr as string);
@@ -119,18 +124,3 @@ function BarSeries(props: BarSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(BarSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  linePosAttr: PropTypes.string,
-  valuePosAttr: PropTypes.string,
-  lineSizeAttr: PropTypes.string,
-  valueSizeAttr: PropTypes.string,
-  cluster: PropTypes.string,
-  barWidth: PropTypes.number
-};
-(BarSeries as any).defaultProps = {barWidth: 0.85};
-
-(BarSeries as any).displayName = 'BarSeries';
-
-export default BarSeries;

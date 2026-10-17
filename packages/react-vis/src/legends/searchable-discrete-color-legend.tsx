@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import DiscreteColorLegend, {
   DiscreteColorLegendProps,
@@ -35,18 +34,7 @@ export interface SearchableDiscreteColorLegendProps
   searchFn?: (items: LegendItemValue[], search: string) => LegendItemValue[];
 }
 
-const propTypes = {
-  ...(DiscreteColorLegend as any).propTypes,
-  searchText: PropTypes.string,
-  onSearchChange: PropTypes.func,
-  searchPlaceholder: PropTypes.string,
-  searchFn: PropTypes.func
-};
-
-const defaultProps = {
-  className: '',
-  searchText: '',
-  searchFn: (items: LegendItemValue[], search: string) =>
+const defaultSearchFn = (items: LegendItemValue[], search: string) =>
     items.filter(item =>
       String(
         typeof item === 'object' && item && 'title' in item
@@ -56,26 +44,26 @@ const defaultProps = {
         .toLowerCase()
         .indexOf(search) !== -1
     )
-};
 
-function SearchableDiscreteColorLegend(
-  props: SearchableDiscreteColorLegendProps
+
+function SearchableDiscreteColorLegend({
+  className = '',
+  colors,
+  height,
+  items,
+  onItemClick,
+  onItemMouseEnter,
+  onItemMouseLeave,
+  orientation,
+  style,
+  width,
+  _displayName = 'SearchableDiscreteColorLegend',
+  searchText = '',
+  onSearchChange,
+  searchPlaceholder,
+  searchFn = defaultSearchFn,
+}: SearchableDiscreteColorLegendProps
 ): JSX.Element {
-  const {
-    className = '',
-    colors,
-    height,
-    items,
-    onItemClick,
-    onItemMouseEnter,
-    onItemMouseLeave,
-    onSearchChange,
-    orientation,
-    searchFn = defaultProps.searchFn,
-    searchPlaceholder,
-    searchText = '',
-    width
-  } = props;
   const onChange = onSearchChange
     ? ({target: {value}}: React.ChangeEvent<HTMLInputElement>) =>
         onSearchChange(value)
@@ -108,10 +96,5 @@ function SearchableDiscreteColorLegend(
     </div>
   );
 }
-
-(SearchableDiscreteColorLegend as any).propTypes = propTypes;
-(SearchableDiscreteColorLegend as any).defaultProps = defaultProps;
-(SearchableDiscreteColorLegend as any).displayName =
-  'SearchableDiscreteColorLegend';
 
 export default SearchableDiscreteColorLegend;

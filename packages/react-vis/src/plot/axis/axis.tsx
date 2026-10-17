@@ -19,9 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import Animation, {AnimationParam, AnimationPropType} from 'animation';
+import Animation, {AnimationParam} from 'animation';
 import {ORIENTATION, getTicksTotalFromSize} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -79,49 +78,9 @@ export interface AxisProps {
   innerHeight?: number;
   animation?: AnimationParam;
   position?: string;
+  _displayName?: string;
   [key: string]: any;
 }
-
-const propTypes = {
-  orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]),
-  attr: PropTypes.string.isRequired,
-  attrAxis: PropTypes.string,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  top: PropTypes.number,
-  left: PropTypes.number,
-  title: PropTypes.string,
-  style: PropTypes.object,
-  className: PropTypes.string,
-  hideTicks: PropTypes.bool,
-  hideLine: PropTypes.bool,
-  on0: PropTypes.bool,
-  tickLabelAngle: PropTypes.number,
-  tickSize: PropTypes.number,
-  tickSizeInner: PropTypes.number,
-  tickSizeOuter: PropTypes.number,
-  tickPadding: PropTypes.number,
-  tickValues: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  ),
-  tickFormat: PropTypes.func,
-  tickTotal: PropTypes.number,
-  marginTop: PropTypes.number,
-  marginBottom: PropTypes.number,
-  marginLeft: PropTypes.number,
-  marginRight: PropTypes.number,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number
-};
-
-const defaultProps = {
-  className: '',
-  on0: false,
-  style: {},
-  tickSize: 6,
-  tickPadding: 8,
-  orientation: BOTTOM
-};
 
 const predefinedClassName = 'rv-xy-plot__axis';
 const VERTICAL_CLASS_NAME = 'rv-xy-plot__axis--vertical';
@@ -171,8 +130,28 @@ function getDefaultAxisProps(props: AxisProps) {
     };
 }
 
-const Axis: any = (props: AxisProps) => {
-    const {animation} = props;
+const Axis: any = ({
+  animation,
+  className = '',
+  on0 = false,
+  style = {},
+  tickSize = 6,
+  tickPadding = 8,
+  orientation = BOTTOM,
+  _displayName = 'Axis',
+  _requiresSVG = true,
+  ...restProps
+}: AxisProps) => {
+    const allProps = {
+      ...restProps,
+      animation,
+      className,
+      on0,
+      style,
+      tickSize,
+      tickPadding,
+      orientation
+    };
 
     if (animation) {
       const animatedProps = (animation as any).nonAnimatedProps
@@ -182,29 +161,25 @@ const Axis: any = (props: AxisProps) => {
         : defaultAnimatedProps;
 
       return (
-        <Animation {...props} {...{animatedProps}}>
-          <Axis {...props} animation={null as any} />
+        <Animation {...allProps} {...{animatedProps}}>
+          <Axis {...allProps} animation={null as any} />
         </Animation>
       );
     }
 
     const mergedProps = {
-      ...getDefaultAxisProps(props),
-      ...props
+      ...getDefaultAxisProps(allProps),
+      ...allProps
     };
 
     const {
       attrAxis,
-      className,
       height,
       hideLine,
       hideTicks,
       left,
       marginTop,
-      on0,
-      orientation,
       position,
-      style,
       title,
       top,
       width
@@ -260,9 +235,4 @@ const Axis: any = (props: AxisProps) => {
     );
   };
 
-(Axis as any).displayName = 'Axis';
-(Axis as any).propTypes = propTypes;
-(Axis as any).defaultProps = defaultProps;
 (Axis as any).requiresSVG = true;
-
-export default Axis;

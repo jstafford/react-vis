@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -36,6 +35,7 @@ const DEFAULT_CROSS_BAR_WIDTH = 6;
 export interface WhiskerSeriesProps extends AbstractSeriesProps<any> {
   strokeWidth?: number;
   crossBarWidth?: number;
+  _displayName?: string;
 }
 
 interface WhiskerMarkProps {
@@ -190,19 +190,37 @@ const renderWhiskerMark = (whiskerMarkProps: WhiskerMarkProps) => (
   );
 };
 
-function WhiskerSeries(props: WhiskerSeriesProps): JSX.Element | null {
+export function WhiskerSeries({
+  className: defaultClassName = '',
+  stack: defaultStack = false,
+  style: defaultStyle = {},
+  crossBarWidth: defaultCrossBarWidth = DEFAULT_CROSS_BAR_WIDTH,
+  size: defaultSize = 0,
+  strokeWidth: defaultStrokeWidth = DEFAULT_STROKE_WIDTH,
+  _displayName: defaultDisplayName = 'WhiskerSeries',
+  ...restProps
+}: WhiskerSeriesProps): JSX.Element | null {
+  const allProps = {
+    ...restProps,
+    className: defaultClassName,
+    stack: defaultStack,
+    style: defaultStyle,
+    crossBarWidth: defaultCrossBarWidth,
+    size: defaultSize,
+    strokeWidth: defaultStrokeWidth
+  };
   const {
     animation, className, crossBarWidth, data, marginLeft, marginTop,
     strokeWidth, style, getAttributeFunctor, onValueClickHandler,
     onValueRightClickHandler, onValueMouseOverHandler, onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
     if (!data) {
       return null;
     }
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <WhiskerSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <WhiskerSeries {...allProps} animation={false} />
         </Animation>
       );
     }
@@ -232,16 +250,3 @@ function WhiskerSeries(props: WhiskerSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(WhiskerSeries as any).displayName = 'WhiskerSeries';
-(WhiskerSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  strokeWidth: PropTypes.number
-};
-(WhiskerSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  crossBarWidth: DEFAULT_CROSS_BAR_WIDTH,
-  size: 0,
-  strokeWidth: DEFAULT_STROKE_WIDTH
-};
-export default WhiskerSeries;

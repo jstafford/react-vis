@@ -28,19 +28,20 @@ export interface TreemapDOMProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-function TreemapDOM(props: TreemapDOMProps): JSX.Element {
-  const {
-    animation,
-    className,
-    height,
-    hideRootNode,
-    getLabel,
-    mode,
-    nodes,
-    width,
-    scales,
-    style
-  } = props;
+export function TreemapDOM({
+  animation,
+  className,
+  height,
+  hideRootNode,
+  getLabel,
+  mode,
+  nodes,
+  width,
+  scales,
+  style,
+  _displayName = 'TreemapDOM',
+  ...rest
+}: TreemapDOMProps): JSX.Element {
   const useCirclePacking = mode === 'circlePack';
   return (
     <div
@@ -58,9 +59,13 @@ function TreemapDOM(props: TreemapDOMProps): JSX.Element {
 
         const nodeProps = {
           animation,
+          className,
+          height,
+          hideRootNode,
           node,
           getLabel,
-          ...props,
+          width,
+          ...rest,
           x0: useCirclePacking ? node.x || 0 : node.x0 || 0,
           x1: useCirclePacking ? node.x || 0 : node.x1 || 0,
           y0: useCirclePacking ? node.y || 0 : node.y0 || 0,
@@ -74,6 +79,3 @@ function TreemapDOM(props: TreemapDOMProps): JSX.Element {
     </div>
   );
 }
-
-(TreemapDOM as any).displayName = 'TreemapDOM';
-export default TreemapDOM;

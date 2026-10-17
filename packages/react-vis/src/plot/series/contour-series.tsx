@@ -19,13 +19,11 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {contourDensity} from 'd3-contour';
 import {geoPath} from 'd3-geo';
 import {scaleLinear} from 'd3-scale';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -36,6 +34,7 @@ const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--contour';
 export interface ContourSeriesProps extends AbstractSeriesProps<any> {
   bandwidth?: number;
   colorRange?: string[];
+  _displayName?: string;
 }
 
 function getDomain(data: Array<{value: number}>): {min: number; max: number} {
@@ -50,22 +49,33 @@ function getDomain(data: Array<{value: number}>): {min: number; max: number} {
   );
 }
 
-function ContourSeries(props: ContourSeriesProps): JSX.Element | null {
+function ContourSeries({
+  className = '',
+  stack = false,
+  style = {},
+  bandwidth = 40,
+  _displayName = 'ContourSeries',
+  ...restProps
+}: ContourSeriesProps): JSX.Element | null {
+  const allProps = {
+    ...restProps,
+    className,
+    stack,
+    style,
+    bandwidth
+  };
   const {
     getAttributeFunctor,
     ...series
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
   const {
       animation,
-      bandwidth,
-      className,
       colorRange,
       data,
       innerHeight,
       innerWidth,
       marginLeft,
       marginTop,
-      style
     } = series as ContourSeriesProps;
 
     if (!data || !innerWidth || !innerHeight) {
@@ -74,8 +84,8 @@ function ContourSeries(props: ContourSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <ContourSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <ContourSeries {...allProps} animation={false} />
         </Animation>
       );
     }
@@ -115,21 +125,3 @@ function ContourSeries(props: ContourSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(ContourSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  animation: PropTypes.bool,
-  bandwidth: PropTypes.number,
-  className: PropTypes.string,
-  marginLeft: PropTypes.number,
-  marginTop: PropTypes.number,
-  style: PropTypes.object
-};
-
-(ContourSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  bandwidth: 40,
-  style: {}
-};
-
-export default ContourSeries;

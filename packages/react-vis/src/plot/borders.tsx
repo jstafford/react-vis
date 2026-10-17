@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 interface BordersProps {
@@ -37,22 +36,8 @@ interface BordersProps {
   innerWidth?: number;
   innerHeight?: number;
   className?: string;
+  _displayName?: string
 }
-
-const propTypes = {
-  style: PropTypes.shape({
-    bottom: PropTypes.object,
-    left: PropTypes.object,
-    right: PropTypes.object,
-    top: PropTypes.object
-  }),
-  marginTop: PropTypes.number,
-  marginBottom: PropTypes.number,
-  marginLeft: PropTypes.number,
-  marginRight: PropTypes.number,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number
-};
 
 const CLASSES = {
   bottom: 'rv-xy-plot__borders-bottom',
@@ -62,17 +47,23 @@ const CLASSES = {
   top: 'rv-xy-plot__borders-top'
 };
 
-function Borders(props: BordersProps) {
-  const {
-    marginTop = 0,
-    marginBottom = 0,
-    marginLeft = 0,
-    marginRight = 0,
-    innerWidth = 0,
-    innerHeight = 0,
-    style = {},
-    className = ''
-  } = props;
+function Borders({
+  marginTop = 0,
+  marginBottom = 0,
+  marginLeft = 0,
+  marginRight = 0,
+  innerWidth = 0,
+  innerHeight = 0,
+  style = {
+    all: {},
+    bottom: {},
+    left: {},
+    right: {},
+    top: {}
+  },
+  className = '',
+  _displayName = 'Borders'
+}: BordersProps) {
   const height = innerHeight + marginTop + marginBottom;
   const width = innerWidth + marginLeft + marginRight;
   return (
@@ -113,18 +104,6 @@ function Borders(props: BordersProps) {
   );
 }
 
-(Borders as any).displayName = 'Borders';
-(Borders as any).defaultProps = {
-  className: '',
-  style: {
-    all: {},
-    bottom: {},
-    left: {},
-    right: {},
-    top: {}
-  }
-};
-(Borders as any).propTypes = propTypes;
 (Borders as any).requiresSVG = true;
 
 export default Borders;

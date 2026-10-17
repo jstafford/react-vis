@@ -24,27 +24,32 @@ import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series';
 import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--heatmap';
 
-export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {}
+export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {
+  _displayName?: string;
+}
 
-function HeatmapSeries(props: HeatmapSeriesProps): JSX.Element | null {
+export function HeatmapSeries({
+  _displayName = 'HeatmapSeries',
+  ...restProps
+}: HeatmapSeriesProps): JSX.Element | null {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, getScaleDistance,
     onValueClickHandler, onValueRightClickHandler, onValueMouseOverHandler,
     onValueMouseOutHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...restProps, ...useAbstractSeries(restProps)};
     if (!data) {
       return null;
     }
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <HeatmapSeries {...props} animation={false} />
+        <Animation {...restProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <HeatmapSeries {...restProps} animation={false} />
         </Animation>
       );
     }
@@ -92,11 +97,3 @@ namespace HeatmapSeries {
     return {isDomainAdjustmentNeeded: attr === 'x' || attr === 'y'};
   }
 }
-
-(HeatmapSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes
-};
-
-(HeatmapSeries as any).displayName = 'HeatmapSeries';
-
-export default HeatmapSeries;

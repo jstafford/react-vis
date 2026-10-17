@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 import BarSeriesCanvas from './bar-series-canvas';
 
 export interface HorizontalBarSeriesCanvasProps extends AbstractSeriesProps<any> {}
@@ -28,7 +28,12 @@ interface HorizontalBarSeriesCanvasComponent {
   renderLayer: (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const HorizontalBarSeriesCanvas = ((props: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
+const HorizontalBarSeriesCanvas = (({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'HorizontalBarSeriesCanvas'
+}: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
 
 (HorizontalBarSeriesCanvas as any).requiresSVG = false;
 (HorizontalBarSeriesCanvas as any).isCanvas = true;
@@ -51,12 +56,6 @@ const HorizontalBarSeriesCanvas = ((props: HorizontalBarSeriesCanvasProps): null
       },
       ctx
     );
-};
-
-(HorizontalBarSeriesCanvas as any).displayName = 'HorizontalBarSeriesCanvas';
-(HorizontalBarSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
-(HorizontalBarSeriesCanvas as any).propTypes = {
-  ...(AbstractSeries as any).propTypes
 };
 
 export default HorizontalBarSeriesCanvas;

@@ -20,31 +20,17 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {DIRECTION} from 'utils/axis-utils';
 import GridLines from 'plot/grid-lines';
 
 const {HORIZONTAL} = DIRECTION;
 
-const propTypes = {
-  ...(GridLines as any).propTypes,
-  direction: PropTypes.oneOf([HORIZONTAL])
-};
-
-const defaultProps = {
-  direction: HORIZONTAL,
-  attr: 'y'
-};
-
-function HorizontalGridLines(props: any) {
-  return <GridLines {...props} />;
+export function HorizontalGridLines({
+  direction = HORIZONTAL,
+  attr = 'y',
+  _displayName = 'HorizontalGridLines',
+  _requiresSVG = true,
+  ...restProps
+}: any) {
+  return <GridLines {...restProps} direction={direction} attr={attr} />;
 }
-
-HorizontalGridLines.displayName = 'HorizontalGridLines';
-(HorizontalGridLines as any).displayName = 'HorizontalGridLines';
-(HorizontalGridLines as any).propTypes = propTypes;
-(HorizontalGridLines as any).defaultProps = defaultProps;
-(HorizontalGridLines as any).requiresSVG = true;
-
-export default HorizontalGridLines;

@@ -20,9 +20,7 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
-import Animation, {AnimationPropType, AnimationParam} from 'animation';
+import Animation, {AnimationParam} from 'animation';
 import {getFontColorFromBackground} from 'utils/scales-utils';
 import {TreemapNode, TreemapScales} from './index';
 
@@ -60,28 +58,43 @@ export interface TreemapLeafProps {
   [key: string]: any;
 }
 
-function TreemapLeaf(props: TreemapLeafProps): JSX.Element {
-  const {
-    animation,
-    getLabel = (datum: any) => datum.title,
+export function TreemapLeaf({
+  animation,
+  getLabel = (datum: any) => datum.title,
+  mode,
+  node,
+  onLeafClick = () => undefined,
+  onLeafMouseOver = () => undefined,
+  onLeafMouseOut = () => undefined,
+  r,
+  scales,
+  x0,
+  x1,
+  y0,
+  y1,
+  style,
+  _displayName = 'TreemapLeaf',
+  ...rest
+}: TreemapLeafProps): JSX.Element {
+
+  if (animation) {
+    const allProps = {...rest, animation,
+    getLabel,
     mode,
     node,
-    onLeafClick = () => undefined,
-    onLeafMouseOver = () => undefined,
-    onLeafMouseOut = () => undefined,
+    onLeafClick,
+    onLeafMouseOver,
+    onLeafMouseOut,
     r,
     scales,
     x0,
     x1,
     y0,
     y1,
-    style
-  } = props;
-
-  if (animation) {
+    style}
     return (
-      <Animation {...props} animatedProps={ANIMATED_PROPS}>
-        <TreemapLeaf {...props} animation={null as any} />
+      <Animation {...allProps} animatedProps={ANIMATED_PROPS}>
+        <TreemapLeaf {...allProps} animation={null as any} />
       </Animation>
     );
   }
@@ -117,22 +130,3 @@ function TreemapLeaf(props: TreemapLeafProps): JSX.Element {
     </div>
   );
 }
-
-(TreemapLeaf as any).propTypes = {
-  animation: AnimationPropType,
-  height: PropTypes.number.isRequired,
-  mode: PropTypes.string,
-  node: PropTypes.object.isRequired,
-  onLeafClick: PropTypes.func,
-  onLeafMouseOver: PropTypes.func,
-  onLeafMouseOut: PropTypes.func,
-  scales: PropTypes.object.isRequired,
-  width: PropTypes.number.isRequired,
-  r: PropTypes.number.isRequired,
-  x0: PropTypes.number.isRequired,
-  x1: PropTypes.number.isRequired,
-  y0: PropTypes.number.isRequired,
-  y1: PropTypes.number.isRequired
-};
-
-export default TreemapLeaf;

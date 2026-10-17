@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   sankey,
   sankeyLinkHorizontal,
@@ -14,7 +13,7 @@ import VerticalRectSeries from 'plot/series/vertical-rect-series';
 import LabelSeries from 'plot/series/label-series';
 import Voronoi from 'plot/voronoi';
 import {AnimationParam} from 'animation';
-import {Margin, MarginPropType, getInnerDimensions} from 'utils/chart-utils';
+import {Margin, getInnerDimensions} from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 
@@ -101,10 +100,11 @@ export interface SankeyProps {
   onLinkMouseOut?: (link: SankeyGraphLink, event?: React.SyntheticEvent<any>) => void;
   style?: SankeyStyle;
   width: number;
+  _displayName?: string;
   [key: string]: any;
 }
 
-function Sankey(props: SankeyProps): JSX.Element {
+export function Sankey(props: SankeyProps): JSX.Element {
   const {
     align = 'justify',
     animation,
@@ -128,9 +128,14 @@ function Sankey(props: SankeyProps): JSX.Element {
     onLinkMouseOver = NOOP,
     onLinkMouseOut = NOOP,
     style: sankeyStyle = DEFAULT_STYLE,
-    width
+    width,
+    _displayName = 'Sankey'
   } = props;
-  const {style: _ignoredStyle, ...xyPlotProps} = props;
+  const {style: _ignoredStyle, ...xyPlotProps} = {
+    ...props,
+    className,
+    margin
+  };
 
   if (nodes.length === 0) {
     return (
@@ -248,56 +253,3 @@ function Sankey(props: SankeyProps): JSX.Element {
     </XYPlot>
   );
 }
-
-(Sankey as any).defaultProps = {
-  align: 'justify',
-  className: '',
-  hasVoronoi: false,
-  hideLabels: false,
-  labelRotation: 0,
-  layout: 50,
-  margin: DEFAULT_MARGINS,
-  nodePadding: 10,
-  nodeWidth: 10,
-  onValueMouseOver: NOOP,
-  onValueClick: NOOP,
-  onValueMouseOut: NOOP,
-  onLinkClick: NOOP,
-  onLinkMouseOver: NOOP,
-  onLinkMouseOut: NOOP,
-  style: DEFAULT_STYLE
-};
-
-(Sankey as any).propTypes = {
-  align: PropTypes.oneOf(['justify', 'left', 'right', 'center']),
-  className: PropTypes.string,
-  hasVoronoi: PropTypes.bool,
-  height: PropTypes.number.isRequired,
-  hideLabels: PropTypes.bool,
-  labelRotation: PropTypes.number,
-  layout: PropTypes.number,
-  links: PropTypes.arrayOf(
-    PropTypes.shape({
-      source: PropTypes.oneOfType([PropTypes.number, PropTypes.object]).isRequired,
-      target: PropTypes.oneOfType([PropTypes.number, PropTypes.object]).isRequired
-    })
-  ).isRequired,
-  margin: MarginPropType,
-  nodePadding: PropTypes.number,
-  nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
-  nodeWidth: PropTypes.number,
-  onValueMouseOver: PropTypes.func,
-  onValueClick: PropTypes.func,
-  onValueMouseOut: PropTypes.func,
-  onLinkClick: PropTypes.func,
-  onLinkMouseOver: PropTypes.func,
-  onLinkMouseOut: PropTypes.func,
-  style: PropTypes.shape({
-    links: PropTypes.object,
-    rects: PropTypes.object,
-    labels: PropTypes.object
-  }),
-  width: PropTypes.number.isRequired
-};
-
-export default Sankey;

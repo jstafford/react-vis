@@ -19,33 +19,28 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 
 interface GradientDefsProps {
   className?: string;
   children?: React.ReactNode;
+  _displayName?: string;
+  _requiresSVG?: boolean;
 }
 
 const predefinedClassName = 'rv-gradient-defs';
 
-function GradientDefs(props: GradientDefsProps) {
-  const {className} = props;
+export function GradientDefs(props: GradientDefsProps) {
+  const {
+    className = '',
+    _displayName = 'GradientDefs',
+    _requiresSVG = true,
+    children
+  } = props;
   return (
     <defs className={getCombinedClassName(predefinedClassName, className)}>
-      {props.children}
+      {children}
     </defs>
   );
 }
-
-GradientDefs.displayName = 'GradientDefs';
-GradientDefs.requiresSVG = true;
-GradientDefs.propTypes = {
-  className: PropTypes.string
-};
-GradientDefs.defaultProps = {
-  className: ''
-};
-
-export default GradientDefs;

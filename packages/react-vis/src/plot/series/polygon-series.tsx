@@ -24,8 +24,7 @@ import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {useAbstractSeries, AbstractSeriesProps} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--polygon';
 const DEFAULT_COLOR = '#12939A';
@@ -41,14 +40,21 @@ const generatePath = (
     ''
   )} Z`;
 
-export interface PolygonSeriesProps extends AbstractSeriesProps<any> {}
+export interface PolygonSeriesProps extends AbstractSeriesProps<any> {
+  color: string;
+  _displayName?: string;
+}
 
-function PolygonSeries(props: PolygonSeriesProps): JSX.Element | null {
+export function PolygonSeries({
+  color = DEFAULT_COLOR,
+  _displayName = 'PolygonSeries',
+  ...rest
+}: PolygonSeriesProps): JSX.Element | null {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, onSeriesMouseOverHandler, onSeriesMouseOutHandler,
     onSeriesClickHandler, onSeriesRightClickHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...rest, ...useAbstractSeries(rest)};
 
     if (!data) {
       return null;
@@ -56,8 +62,8 @@ function PolygonSeries(props: PolygonSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <PolygonSeries {...props} animation={false} />
+        <Animation {...rest} animatedProps={ANIMATED_SERIES_PROPS}>
+          <PolygonSeries {...rest} color={color} animation={false} />
         </Animation>
       );
     }
@@ -72,7 +78,7 @@ function PolygonSeries(props: PolygonSeriesProps): JSX.Element | null {
           onMouseOut: onSeriesMouseOutHandler,
           onClick: onSeriesClickHandler,
           onContextMenu: onSeriesRightClickHandler,
-          fill: (props.color as string) || DEFAULT_COLOR,
+          fill: color,
           style,
           d: generatePath(data, xFunctor, yFunctor),
           transform: `translate(${marginLeft},${marginTop})`
@@ -80,10 +86,3 @@ function PolygonSeries(props: PolygonSeriesProps): JSX.Element | null {
       />
     );
   }
-
-  (PolygonSeries as any).propTypes = {
-    ...(AbstractSeries as any).propTypes
-  };
-(PolygonSeries as any).displayName = 'PolygonSeries';
-
-export default PolygonSeries;

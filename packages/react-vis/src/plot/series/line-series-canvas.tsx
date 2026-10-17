@@ -18,14 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import PropTypes from 'prop-types';
 import {rgb} from 'd3-color';
 import * as d3Shape from 'd3-shape';
 import React from 'react';
 
 import {DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor, getAttributeValue} from 'utils/scales-utils';
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import AbstractSeries from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface LineSeriesCanvasProps extends AbstractSeriesProps<any> {
   strokeWidth?: number;
@@ -38,7 +38,13 @@ interface LineSeriesCanvasComponent {
   renderLayer: (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const LineSeriesCanvas = ((props: LineSeriesCanvasProps): JSX.Element => <div />) as LineSeriesCanvasComponent;
+const LineSeriesCanvas = (({
+  className = '',
+  stack = false,
+  style = {},
+  strokeWidth = 2,
+  _displayName = 'LineSeriesCanvas'
+}: LineSeriesCanvasProps): JSX.Element => <div />) as LineSeriesCanvasComponent;
 
 (LineSeriesCanvas as any).requiresSVG = false;
 (LineSeriesCanvas as any).isCanvas = true;
@@ -49,7 +55,7 @@ const LineSeriesCanvas = ((props: LineSeriesCanvasProps): JSX.Element => <div />
       data,
       marginLeft,
       marginTop,
-      strokeWidth,
+      strokeWidth = 2,
       strokeDasharray
     } = props;
     if (!data || data.length === 0) {
@@ -87,17 +93,6 @@ const LineSeriesCanvas = ((props: LineSeriesCanvasProps): JSX.Element => <div />
     // set back to default
     ctx.lineWidth = 1;
     ctx.setLineDash([]);
-};
-
-(LineSeriesCanvas as any).displayName = 'LineSeriesCanvas';
-(LineSeriesCanvas as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  strokeWidth: 2
-};
-
-(LineSeriesCanvas as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  strokeWidth: PropTypes.number
 };
 
 export default LineSeriesCanvas;

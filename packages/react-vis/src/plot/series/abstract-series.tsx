@@ -18,18 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import PropTypes from 'prop-types';
 import {voronoi} from 'd3-voronoi';
 import {PureComponent} from 'react';
 import React from 'react';
 
-import {AnimationPropType, AnimationParam} from 'animation';
+import {AnimationParam} from 'animation';
 import {
   getAttributeFunctor,
   getAttr0Functor,
   getAttributeValue,
-  getScaleObjectFromProps,
-  getScalePropTypesByAttribute
+  getScaleObjectFromProps
 } from 'utils/scales-utils';
 
 export type RVDatum = {[key: string]: any};
@@ -73,32 +71,6 @@ export interface AbstractSeriesProps<T extends RVDatum = RVDatum> {
   marginLeft?: number;
   [key: string]: any;
 }
-
-const propTypes = {
-  ...getScalePropTypesByAttribute('x'),
-  ...getScalePropTypesByAttribute('y'),
-  ...getScalePropTypesByAttribute('size'),
-  ...getScalePropTypesByAttribute('opacity'),
-  ...getScalePropTypesByAttribute('color'),
-  width: PropTypes.number,
-  height: PropTypes.number,
-  data: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.object, PropTypes.array])
-  ),
-  onValueMouseOver: PropTypes.func,
-  onValueMouseOut: PropTypes.func,
-  onValueClick: PropTypes.func,
-  onValueRightClick: PropTypes.func,
-  onSeriesMouseOver: PropTypes.func,
-  onSeriesMouseOut: PropTypes.func,
-  onSeriesClick: PropTypes.func,
-  onSeriesRightClick: PropTypes.func,
-  onNearestX: PropTypes.func,
-  onNearestXY: PropTypes.func,
-  style: PropTypes.object,
-  animation: AnimationPropType,
-  stack: PropTypes.bool
-};
 
 const defaultProps = {
   className: '',
@@ -400,7 +372,6 @@ class AbstractSeries<
 }
 
 (AbstractSeries as any).displayName = 'AbstractSeries';
-(AbstractSeries as any).propTypes = propTypes;
 (AbstractSeries as any).defaultProps = defaultProps;
 
 export default AbstractSeries;

@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React, {useEffect, useRef} from 'react';
-import PropTypes from 'prop-types';
 
 import {interpolate} from 'd3-interpolate';
 import {extractAnimatedPropValues} from 'animation';
@@ -34,8 +33,9 @@ export interface CanvasWrapperProps {
   marginTop: number;
   innerHeight: number;
   innerWidth: number;
-  pixelRatio: number;
+  pixelRatio?: number;
   children?: React.ReactNode;
+  _displayName?: string;
 }
 
 /**
@@ -133,7 +133,12 @@ function buildLayers(newChildren: React.ReactElement[], oldChildren: React.React
   });
 }
 
-const CanvasWrapper: any = (props: CanvasWrapperProps): JSX.Element => {
+const CanvasWrapper: any = ({
+  pixelRatio = (window && window.devicePixelRatio) || 1,
+  _displayName = 'CanvasWrapper',
+  ...restProps
+}: CanvasWrapperProps): JSX.Element => {
+  const props = {...restProps, pixelRatio};
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const previousProps = useRef<CanvasWrapperProps | null>(null);
 
@@ -228,20 +233,6 @@ const CanvasWrapper: any = (props: CanvasWrapperProps): JSX.Element => {
       </div>
     );
   }
-};
-
-CanvasWrapper.displayName = 'CanvasWrapper';
-CanvasWrapper.defaultProps = {
-  pixelRatio: (window && window.devicePixelRatio) || 1
-};
-CanvasWrapper.propTypes = {
-  marginBottom: PropTypes.number.isRequired,
-  marginLeft: PropTypes.number.isRequired,
-  marginRight: PropTypes.number.isRequired,
-  marginTop: PropTypes.number.isRequired,
-  innerHeight: PropTypes.number.isRequired,
-  innerWidth: PropTypes.number.isRequired,
-  pixelRatio: PropTypes.number.isRequired
 };
 
 export default CanvasWrapper;

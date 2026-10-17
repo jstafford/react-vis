@@ -19,25 +19,27 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import LineSeries from './line-series';
-import MarkSeries from './mark-series';
+import {AbstractSeriesProps} from './abstract-series';
+import {LineSeries} from './line-series';
+import {MarkSeries} from './mark-series';
 
 export interface LineMarkSeriesProps extends AbstractSeriesProps<any> {
   lineStyle?: React.CSSProperties | {[key: string]: any};
   markStyle?: React.CSSProperties | {[key: string]: any};
 }
 
-const propTypes = {
-  ...(LineSeries as any).propTypes,
-  lineStyle: PropTypes.object,
-  markStyle: PropTypes.object
-};
-
-function LineMarkSeries(props: LineMarkSeriesProps): JSX.Element {
-  const {lineStyle, markStyle, style} = props;
+export function LineMarkSeries({
+  className = '',
+  stack = false,
+  style = {},
+  lineStyle = {},
+  markStyle = {},
+  _displayName = 'LineMarkSeries',
+  _requiresSVG = true,
+  ...restProps
+}: LineMarkSeriesProps): JSX.Element {
+  const props = {...restProps, className, stack, style};
   return (
     <g className="rv-xy-plot__series rv-xy-plot__series--linemark">
       <LineSeries {...props} style={{...style, ...lineStyle}} />
@@ -45,14 +47,3 @@ function LineMarkSeries(props: LineMarkSeriesProps): JSX.Element {
     </g>
   );
 }
-
-(LineMarkSeries as any).requiresSVG = true;
-(LineMarkSeries as any).defaultProps = {
-  ...(LineSeries as any).defaultProps,
-  lineStyle: {},
-  markStyle: {}
-};
-(LineMarkSeries as any).displayName = 'LineMarkSeries';
-(LineMarkSeries as any).propTypes = propTypes;
-
-export default LineMarkSeries;

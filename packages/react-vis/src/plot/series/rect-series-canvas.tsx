@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import PropTypes from 'prop-types';
 import {rgb} from 'd3-color';
 
 import {DEFAULT_OPACITY} from 'theme';
@@ -37,7 +36,12 @@ interface RectSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-const RectSeriesCanvas = ((props: RectSeriesCanvasProps): null => null) as RectSeriesCanvasComponent;
+const RectSeriesCanvas = (({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'RectSeriesCanvas'
+}: RectSeriesCanvasProps): null => null) as RectSeriesCanvasComponent;
 
 (RectSeriesCanvas as any).requiresSVG = false;
 (RectSeriesCanvas as any).isCanvas = true;
@@ -88,19 +92,6 @@ const RectSeriesCanvas = ((props: RectSeriesCanvasProps): null => null) as RectS
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-};
-
-(RectSeriesCanvas as any).displayName = 'RectSeriesCanvas';
-(RectSeriesCanvas as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  linePosAttr: PropTypes.string.isRequired,
-  valuePosAttr: PropTypes.string.isRequired,
-  lineSizeAttr: PropTypes.string.isRequired,
-  valueSizeAttr: PropTypes.string.isRequired
-};
-
-(RectSeriesCanvas as any).propTypes = {
-  ...(AbstractSeries as any).propTypes
 };
 
 export default RectSeriesCanvas;

@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Animation from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -27,8 +26,7 @@ import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {useAbstractSeries, AbstractSeriesProps} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--mark';
 const DEFAULT_STROKE_WIDTH = 1;
@@ -37,6 +35,7 @@ export interface MarkSeriesProps extends AbstractSeriesProps<any> {
   getNull?: (d: any) => boolean;
   nullAccessor?: (d: any) => boolean;
   strokeWidth?: number;
+  _displayName?: string;
 }
 
 function renderCircle(
@@ -79,7 +78,12 @@ function renderCircle(
     return <circle {...attrs} />;
   }
 
-function MarkSeries(props: MarkSeriesProps): JSX.Element | null {
+export function MarkSeries({
+  getNull: defaultGetNull = () => true,
+  _displayName: defaultDisplayName = 'MarkSeries',
+  ...rest
+}: MarkSeriesProps): JSX.Element | null {
+  const props = {...rest, getNull: defaultGetNull};
   const {
     animation, className, data, marginLeft, marginTop, strokeWidth, style,
     getAttributeFunctor, onValueClickHandler, onValueRightClickHandler,
@@ -133,15 +137,3 @@ function MarkSeries(props: MarkSeriesProps): JSX.Element | null {
       </g>
     );
   }
-
-(MarkSeries as any).displayName = 'MarkSeries';
-(MarkSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  getNull: PropTypes.func,
-  strokeWidth: PropTypes.number
-};
-(MarkSeries as any).defaultProps = {
-  getNull: () => true
-};
-
-export default MarkSeries;

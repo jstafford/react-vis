@@ -19,15 +19,13 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {pie as pieBuilder} from 'd3-shape';
 
-import {AnimationPropType} from 'animation';
 import ArcSeries from 'plot/series/arc-series';
 import LabelSeries from 'plot/series/label-series';
 import XYPlot from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
-import {MarginPropType, getRadialLayoutMargin} from 'utils/chart-utils';
+import {getRadialLayoutMargin} from 'utils/chart-utils';
 import {getRadialDomain} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -66,6 +64,7 @@ export interface RadialChartProps {
   showLabels?: boolean;
   style?: React.CSSProperties;
   width: number;
+  _displayName?: string;
   [key: string]: any;
 }
 
@@ -142,14 +141,56 @@ function getMaxRadius(width: number, height: number): number {
   return Math.min(width, height) / 2 - DEFAULT_RADIUS_MARGIN;
 }
 
-function RadialChart(props: RadialChartProps): JSX.Element {
-  const {
+export function RadialChart({
+  animation,
+  className = '',
+  children,
+  colorType = 'category',
+  colorRange = DISCRETE_COLOR_RANGE,
+  padAngle = 0,
+  data,
+  getAngle = (d: any) => d.angle,
+  getAngle0 = (d: any) => d.angle0,
+  getRadius = (d: any) => d.radius,
+  getRadius0 = (d: any) => d.radius0,
+  getLabel = (d: any) => d.label,
+  getSubLabel = (d: any) => d.subLabel,
+  height,
+  hideRootNode,
+  innerRadius,
+  labelsAboveChildren,
+  labelsRadiusMultiplier,
+  labelsStyle,
+  margin,
+  onMouseLeave,
+  onMouseEnter,
+  radius,
+  showLabels,
+  style,
+  width,
+  _displayName = 'RadialChart',
+  ...rest
+}: RadialChartProps): JSX.Element {
+  const mappedData = getWedgesToRender({
+    data,
+    height,
+    hideRootNode,
+    width,
+    getAngle
+  });
+  const radialDomain = getRadialDomain(mappedData);
+  const arcProps: any = {
+    ...rest,
     animation,
     className,
     children,
     colorType,
-    data,
+    colorRange,
+    padAngle,
     getAngle,
+    getAngle0,
+    getRadius,
+    getRadius0,
     getLabel,
     getSubLabel,
     height,
@@ -164,24 +205,10 @@ function RadialChart(props: RadialChartProps): JSX.Element {
     radius,
     showLabels,
     style,
-    width
-  } = props;
-  const mappedData = getWedgesToRender({
-    data,
-    height,
-    hideRootNode,
     width,
-    getAngle
-  });
-  const radialDomain = getRadialDomain(mappedData);
-  const arcProps: any = {
-    colorType,
-    ...props,
-    animation,
     radiusDomain: [0, radialDomain],
     data: mappedData,
     radiusNoFallBack: true,
-    style,
     arcClassName: 'rv-radial-chart__series--pie__slice'
   };
   if (radius) {
@@ -225,50 +252,3 @@ function RadialChart(props: RadialChartProps): JSX.Element {
     </XYPlot>
   );
 }
-
-(RadialChart as any).displayName = 'RadialChart';
-(RadialChart as any).propTypes = {
-  animation: AnimationPropType,
-  className: PropTypes.string,
-  colorType: PropTypes.string,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      angle: PropTypes.number,
-      className: PropTypes.string,
-      label: PropTypes.string,
-      radius: PropTypes.number,
-      style: PropTypes.object
-    })
-  ).isRequired,
-  getAngle: PropTypes.func,
-  getAngle0: PropTypes.func,
-  padAngle: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
-  getRadius: PropTypes.func,
-  getRadius0: PropTypes.func,
-  getLabel: PropTypes.func,
-  height: PropTypes.number.isRequired,
-  labelsAboveChildren: PropTypes.bool,
-  labelsStyle: PropTypes.object,
-  margin: MarginPropType,
-  onValueClick: PropTypes.func,
-  onValueMouseOver: PropTypes.func,
-  onValueMouseOut: PropTypes.func,
-  showLabels: PropTypes.bool,
-  style: PropTypes.object,
-  subLabel: PropTypes.func,
-  width: PropTypes.number.isRequired
-};
-(RadialChart as any).defaultProps = {
-  className: '',
-  colorType: 'category',
-  colorRange: DISCRETE_COLOR_RANGE,
-  padAngle: 0,
-  getAngle: (d: any) => d.angle,
-  getAngle0: (d: any) => d.angle0,
-  getRadius: (d: any) => d.radius,
-  getRadius0: (d: any) => d.radius0,
-  getLabel: (d: any) => d.label,
-  getSubLabel: (d: any) => d.subLabel
-};
-
-export default RadialChart;

@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as d3Shape from 'd3-shape';
 
 import Animation from 'animation';
@@ -28,8 +27,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--line';
 
@@ -37,6 +35,7 @@ export interface AreaSeriesProps extends AbstractSeriesProps<any> {
   curve?: string | ((arg: any) => any) | null;
   getNull?: (d: any) => boolean;
   nullAccessor?: (d: any) => boolean;
+  _displayName?: string;
 }
 
 function renderArea(
@@ -63,15 +62,27 @@ function renderArea(
     return area(data);
   }
 
-function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
+export function AreaSeries({
+  className = '',
+  stack = false,
+  style = {},
+  getNull = () => true,
+  _displayName = 'AreaSeries',
+  ...restProps
+}: AreaSeriesProps): JSX.Element | null {
+  const allProps = {
+    ...restProps,
+    className,
+    stack,
+    style,
+    getNull
+  };
   const {
     animation,
-    className,
     curve,
     data,
     marginLeft,
     marginTop,
-    style,
     getAttributeFunctor,
     getAttr0Functor,
     getAttributeValue,
@@ -79,9 +90,9 @@ function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
     onSeriesMouseOutHandler,
     onSeriesClickHandler,
     onSeriesRightClickHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allProps, ...useAbstractSeries(allProps)};
 
-    if (props.nullAccessor) {
+    if (allProps.nullAccessor) {
       warning('nullAccessor has been renamed to getNull', true);
     }
 
@@ -91,8 +102,8 @@ function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <AreaSeries {...props} animation={false} />
+        <Animation {...allProps} animatedProps={ANIMATED_SERIES_PROPS}>
+          <AreaSeries {...allProps} animation={false} />
         </Animation>
       );
     }
@@ -106,10 +117,6 @@ function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
       getAttributeValue('fill') || getAttributeValue('color');
     const newOpacity = getAttributeValue('opacity');
     const opacity = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
-    const getNull =
-      props.nullAccessor ||
-      props.getNull ||
-      (() => true);
     const d = renderArea(data, x as (d: any) => any, y0 as (d: any) => any, y as (d: any) => any, curve ?? null, getNull);
 
     return (
@@ -130,15 +137,3 @@ function AreaSeries(props: AreaSeriesProps): JSX.Element | null {
       />
     );
   }
-
-(AreaSeries as any).displayName = 'AreaSeries';
-(AreaSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  getNull: PropTypes.func
-};
-(AreaSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  getNull: () => true
-};
-
-export default AreaSeries;

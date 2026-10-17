@@ -23,7 +23,8 @@ import {rgb} from 'd3-color';
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor} from 'utils/scales-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import AbstractSeries from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface MarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
@@ -32,7 +33,12 @@ interface MarkSeriesCanvasComponent {
   renderLayer: (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const MarkSeriesCanvas = ((props: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
+const MarkSeriesCanvas = (({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'MarkSeriesCanvas'
+}: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
 
 (MarkSeriesCanvas as any).requiresSVG = false;
 (MarkSeriesCanvas as any).isCanvas = true;
@@ -67,13 +73,6 @@ const MarkSeriesCanvas = ((props: MarkSeriesCanvasProps): null => null) as MarkS
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-};
-
-(MarkSeriesCanvas as any).displayName = 'MarkSeriesCanvas';
-(MarkSeriesCanvas as any).defaultProps = (AbstractSeries as any).defaultProps;
-
-(MarkSeriesCanvas as any).propTypes = {
-  ...(AbstractSeries as any).propTypes
 };
 
 export default MarkSeriesCanvas;

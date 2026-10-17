@@ -34,7 +34,22 @@ interface TreemapSVGProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-function TreemapSVG(props: TreemapSVGProps): JSX.Element {
+export function TreemapSVG({
+  animation,
+  className,
+  height,
+  hideRootNode,
+  mode,
+  nodes,
+  onLeafMouseOver,
+  onLeafMouseOut,
+  onLeafClick,
+  scales,
+  style,
+  width,
+  _displayName = 'TreemapSVG',
+  ...rest
+}: TreemapSVGProps): JSX.Element {
   function getCircularNodes(): {
     updatedNodes: JSX.Element;
     minY: number;
@@ -42,16 +57,6 @@ function TreemapSVG(props: TreemapSVGProps): JSX.Element {
     minX: number;
     maxX: number;
   } {
-    const {
-      animation,
-      hideRootNode,
-      nodes,
-      onLeafMouseOver,
-      onLeafMouseOut,
-      onLeafClick,
-      scales,
-      style
-    } = props;
 
     const {rows, minY, maxY, minX, maxX} = nodes.reduce(
       (acc, node, index) => {
@@ -112,16 +117,6 @@ function TreemapSVG(props: TreemapSVGProps): JSX.Element {
     minX: number;
     maxX: number;
   } {
-    const {
-      animation,
-      hideRootNode,
-      nodes,
-      onLeafMouseOver,
-      onLeafMouseOut,
-      onLeafClick,
-      scales,
-      style
-    } = props;
     const {color} = scales;
     return nodes.reduce(
       (acc, node, index) => {
@@ -175,7 +170,6 @@ function TreemapSVG(props: TreemapSVGProps): JSX.Element {
     );
   }
 
-  const {className, height, mode, nodes, width, hideRootNode} = props;
     const useCirclePacking = mode === 'circlePack';
 
     const {minY, maxY, minX, maxX, updatedNodes} = useCirclePacking
@@ -196,12 +190,14 @@ function TreemapSVG(props: TreemapSVGProps): JSX.Element {
 
     return (
       <XYPlot
-        {...props}
+        {...rest}
+        animation
         className={getCombinedClassName(
           'rv-treemap',
           useCirclePacking && 'rv-treemap-circle-paked',
           className
         )}
+        style
         width={width}
         height={height}
         yDomain={[maxY, minY]}
@@ -214,7 +210,3 @@ function TreemapSVG(props: TreemapSVGProps): JSX.Element {
       </XYPlot>
     );
 }
-
-(TreemapSVG as any).displayName = 'TreemapSVG';
-
-export default TreemapSVG;

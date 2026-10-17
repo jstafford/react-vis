@@ -200,10 +200,3 @@ export function getAxisAngle(axisStart: AxisPoint, axisEnd: AxisPoint): number {
   }
   return Math.atan((axisEnd.y - axisStart.y) / (axisEnd.x - axisStart.x));
 }
-
-export default {
-  DIRECTION,
-  ORIENTATION,
-  getTicksTotalFromSize,
-  getTickValues
-};

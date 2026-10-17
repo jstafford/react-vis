@@ -47,17 +47,18 @@ export interface AbstractSeriesProps<T extends RVDatum = RVDatum> {
   animation?: AnimationParam;
   stack?: boolean;
   className?: string;
+  _displayName?: string;
+  _requiresSVG?: boolean;
   marginTop?: number;
   marginLeft?: number;
   [key: string]: any;
 }
 
-const defaultProps = {
+export const abstractSeriesDefaultProps = {
   className: '',
   stack: false,
   style: {}
 };
-
 
 export function useAbstractSeries<T extends RVDatum = RVDatum>(
   props: AbstractSeriesProps<T>

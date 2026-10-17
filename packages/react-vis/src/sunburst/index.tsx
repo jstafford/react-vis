@@ -19,11 +19,9 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {hierarchy, partition} from 'd3-hierarchy';
 import {scaleLinear, scaleSqrt} from 'd3-scale';
 
-import {AnimationPropType} from 'animation';
 import LabelSeries from 'plot/series/label-series';
 import ArcSeries from 'plot/series/arc-series';
 import XYPlot from 'plot/xy-plot';
@@ -55,6 +53,7 @@ export interface SunburstProps {
   getAngle0?: (datum: SunburstDatum) => number;
   getLabel?: (datum: SunburstDatum) => string | undefined;
   getSize?: (datum: SunburstDatum) => number | undefined;
+  _displayName?: string;
   width: number;
   [key: string]: any;
 }
@@ -157,21 +156,36 @@ function buildLabels(mappedData: SunburstDatum[], accessors: any): any[] {
 
 const NOOP = () => {};
 
-function Sunburst(props: SunburstProps): JSX.Element {
+export function Sunburst(props: SunburstProps): JSX.Element {
   const {
-    getAngle,
-    getAngle0,
+    getAngle = (d: any) => d.angle,
+    getAngle0 = (d: any) => d.angle0,
     animation,
-    className,
+    className = '',
     children,
     data,
     height,
+    hideRootNode = false,
+    getLabel = (d: any) => d.label,
+    width,
+    getSize = (d: any) => d.size,
+    colorType = 'literal',
+    getColor = (d: any) => d.color,
+    padAngle = 0,
+    _displayName = 'Sunburst'
+  } = props;
+  const propsWithDefaults = {
+    ...props,
+    getAngle,
+    getAngle0,
+    className,
     hideRootNode,
     getLabel,
-    width,
     getSize,
-    colorType
-  } = props;
+    colorType,
+    getColor,
+    padAngle
+  };
   const mappedData = getNodesToRender({
     data,
     height,
@@ -203,8 +217,8 @@ function Sunburst(props: SunburstProps): JSX.Element {
     >
       <ArcSeries
         {...{
-          colorType,
-          ...props,
+        ...propsWithDefaults,
+        colorType,
           animation,
           radiusDomain: [0, radialDomain],
           // need to present a stripped down version for interpolation
@@ -232,35 +246,3 @@ function Sunburst(props: SunburstProps): JSX.Element {
     </XYPlot>
   );
 }
-
-(Sunburst as any).displayName = 'Sunburst';
-(Sunburst as any).propTypes = {
-  animation: AnimationPropType,
-  getAngle: PropTypes.func,
-  getAngle0: PropTypes.func,
-  className: PropTypes.string,
-  colorType: PropTypes.string,
-  data: PropTypes.object.isRequired,
-  height: PropTypes.number.isRequired,
-  hideRootNode: PropTypes.bool,
-  getLabel: PropTypes.func,
-  onValueClick: PropTypes.func,
-  onValueMouseOver: PropTypes.func,
-  onValueMouseOut: PropTypes.func,
-  getSize: PropTypes.func,
-  width: PropTypes.number.isRequired,
-  padAngle: PropTypes.oneOfType([PropTypes.func, PropTypes.number])
-};
-(Sunburst as any).defaultProps = {
-  getAngle: (d: any) => d.angle,
-  getAngle0: (d: any) => d.angle0,
-  className: '',
-  colorType: 'literal',
-  getColor: (d: any) => d.color,
-  hideRootNode: false,
-  getLabel: (d: any) => d.label,
-  getSize: (d: any) => d.size,
-  padAngle: 0
-};
-
-export default Sunburst;

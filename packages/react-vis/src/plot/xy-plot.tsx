@@ -19,17 +19,15 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import equal from 'deep-equal';
 
-import {AnimationParam, AnimationPropType} from 'animation';
+import {AnimationParam} from 'animation';
 import CanvasWrapper from './series/canvas-wrapper';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 import {
   getInnerDimensions,
   Margin,
-  MarginPropType,
   DEFAULT_MARGINS
 } from 'utils/chart-utils';
 import {
@@ -190,37 +188,12 @@ function checkIfMixinsAreEqual(
   return equal(newMixins, oldMixins);
 }
 
-class XYPlotImplementation extends React.Component<XYPlotProps, XYPlotState> {
+export class XYPlotImplementation extends React.Component<XYPlotProps, XYPlotState> {
   static displayName = 'XYPlot';
 
   static get defaultProps() {
     return {
       className: ''
-    };
-  }
-
-  static get propTypes() {
-    return {
-      animation: AnimationPropType,
-      className: PropTypes.string,
-      dontCheckIfEmpty: PropTypes.bool,
-      height: PropTypes.number.isRequired,
-      margin: MarginPropType,
-      onClick: PropTypes.func,
-      onDoubleClick: PropTypes.func,
-      onMouseDown: PropTypes.func,
-      onMouseUp: PropTypes.func,
-      onMouseEnter: PropTypes.func,
-      onMouseLeave: PropTypes.func,
-      onMouseMove: PropTypes.func,
-      onTouchStart: PropTypes.func,
-      onTouchMove: PropTypes.func,
-      onTouchEnd: PropTypes.func,
-      onTouchCancel: PropTypes.func,
-      onWheel: PropTypes.func,
-      stackBy: PropTypes.oneOf(ATTRIBUTES),
-      style: PropTypes.object,
-      width: PropTypes.number.isRequired
     };
   }
 
@@ -675,8 +648,5 @@ const XYPlot: any = (props: XYPlotProps): React.ReactElement => (
 
 XYPlot.displayName = 'XYPlot';
 XYPlot.defaultProps = XYPlotImplementation.defaultProps;
-XYPlot.propTypes = XYPlotImplementation.propTypes;
 XYPlot._getDefaultScaleProps = XYPlotImplementation._getDefaultScaleProps;
 XYPlot._getScaleMixins = XYPlotImplementation._getScaleMixins;
-
-export default XYPlot;

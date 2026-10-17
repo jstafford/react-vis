@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as d3Shape from 'd3-shape';
 
 import Animation from 'animation';
@@ -28,8 +27,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--line';
 
@@ -45,6 +43,7 @@ export interface LineSeriesProps extends AbstractSeriesProps<any> {
   nullAccessor?: (d: any) => boolean;
   strokeDasharray?: string;
   strokeWidth?: number | string;
+  _displayName?: string;
 }
 
 function renderLine(
@@ -67,15 +66,34 @@ function renderLine(
     return line(data);
   }
 
-function LineSeries(props: LineSeriesProps): JSX.Element | null {
+export function LineSeries({
+  className = '',
+  stack = false,
+  style = {},
+  strokeStyle = 'solid',
+  opacity = 1,
+  curve = null,
+  getNull = () => true,
+  _displayName: defaultDisplayName = 'LineSeries',
+  ...restProps
+}: LineSeriesProps): JSX.Element | null {
+  const allprops: LineSeriesProps = {
+    ...restProps,
+    className,
+    stack,
+    style,
+    strokeStyle,
+    curve,
+    getNull
+  };
   const {
-    animation, className, data, getAttributeFunctor, getAttributeValue,
-    marginLeft, marginTop, strokeDasharray, strokeStyle, strokeWidth, style,
+    animation, data, getAttributeFunctor, getAttributeValue,
+    marginLeft, marginTop, strokeDasharray, strokeWidth,
     onSeriesMouseOverHandler, onSeriesMouseOutHandler, onSeriesClickHandler,
     onSeriesRightClickHandler
-  } = {...props, ...useAbstractSeries(props)};
+  } = {...allprops, ...useAbstractSeries(allprops)};
 
-    if (props.nullAccessor) {
+    if (allprops.nullAccessor) {
       warning('nullAccessor has been renamed to getNull', true);
     }
 
@@ -85,24 +103,18 @@ function LineSeries(props: LineSeriesProps): JSX.Element | null {
 
     if (animation) {
       return (
-        <Animation {...props} animatedProps={ANIMATED_SERIES_PROPS}>
-          <LineSeries {...props} animation={false} />
+        <Animation {...allprops} animatedProps={ANIMATED_SERIES_PROPS}>
+          <LineSeries {...allprops} animation={false} />
         </Animation>
       );
     }
-
-    const {curve} = props;
 
     const x = getAttributeFunctor('x');
     const y = getAttributeFunctor('y');
     const stroke =
       getAttributeValue('stroke') || getAttributeValue('color');
     const newOpacity = getAttributeValue('opacity');
-    const opacity = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
-    const getNull =
-      props.nullAccessor ||
-      props.getNull ||
-      (() => true);
+    const newOpacityFinite = Number.isFinite(newOpacity) ? newOpacity : DEFAULT_OPACITY;
     const d = renderLine(data, x as (d: any) => any, y as (d: any) => any, curve ?? null, getNull);
 
     return (
@@ -115,7 +127,7 @@ function LineSeries(props: LineSeriesProps): JSX.Element | null {
         onClick={onSeriesClickHandler}
         onContextMenu={onSeriesRightClickHandler}
         style={{
-          opacity,
+          opacity: newOpacityFinite,
           strokeDasharray: STROKE_STYLES[strokeStyle as string] || strokeDasharray,
           strokeWidth,
           stroke,
@@ -124,22 +136,3 @@ function LineSeries(props: LineSeriesProps): JSX.Element | null {
       />
     );
   }
-
-(LineSeries as any).displayName = 'LineSeries';
-(LineSeries as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  strokeStyle: PropTypes.oneOf(Object.keys(STROKE_STYLES)),
-  curve: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  getNull: PropTypes.func
-};
-(LineSeries as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps,
-  strokeStyle: 'solid',
-  style: {},
-  opacity: 1,
-  curve: null,
-  className: '',
-  getNull: () => true
-};
-
-export default LineSeries;

@@ -19,11 +19,10 @@
 // THE SOFTWARE.
 
 import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
 
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
-import Animation, {AnimationPropType} from 'animation';
+import Animation from 'animation';
 
 import {
   getTicksTotalFromSize,
@@ -53,27 +52,6 @@ interface GridLinesProps {
   className?: string;
   [key: string]: any;
 }
-
-const propTypes = {
-  direction: PropTypes.oneOf([VERTICAL, HORIZONTAL]),
-  attr: PropTypes.string.isRequired,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  top: PropTypes.number,
-  left: PropTypes.number,
-  style: PropTypes.object,
-  tickValues: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  ),
-  tickTotal: PropTypes.number,
-  animation: AnimationPropType,
-  marginTop: PropTypes.number,
-  marginBottom: PropTypes.number,
-  marginLeft: PropTypes.number,
-  marginRight: PropTypes.number,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number
-};
 
 const defaultProps = {
   direction: VERTICAL
@@ -176,7 +154,6 @@ class GridLines extends PureComponent<GridLinesProps> {
 
 (GridLines as any).displayName = 'GridLines';
 (GridLines as any).defaultProps = defaultProps;
-(GridLines as any).propTypes = propTypes;
 (GridLines as any).requiresSVG = true;
 
 export default GridLines;

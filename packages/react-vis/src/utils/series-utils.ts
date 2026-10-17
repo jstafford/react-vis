@@ -19,7 +19,6 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import AbstractSeries from 'plot/series/abstract-series';
 import {DISCRETE_COLOR_RANGE, DEFAULT_OPACITY} from 'theme';
 
 export type RVDatum = {[key: string]: any};
@@ -37,19 +36,48 @@ interface SeriesTypeInfo {
   clusters: Set<string | undefined>;
 }
 
+const seriesNames = [
+  'ArcSeries',
+  'AreaSeries',
+  'BarSeries',
+  'BarSeriesCanvas',
+  'HeatmapSeries',
+  'HexbinSeries',
+  'HorizontalBarSeries',
+  'HorizontalBarSeriesCanvas',
+  'HorizontalRectSeries',
+  'HorizontalRectSeriesCanvas',
+  'LabelSeries',
+  'LineMarkSeries',
+  'LineMarkSeriesCanvas',
+  'LineSeries',
+  'LineSeriesCanvas',
+  'MarkSeries',
+  'MarkSeriesCanvas',
+  'PolygonSeries',
+  'RectSeries',
+  'RectSeriesCanvas',
+  'VerticalBarSeries',
+  'VerticalBarSeriesCanvas',
+  'VerticalRectSeries',
+  'WhiskerSeries'
+]
+
+const seriesNamesSet = new Set(seriesNames)
+
+function getSeriesTypeName(child: React.ReactElement): string {
+  const type = child.type as any;
+  return child.props._displayName || type.displayName || type.name || '';
+}
+
 /**
  * Check if the component is series or not.
  * @param {React.Component} child Component.
  * @returns {boolean} True if the child is series, false otherwise.
  */
 export function isSeriesChild(child: React.ReactElement): boolean {
-  const childType = child.type as any;
-  const {prototype} = childType;
-  return (
-    prototype instanceof AbstractSeries ||
-    typeof childType.getParentConfig === 'function' ||
-    Boolean(childType.propTypes && childType.propTypes.data)
-  );
+  const displayName = getSeriesTypeName(child);
+  return Boolean(displayName && seriesNamesSet.has(displayName));
 }
 
 /**
@@ -76,8 +104,8 @@ function collectSeriesTypesInfo(
 ): {[displayName: string]: SeriesTypeInfo} {
   const result: {[displayName: string]: SeriesTypeInfo} = {};
   children.filter(isSeriesChild).forEach(child => {
-    const {displayName} = child.type as any;
-    const {cluster} = child.props;
+    const displayName = getSeriesTypeName(child);
+    const cluster = child.props.cluster;
     if (!result[displayName]) {
       result[displayName] = {
         sameTypeTotal: 0,
@@ -148,7 +176,7 @@ export function getStackedData(
         accumulator.push(null);
         return accumulator;
       }
-      const seriesType = (series.type as any).displayName;
+      const seriesType = getSeriesTypeName(series);
 
       const {data, cluster = 'default', stack} = series.props;
       const preppedData = prepareData(data);
@@ -224,7 +252,7 @@ export function getSeriesPropsFromChildren(
   children.forEach(child => {
     let props: {[key: string]: any} | undefined;
     if (isSeriesChild(child)) {
-      const seriesTypeInfo = seriesTypesInfo[(child.type as any).displayName];
+      const seriesTypeInfo = seriesTypesInfo[getSeriesTypeName(child)];
       const _colorValue =
         DISCRETE_COLOR_RANGE[seriesIndex % DISCRETE_COLOR_RANGE.length];
       props = {

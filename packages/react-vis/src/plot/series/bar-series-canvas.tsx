@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import PropTypes from 'prop-types';
 import {rgb} from 'd3-color';
 
 import {DEFAULT_OPACITY} from 'theme';
@@ -28,7 +27,8 @@ import {
   getAttr0Functor
 } from 'utils/scales-utils';
 import {getStackParams} from 'utils/series-utils';
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
+import AbstractSeries from './abstract-series';
 
 export interface BarSeriesCanvasProps extends AbstractSeriesProps<any> {
   linePosAttr?: string;
@@ -48,7 +48,12 @@ interface BarSeriesCanvasComponent {
   renderLayer: (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const BarSeriesCanvas = ((props: BarSeriesCanvasProps) => null) as BarSeriesCanvasComponent;
+const BarSeriesCanvas = (({
+  className = '',
+  stack = false,
+  style = {},
+  _displayName = 'BarSeriesCanvas'
+}: BarSeriesCanvasProps) => null) as BarSeriesCanvasComponent;
 
 (BarSeriesCanvas as any).requiresSVG = false;
 (BarSeriesCanvas as any).isCanvas = true;
@@ -116,15 +121,6 @@ const BarSeriesCanvas = ((props: BarSeriesCanvasProps) => null) as BarSeriesCanv
       ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
       ctx.stroke();
     });
-};
-
-(BarSeriesCanvas as any).displayName = 'BarSeriesCanvas';
-(BarSeriesCanvas as any).defaultProps = {
-  ...(AbstractSeries as any).defaultProps
-};
-
-(BarSeriesCanvas as any).propTypes = {
-  ...(AbstractSeries as any).propTypes
 };
 
 export default BarSeriesCanvas;

@@ -20,8 +20,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {CONTINUOUS_COLOR_RANGE} from 'theme';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -37,27 +35,8 @@ export interface ContinuousColorLegendProps {
   startColor?: string;
   startTitle: LegendTitle;
   width?: number;
+  _displayName?: string;
 }
-
-const propTypes = {
-  className: PropTypes.string,
-  height: PropTypes.number,
-  endColor: PropTypes.string,
-  endTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    .isRequired,
-  midColor: PropTypes.string,
-  midTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  startColor: PropTypes.string,
-  startTitle: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    .isRequired,
-  width: PropTypes.number
-};
-
-const defaultProps = {
-  className: '',
-  startColor: CONTINUOUS_COLOR_RANGE[0],
-  endColor: CONTINUOUS_COLOR_RANGE[1]
-};
 
 function ContinuousColorLegend({
   startColor = CONTINUOUS_COLOR_RANGE[0],
@@ -68,7 +47,8 @@ function ContinuousColorLegend({
   endTitle,
   height,
   width,
-  className = ''
+  className = '',
+  _displayName = 'ContinuousColorLegend'
 }: ContinuousColorLegendProps): JSX.Element {
   const colors = [startColor];
   if (midColor) {
@@ -94,9 +74,5 @@ function ContinuousColorLegend({
     </div>
   );
 }
-
-(ContinuousColorLegend as any).displayName = 'ContinuousColorLegend';
-(ContinuousColorLegend as any).propTypes = propTypes;
-(ContinuousColorLegend as any).defaultProps = defaultProps;
 
 export default ContinuousColorLegend;

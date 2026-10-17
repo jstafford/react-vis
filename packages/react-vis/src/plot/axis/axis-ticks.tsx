@@ -20,8 +20,6 @@
 
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {ORIENTATION, getTickValues} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
 
@@ -47,19 +45,9 @@ export interface AxisTicksProps {
   tickSizeOuter?: number;
   tickTotal?: number;
   tickValues?: any[];
+  _displayName?: string;
   [key: string]: any;
 }
-
-const propTypes = {
-  height: PropTypes.number.isRequired,
-  orientation: PropTypes.oneOf([LEFT, RIGHT, TOP, BOTTOM]).isRequired,
-  style: PropTypes.object,
-  width: PropTypes.number.isRequired
-};
-
-const defaultProps = {
-  style: {}
-};
 
 function _getTickFormatFn(
   scale: any,
@@ -73,7 +61,13 @@ function _getTickFormatFn(
     : tickFormat;
 }
 
-function AxisTicks(props: AxisTicksProps) {
+export function AxisTicks({
+  style = {},
+  _displayName = 'AxisTicks',
+  _requiresSVG = true,
+  ...restProps
+}: AxisTicksProps) {
+  const allProps = {...restProps, style};
 
   /**
    * Check if axis ticks should be mirrored (for the right and top positions.
@@ -81,7 +75,7 @@ function AxisTicks(props: AxisTicksProps) {
    * @private
    */
   function areTicksWrapped(): boolean {
-    const {orientation} = props;
+    const {orientation} = allProps;
     return orientation === LEFT || orientation === TOP;
   }
 
@@ -108,7 +102,7 @@ function AxisTicks(props: AxisTicksProps) {
       tickSize,
       tickSizeOuter = tickSize,
       tickPadding = tickSize
-    } = props;
+    } = allProps;
 
     // Assign the text orientation inside the label of the tick mark.
     let textAnchor: string;
@@ -161,7 +155,7 @@ function AxisTicks(props: AxisTicksProps) {
       tickSize,
       tickSizeOuter = tickSize,
       tickSizeInner = tickSize
-    } = props;
+    } = allProps;
     const isVertical = isAxisVertical();
     const tickXAttr = isVertical ? 'y' : 'x';
     const tickYAttr = isVertical ? 'x' : 'y';
@@ -180,7 +174,7 @@ function AxisTicks(props: AxisTicksProps) {
    * @private
    */
   function isAxisVertical(): boolean {
-    const {orientation} = props;
+    const {orientation} = allProps;
     return orientation === LEFT || orientation === RIGHT;
   }
 
@@ -189,16 +183,15 @@ function AxisTicks(props: AxisTicksProps) {
       orientation,
       width,
       height,
-      style,
       tickFormat,
       tickTotal,
       tickValues
-    } = props;
+    } = allProps;
 
     const x = orientation === LEFT ? width : 0;
     const y = orientation === TOP ? height : 0;
 
-    const scale = getAttributeScale(props, attr);
+    const scale = getAttributeScale(allProps, attr);
 
     const values = getTickValues(scale, tickTotal as number, tickValues);
     const tickFormatFn = _getTickFormatFn(scale, tickTotal, tickFormat);
@@ -259,10 +252,3 @@ function AxisTicks(props: AxisTicksProps) {
       </g>
   );
 }
-
-(AxisTicks as any).defaultProps = defaultProps;
-(AxisTicks as any).displayName = 'AxisTicks';
-(AxisTicks as any).propTypes = propTypes;
-(AxisTicks as any).requiresSVG = true;
-
-export default AxisTicks;

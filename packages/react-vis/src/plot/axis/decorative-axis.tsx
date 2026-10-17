@@ -20,7 +20,6 @@
 
 import React from 'react';
 import {format} from 'd3-format';
-import PropTypes from 'prop-types';
 
 import AbstractSeries, {AbstractSeriesProps, RVDatum} from 'plot/series/abstract-series';
 import DecorativeAxisTicks from './decorative-axis-ticks';
@@ -64,7 +63,7 @@ export interface DecorativeAxisProps extends AbstractSeriesProps {
   tickSize?: number;
 }
 
-class DecorativeAxis extends AbstractSeries<RVDatum> {
+export class DecorativeAxis extends AbstractSeries<RVDatum> {
   render() {
     const props = this.props as DecorativeAxisProps &
       AbstractSeriesProps & {style?: any};
@@ -142,25 +141,3 @@ const DEFAULT_FORMAT = formatTickValue;
     text: {}
   }
 };
-(DecorativeAxis as any).propTypes = {
-  ...(AbstractSeries as any).propTypes,
-  axisDomain: PropTypes.arrayOf(PropTypes.number).isRequired,
-  axisEnd: PropTypes.shape({
-    x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    y: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  }).isRequired,
-  axisStart: PropTypes.shape({
-    x: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    y: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  }).isRequired,
-  className: PropTypes.string,
-  numberOfTicks: PropTypes.number,
-  tickValue: PropTypes.func,
-  tickSize: PropTypes.number,
-  style: PropTypes.shape({
-    line: PropTypes.object,
-    ticks: PropTypes.object,
-    text: PropTypes.object
-  })
-};
-export default DecorativeAxis;
