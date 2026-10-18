@@ -22,6 +22,7 @@ interface HighlightState {
 }
 
 interface HighlightProps extends AbstractSeriesProps<any> {
+  className: string;
   enableX?: boolean;
   enableY?: boolean;
   drag?: boolean;
@@ -33,8 +34,10 @@ interface HighlightProps extends AbstractSeriesProps<any> {
   highlightY?: number;
   innerWidth?: number;
   innerHeight?: number;
+  marginLeft?: number;
   marginRight?: number;
   marginBottom?: number;
+  marginTop?: number;
   onBrush?: (area: HighlightCoordinates) => void;
   onBrushStart?: (event: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => void;
   onBrushEnd?: (area: HighlightCoordinates | null) => void;
@@ -66,8 +69,8 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
   const getDrawArea = (xLoc: number, yLoc: number) => {
     const {startLocX, startLocY} = state;
     const {
-      enableX,
-      enableY,
+      enableX = true,
+      enableY = true,
       highlightWidth,
       highlightHeight,
       innerWidth = 0,
@@ -91,7 +94,7 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
   }
 
   const getDragArea = (xLoc: number, yLoc: number) => {
-    const {enableX, enableY} = props;
+    const {enableX = true, enableY = true} = props;
     const {startLocX, startLocY, dragArea, brushArea} = state;
     const area = dragArea || brushArea;
 
@@ -104,7 +107,7 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
   }
 
   const clickedOutsideDrag = (xLoc: number, yLoc: number) => {
-    const {enableX, enableY} = props;
+    const {enableX = true, enableY = true} = props;
     const {
       dragArea,
       brushArea: {left, right, top, bottom}
@@ -124,7 +127,7 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
   }
 
   const convertAreaToCoordinates = (brushArea: BrushArea): HighlightCoordinates => {
-    const {enableX, enableY, marginLeft = 0, marginTop = 0} = props;
+    const {enableX = true, enableY = true, marginLeft = 0, marginTop = 0} = props;
     const xScale = getAttributeScale(props, 'x') as any;
     const yScale = getAttributeScale(props, 'y') as any;
 
@@ -244,8 +247,8 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
   }
 
     const {
-      color,
-      className,
+      color = 'rgb(77, 182, 172)',
+      className = '',
       highlightHeight,
       highlightWidth,
       highlightX,
@@ -256,7 +259,7 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
       marginRight = 0,
       marginTop = 0,
       marginBottom = 0,
-      opacity
+      opacity = 0.3
     } = props;
     const {
       brushArea: {left, right, top, bottom}
@@ -322,13 +325,6 @@ export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightP
 }
 
 Highlight.displayName = 'HighlightOverlay';
-(Highlight as any).defaultProps = {
-  color: 'rgb(77, 182, 172)',
-  className: '',
-  enableX: true,
-  enableY: true,
-  opacity: 0.3
-};
 Highlight.requiresSVG = true;
 
 

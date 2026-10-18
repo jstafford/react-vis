@@ -112,12 +112,6 @@ interface XYPlotProps {
   [key: string]: any;
 }
 
-type XYPlotComponent = SeriesComponentType<XYPlotProps> & {
-  defaultProps?: Partial<XYPlotProps>;
-  _getDefaultScaleProps: typeof getDefaultScaleProps;
-  _getScaleMixins: typeof getScaleMixins;
-};
-
 interface XYPlotState {
   data: PlotData;
   scaleMixins: ScaleMixins;
@@ -188,7 +182,7 @@ const getDefaultScaleProps = (props: XYPlotProps): {[key: string]: any} => {
   };
 };
 
-const getScaleMixins = (data: PlotData, props: XYPlotProps): ScaleMixins => {
+export const getScaleMixins = (data: PlotData, props: XYPlotProps): ScaleMixins => {
   const filteredData = data.filter((datum): datum is RVDatum[] => Boolean(datum));
   const allData = ([] as RVDatum[]).concat(...filteredData);
   const attributes = ATTRIBUTES as unknown as string[];
@@ -249,7 +243,7 @@ const isPlotEmpty = (data: PlotData): boolean => {
   return !data || !data.length || !data.some(series => series && series.some(d => d));
 };
 
-export const XYPlotImplementation: XYPlotComponent = (props: XYPlotProps): React.ReactElement => {
+export const XYPlotImplementation: SeriesComponentType<XYPlotProps> = (props: XYPlotProps): React.ReactElement => {
   const seriesRefs = React.useRef<Record<number, ParentSeriesComponent | null>>({});
   const stateRef = React.useRef<XYPlotState | null>(null);
   const children = getSeriesChildren(props.children);
@@ -413,12 +407,6 @@ export const XYPlotImplementation: XYPlotComponent = (props: XYPlotProps): React
 };
 
 XYPlotImplementation.displayName = 'XYPlot';
-XYPlotImplementation.defaultProps = {className: ''};
-XYPlotImplementation._getDefaultScaleProps = getDefaultScaleProps;
-XYPlotImplementation._getScaleMixins = getScaleMixins;
 
-export const XYPlot: XYPlotComponent = XYPlotImplementation as XYPlotComponent;
+export const XYPlot: SeriesComponentType<XYPlotProps> = XYPlotImplementation;
 XYPlot.displayName = 'XYPlot';
-XYPlot.defaultProps = XYPlotImplementation.defaultProps;
-XYPlot._getDefaultScaleProps = getDefaultScaleProps;
-XYPlot._getScaleMixins = getScaleMixins;

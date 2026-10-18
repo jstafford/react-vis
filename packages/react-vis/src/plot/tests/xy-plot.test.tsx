@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {XYPlot} from '../xy-plot';
+import {getScaleMixins, XYPlot} from '../xy-plot';
 import {LineSeries} from '../series/line-series';
 
 describe('XYPlot', () => {
@@ -43,7 +43,7 @@ describe('XYPlot', () => {
     };
     const state = {
       data: [[{x: 0, y: 0}]],
-      scaleMixins: XYPlot._getScaleMixins([[{x: 0, y: 0}]], nextProps as any)
+      scaleMixins: getScaleMixins([[{x: 0, y: 0}]], nextProps as any)
     };
 
     expect(state.scaleMixins).toEqual(expect.any(Object));

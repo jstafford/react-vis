@@ -54,10 +54,6 @@ interface GridLinesProps {
   [key: string]: any;
 }
 
-const defaultProps = {
-  direction: VERTICAL
-};
-
 const animatedProps = [
   'xRange',
   'yRange',
@@ -136,5 +132,4 @@ export const GridLines: SeriesComponentType<GridLinesProps> = (props: GridLinesP
 }
 
 GridLines.displayName = 'GridLines';
-(GridLines as any).defaultProps = defaultProps;
 GridLines.requiresSVG = true;
