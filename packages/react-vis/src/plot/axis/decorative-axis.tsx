@@ -22,7 +22,7 @@ import React from 'react';
 import {SeriesComponentType} from 'seriesComponentType';
 import {format} from 'd3-format';
 
-import {AbstractSeriesProps} from 'plot/series/abstract-series';
+import {AbstractSeriesProps} from 'plot/series/abstract-series-hook';
 import {DecorativeAxisTicks} from './decorative-axis-ticks';
 import {Animation} from 'animation';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -72,7 +72,7 @@ export interface DecorativeAxisProps extends Omit<AbstractSeriesProps, 'style'> 
   style?: DecorativeAxisStyle;
 }
 
-export const DecorativeAxis: SeriesComponentType<DecorativeAxisProps> = (props: DecorativeAxisProps): JSX.Element => {
+export const DecorativeAxis: SeriesComponentType<DecorativeAxisProps> = (props): JSX.Element => {
   const {
     animation,
     className = '',

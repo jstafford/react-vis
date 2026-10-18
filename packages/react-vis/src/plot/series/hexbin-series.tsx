@@ -55,7 +55,7 @@ export const HexbinSeries: SeriesComponentType<HexbinSeriesProps> = ({
   xOffset = 0,
   yOffset = 0,
   ...restProps
-}: HexbinSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {
     ...restProps,
     radius,

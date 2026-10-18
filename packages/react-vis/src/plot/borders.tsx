@@ -62,7 +62,7 @@ export const Borders: SeriesComponentType<BordersProps> = ({
     top: {}
   },
   className = ''
-}: BordersProps) => {
+}) => {
   const height = innerHeight + marginTop + marginBottom;
   const width = innerWidth + marginLeft + marginRight;
   return (

@@ -56,7 +56,7 @@ export const ContourSeries: SeriesComponentType<ContourSeriesProps> = ({
   style = {},
   bandwidth = 40,
   ...restProps
-}: ContourSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,

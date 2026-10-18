@@ -31,9 +31,8 @@ export const VerticalRectSeries: SeriesComponentType<VerticalRectSeriesProps> = 
   className = '',
   stack = false,
   style = {},
-  _requiresSVG,
   ...rest
-}: VerticalRectSeriesProps): JSX.Element => {
+}): JSX.Element => {
   return (
     <RectSeries
       {...rest}

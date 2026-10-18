@@ -25,8 +25,7 @@ import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--heatmap';
 
@@ -35,7 +34,7 @@ export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {
 
 export const HeatmapSeries: SeriesComponentType<HeatmapSeriesProps> = ({
   ...restProps
-}: HeatmapSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, getScaleDistance,

@@ -54,7 +54,7 @@ export const SankeyLink: SeriesComponentType<SankeyLinkProps> = ({
   onLinkMouseOver = () => undefined,
   onLinkMouseOut = () => undefined,
   ...rest
-}:SankeyLinkProps): JSX.Element => {
+}): JSX.Element => {
   if (animation) {
     const allProps = {
     animation,

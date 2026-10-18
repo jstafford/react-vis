@@ -155,15 +155,15 @@ const makeFlexible = <P extends {height?: number; width?: number},>(Component: R
   return Result;
 };
 
-export const makeHeightFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
+export const makeHeightFlexible = <P extends {height?: number; width?: number},>(component: React.FunctionComponent<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, false, true);
 };
 
-export const makeVisFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
+export const makeVisFlexible = <P extends {height?: number; width?: number},>(component: React.FunctionComponent<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, true);
 };
 
-export const makeWidthFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
+export const makeWidthFlexible = <P extends {height?: number; width?: number},>(component: React.FunctionComponent<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, false);
 };
 

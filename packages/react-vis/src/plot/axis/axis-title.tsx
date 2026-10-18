@@ -149,7 +149,7 @@ export const AxisTitle: SeriesComponentType<AxisTitleProps> = ({
   style,
   title,
   position = 'end'
-}: AxisTitleProps) => {
+}) => {
   const outerGroupTranslateX = orientation === LEFT ? width : 0;
   const outerGroupTranslateY = orientation === TOP ? height : 0;
   const outerGroupTransform = `translate(${outerGroupTranslateX}, ${outerGroupTranslateY})`;

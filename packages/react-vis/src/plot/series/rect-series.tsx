@@ -38,7 +38,7 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
 
 export const RectSeries: SeriesComponentType<RectSeriesProps> = ({
   ...rest
-}: RectSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
     marginTop, style, valuePosAttr, valueSizeAttr, getAttributeFunctor,

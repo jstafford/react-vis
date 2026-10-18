@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import { SeriesComponentType } from 'seriesComponentType';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
@@ -36,8 +36,8 @@ export const AxisLine: SeriesComponentType<AxisLineProps> = ({
   orientation,
   width,
   height,
-  style = {},
-}: AxisLineProps) => {
+  style = {}
+}) => {
   let lineProps;
   if (orientation === LEFT) {
     lineProps = {

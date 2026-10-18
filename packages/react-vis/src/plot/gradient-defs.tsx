@@ -30,7 +30,7 @@ interface GradientDefsProps {
 
 const predefinedClassName = 'rv-gradient-defs';
 
-export const GradientDefs: SeriesComponentType<GradientDefsProps> = (props: GradientDefsProps) => {
+export const GradientDefs: SeriesComponentType<GradientDefsProps> = (props) => {
   const {
     className = '',
     children

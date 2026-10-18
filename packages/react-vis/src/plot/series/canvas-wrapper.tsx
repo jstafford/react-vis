@@ -132,7 +132,7 @@ const buildLayers = (newChildren: React.ReactElement[], oldChildren: React.React
 export const CanvasWrapper: SeriesComponentType<CanvasWrapperProps> = ({
   pixelRatio = (window && window.devicePixelRatio) || 1,
   ...restProps
-}: CanvasWrapperProps): JSX.Element => {
+}): JSX.Element => {
   const props = {...restProps, pixelRatio};
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const previousProps = useRef<CanvasWrapperProps | null>(null);

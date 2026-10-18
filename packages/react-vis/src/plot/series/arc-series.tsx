@@ -100,7 +100,7 @@ export const ArcSeries: SeriesComponentType<ArcSeriesProps> = ({
   style = {},
   padAngle = 0,
   ...restProps
-}: ArcSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
     const allProps: ArcSeriesProps = {
       ...restProps,
       center,

@@ -25,8 +25,7 @@ import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import {AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--bar';
 
@@ -42,7 +41,7 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
 export const BarSeries: SeriesComponentType<BarSeriesProps> = ({
   barWidth = 0.85,
   ...restProps
-}: BarSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {...restProps, barWidth};
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,

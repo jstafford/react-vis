@@ -79,7 +79,7 @@ export const Hint: SeriesComponentType<HintProps> & {ORIENTATION: typeof ORIENTA
   align = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO},
   style = {},
   ...restProps
-}: HintProps) => {
+}) => {
   const allProps = {...restProps, format, align, style};
 
   const getAlign = (x: number, y: number): AlignShape => {

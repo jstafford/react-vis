@@ -105,7 +105,7 @@ export interface SankeyProps {
   [key: string]: any;
 }
 
-export const Sankey: SeriesComponentType<SankeyProps> = (props: SankeyProps): JSX.Element => {
+export const Sankey: SeriesComponentType<SankeyProps> = (props): JSX.Element => {
   const {
     align = 'justify',
     animation,

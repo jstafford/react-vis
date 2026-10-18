@@ -218,7 +218,7 @@ export const ParallelCoordinates: SeriesComponentType<ParallelCoordinatesProps> 
   style = DEFAULT_STYLE,
   tickFormat = DEFAULT_FORMAT,
   width
-}: ParallelCoordinatesProps): JSX.Element => {
+}): JSX.Element => {
   const [brushFilters, setBrushFilters] = useState<BrushFilters>({});
 
   const axes = getAxes({

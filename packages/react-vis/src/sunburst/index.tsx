@@ -157,7 +157,7 @@ const buildLabels = (mappedData: SunburstDatum[], accessors: any): any[] => {
 
 const NOOP = () => {};
 
-export const Sunburst: SeriesComponentType<SunburstProps> = (props: SunburstProps): JSX.Element => {
+export const Sunburst: SeriesComponentType<SunburstProps> = (props): JSX.Element => {
   const {
     getAngle = (d: any) => d.angle,
     getAngle0 = (d: any) => d.angle0,

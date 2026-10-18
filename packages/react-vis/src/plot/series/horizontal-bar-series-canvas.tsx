@@ -33,7 +33,7 @@ export const HorizontalBarSeriesCanvas: SeriesComponentType<HorizontalBarSeriesC
   className = '',
   stack = false,
   style = {},
-}: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
+}): null => null) as HorizontalBarSeriesCanvasComponent;
 
 HorizontalBarSeriesCanvas.requiresSVG = false;
 HorizontalBarSeriesCanvas.isCanvas = true;

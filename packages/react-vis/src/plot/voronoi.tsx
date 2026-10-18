@@ -64,7 +64,7 @@ export const Voronoi: SeriesComponentType<VoronoiProps> = ({
   x,
   y,
   ...restProps
-}: VoronoiProps) => {
+}) => {
   const allProps = {
     ...restProps,
     className,

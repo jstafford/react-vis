@@ -58,7 +58,7 @@ export const LabelSeries: SeriesComponentType<LabelSeriesProps> = ({
   rotation = 0,
   getLabel = (d: any) => d.label,
   ...restProps
-}: LabelSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,

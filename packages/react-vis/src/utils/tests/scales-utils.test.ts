@@ -26,8 +26,8 @@ describe('ScaleUtils', () => {
       attr: 'x',
       baseValue: undefined,
       isValue: false,
-      accessor: d => d.x,
-      accessor0: d => d.x0
+      accessor: (d: {x: number, x0: number}) => d.x,
+      accessor0: (d: {x: number, x0: number}) => d.x0
     } as any;
 
     expect(_getSmallestDistanceIndex(['a', 'b', 'c'], scaleObject)).toBe(1);
@@ -70,7 +70,7 @@ describe('ScaleUtils', () => {
       getX: expect.any(Function),
       getY: expect.any(Function)
     });
-    expect(extractScalePropsFromProps({xDomain: [0, 1], getX: d => d.x}, ['x'])).toMatchObject({
+    expect(extractScalePropsFromProps({xDomain: [0, 1], getX: (d: {x: number}) => d.x}, ['x'])).toMatchObject({
       xDomain: [0, 1],
       getX: expect.any(Function)
     });
@@ -82,6 +82,7 @@ describe('ScaleUtils', () => {
   });
 
   test('adjusts domains and handles degenerate/zero cases', () => {
+    
     const scaleObject = {
       type: 'linear',
       domain: [1, 2],
@@ -90,8 +91,8 @@ describe('ScaleUtils', () => {
       attr: 'y',
       baseValue: 0,
       isValue: false,
-      accessor: d => d.y,
-      accessor0: d => d.y0
+      accessor: (d: {y:number, y0:number}) => d.y,
+      accessor0: (d: {y:number, y0:number}) => d.y0
     } as any;
 
     expect(_getScaleDistanceAndAdjustedDomain([{y: 2}, {y: 2}], scaleObject)).toMatchObject({

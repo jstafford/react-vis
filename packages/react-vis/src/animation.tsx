@@ -36,16 +36,22 @@ interface AnimationState {}
  */
 const VALID_PRESETS: Presets = presets;
 
+const isPresetKey = (animationStyle: unknown): animationStyle is keyof typeof VALID_PRESETS => {
+  return (typeof animationStyle === 'string' && animationStyle in VALID_PRESETS)
+}
+
 export const getAnimationStyle = (animationStyle: AnimationParam = presets.noWobble): AnimationStyle => {
-  if (typeof animationStyle === 'string' && animationStyle in VALID_PRESETS) {
+  if (isPresetKey(animationStyle)) {
     return VALID_PRESETS[animationStyle] || presets.noWobble;
   }
   if (typeof animationStyle === 'boolean') {
     return presets.noWobble;
   }
-  const {damping, stiffness} = animationStyle as AnimationStyle;
+  
+  const animationConfig: AnimationStyle = animationStyle as AnimationStyle;
+  const {damping, stiffness} = animationConfig
   return {
-    ...animationStyle,
+    ...animationConfig,
     damping: damping || presets.noWobble.damping,
     stiffness: stiffness || presets.noWobble.stiffness
   };
@@ -67,7 +73,7 @@ export const extractAnimatedPropValues = (props: AnimationProps): {[key: string]
   }, {});
 }
 
-export const Animation: SeriesComponentType<AnimationProps> = (props: AnimationProps): React.ReactElement => {
+export const Animation: SeriesComponentType<AnimationProps> = (props): React.ReactElement => {
   const interpolator = React.useRef<((t: number) => any) | null>(null);
   const previousProps = React.useRef<AnimationProps | null>(null);
 

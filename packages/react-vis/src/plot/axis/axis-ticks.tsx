@@ -62,7 +62,7 @@ const _getTickFormatFn = (scale: any,
 export const AxisTicks: SeriesComponentType<AxisTicksProps> = ({
   style = {},
   ...restProps
-}: AxisTicksProps) => {
+}) => {
   const allProps = {...restProps, style};
 
   /**

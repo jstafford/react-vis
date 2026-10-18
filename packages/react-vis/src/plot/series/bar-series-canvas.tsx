@@ -52,7 +52,7 @@ export const BarSeriesCanvas: SeriesComponentType<BarSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {}
-}: BarSeriesCanvasProps) => null) as BarSeriesCanvasComponent;
+}) => null) as BarSeriesCanvasComponent;
 
 BarSeriesCanvas.requiresSVG = false;
 BarSeriesCanvas.isCanvas = true;

@@ -37,7 +37,7 @@ export const MarkSeriesCanvas: SeriesComponentType<MarkSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
-}: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
+}): null => null) as MarkSeriesCanvasComponent;
 
 MarkSeriesCanvas.requiresSVG = false;
 MarkSeriesCanvas.isCanvas = true;

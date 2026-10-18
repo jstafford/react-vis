@@ -33,7 +33,7 @@ import {
 
 const {VERTICAL, HORIZONTAL} = DIRECTION;
 
-interface GridLinesProps {
+export interface GridLinesProps {
   direction?: string;
   attr: string;
   width?: number;
@@ -68,7 +68,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export const GridLines: SeriesComponentType<GridLinesProps> = (props: GridLinesProps): JSX.Element => {
+export const GridLines: SeriesComponentType<GridLinesProps> = (props): JSX.Element => {
   const {
     direction = VERTICAL,
     innerWidth = 0,

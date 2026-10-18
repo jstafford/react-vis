@@ -74,7 +74,7 @@ export const LineSeries: SeriesComponentType<LineSeriesProps> = ({
   curve = null,
   getNull = () => true,
   ...restProps
-}: LineSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allprops: LineSeriesProps = {
     ...restProps,
     className,

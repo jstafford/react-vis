@@ -41,7 +41,7 @@ export const TreemapDOM: SeriesComponentType<TreemapDOMProps> = ({
   scales,
   style,
   ...rest
-}: TreemapDOMProps): JSX.Element => {
+}): JSX.Element => {
   const useCirclePacking = mode === 'circlePack';
   return (
     <div

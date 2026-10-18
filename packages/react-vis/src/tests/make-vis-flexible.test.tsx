@@ -26,8 +26,8 @@ describe('make-vis-flexible', () => {
   });
 
   test('creates flexible wrappers with the expected display names and props', () => {
-    const Example = ({x = 0, y = 0}: {x?: number; y?: number}) => (
-      <div data-x={x} data-y={y}>Example</div>
+    const Example = ({height = 0, width = 0}: {height?: number; width?: number}) => (
+      <div data-x={height} data-y={width}>Example</div>
     );
 
     const WidthOnly = makeWidthFlexible(Example);

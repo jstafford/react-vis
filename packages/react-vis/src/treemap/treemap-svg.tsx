@@ -49,7 +49,7 @@ export const TreemapSVG: SeriesComponentType<TreemapSVGProps> = ({
   style,
   width,
   ...rest
-}: TreemapSVGProps): JSX.Element => {
+}): JSX.Element => {
   const getCircularNodes = (): {
     updatedNodes: JSX.Element;
     minY: number;

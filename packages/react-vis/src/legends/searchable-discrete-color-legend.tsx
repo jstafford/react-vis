@@ -63,7 +63,7 @@ export const SearchableDiscreteColorLegend: SeriesComponentType<SearchableDiscre
   onSearchChange,
   searchPlaceholder,
   searchFn = defaultSearchFn,
-}: SearchableDiscreteColorLegendProps): JSX.Element => {
+}): JSX.Element => {
   const onChange = onSearchChange
     ? ({target: {value}}: React.ChangeEvent<HTMLInputElement>) =>
         onSearchChange(value)

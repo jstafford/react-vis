@@ -33,7 +33,7 @@ export const HorizontalRectSeriesCanvas: SeriesComponentType<HorizontalRectSerie
   className = '',
   stack = false,
   style = {},
-}: HorizontalRectSeriesCanvasProps): null => null) as HorizontalRectSeriesCanvasComponent;
+}): null => null) as HorizontalRectSeriesCanvasComponent;
 
 HorizontalRectSeriesCanvas.requiresSVG = false;
 HorizontalRectSeriesCanvas.isCanvas = true;

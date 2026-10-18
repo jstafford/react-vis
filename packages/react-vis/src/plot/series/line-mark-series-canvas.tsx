@@ -34,7 +34,7 @@ export const LineMarkSeriesCanvas: SeriesComponentType<LineMarkSeriesCanvasProps
   className = '',
   stack = false,
   style = {},
-}: LineMarkSeriesCanvasProps): null => null) as LineMarkSeriesCanvasComponent;
+}): null => null) as LineMarkSeriesCanvasComponent;
 
 LineMarkSeriesCanvas.requiresSVG = false;
 LineMarkSeriesCanvas.isCanvas = true;

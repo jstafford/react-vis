@@ -197,7 +197,7 @@ export const WhiskerSeries: SeriesComponentType<WhiskerSeriesProps> = ({
   size: defaultSize = 0,
   strokeWidth: defaultStrokeWidth = DEFAULT_STROKE_WIDTH,
   ...restProps
-}: WhiskerSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className: defaultClassName,

@@ -48,7 +48,7 @@ import {
   SIZE_RANGE,
   OPACITY_TYPE
 } from 'theme';
-import type {ParentConfig, SeriesComponentType} from 'seriesComponentType';
+import type {SeriesComponentType} from 'seriesComponentType';
 
 const ATTRIBUTES = [
   'x',
@@ -243,7 +243,7 @@ const isPlotEmpty = (data: PlotData): boolean => {
   return !data || !data.length || !data.some(series => series && series.some(d => d));
 };
 
-export const XYPlotImplementation: SeriesComponentType<XYPlotProps> = (props: XYPlotProps): React.ReactElement => {
+export const XYPlotImplementation: SeriesComponentType<XYPlotProps> = (props): React.ReactElement => {
   const seriesRefs = React.useRef<Record<number, ParentSeriesComponent | null>>({});
   const stateRef = React.useRef<XYPlotState | null>(null);
   const children = getSeriesChildren(props.children);

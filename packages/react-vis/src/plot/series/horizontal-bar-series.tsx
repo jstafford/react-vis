@@ -30,9 +30,8 @@ export const HorizontalBarSeries: SeriesComponentType<HorizontalBarSeriesProps> 
   className = '',
   stack = false,
   style = {},
-  _requiresSVG,
   ...props
-}: HorizontalBarSeriesProps): JSX.Element => {
+}): JSX.Element => {
   return (
     <BarSeries
       {...props}

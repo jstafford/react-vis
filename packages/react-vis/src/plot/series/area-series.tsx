@@ -66,7 +66,7 @@ export const AreaSeries: SeriesComponentType<AreaSeriesProps> = ({
   style = {},
   getNull = () => true,
   ...restProps
-}: AreaSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,

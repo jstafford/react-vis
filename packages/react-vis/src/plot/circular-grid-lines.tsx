@@ -66,7 +66,7 @@ export const CircularGridLines: SeriesComponentType<CircularGridLinesProps> = ({
   centerX = 0,
   centerY = 0,
   ...restProps
-}: CircularGridLinesProps) => {
+}) => {
   const defaultProps = {
     left: restProps.marginLeft || 0,
     top: restProps.marginTop || 0,

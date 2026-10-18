@@ -48,7 +48,7 @@ export const ContinuousColorLegend: SeriesComponentType<ContinuousColorLegendPro
   height,
   width,
   className = ''
-}: ContinuousColorLegendProps): JSX.Element => {
+}): JSX.Element => {
   const colors = [startColor];
   if (midColor) {
     colors.push(midColor);

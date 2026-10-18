@@ -42,13 +42,13 @@ const generatePath = (
   )} Z`;
 
 export interface PolygonSeriesProps extends AbstractSeriesProps<any> {
-  color: string;
+  color?: string;
 }
 
 export const PolygonSeries: SeriesComponentType<PolygonSeriesProps> = ({
   color = DEFAULT_COLOR,
   ...rest
-}: PolygonSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, onSeriesMouseOverHandler, onSeriesMouseOutHandler,

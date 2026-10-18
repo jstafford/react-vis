@@ -95,7 +95,7 @@ export const DiscreteColorLegend: SeriesComponentType<DiscreteColorLegendProps> 
   orientation = 'vertical',
   style,
   width
-}: DiscreteColorLegendProps): JSX.Element => {
+}): JSX.Element => {
   return (
     <div
       className={getCombinedClassName(

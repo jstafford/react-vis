@@ -11,7 +11,7 @@ export const ContentClipPath: SeriesComponentType<ContentClipPathProps> = ({
   id = 'content-area',
   innerWidth,
   innerHeight
-}: ContentClipPathProps) => {
+}) => {
   return (
     <defs>
       <clipPath id={id}>

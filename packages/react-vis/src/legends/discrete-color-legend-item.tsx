@@ -54,7 +54,7 @@ export const DiscreteColorLegendItem: SeriesComponentType<DiscreteColorLegendIte
   onMouseEnter,
   onMouseLeave,
   title
-}: DiscreteColorLegendItemProps): JSX.Element => {
+}): JSX.Element => {
   let className = `rv-discrete-color-legend-item ${orientation}`;
   if (disabled) {
     className += ' disabled';

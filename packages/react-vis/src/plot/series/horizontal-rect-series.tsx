@@ -33,7 +33,7 @@ export const HorizontalRectSeries: SeriesComponentType<HorizontalRectSeriesProps
   stack = false,
   style = {},
   ...props
-}: HorizontalRectSeriesProps): JSX.Element => {
+}): JSX.Element => {
   return (
     <RectSeries
       {...props}

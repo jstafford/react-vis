@@ -32,7 +32,7 @@ export const VerticalBarSeries: SeriesComponentType<VerticalBarSeriesProps> = ({
   stack = false,
   style = {},
   ...rest
-}: VerticalBarSeriesProps): JSX.Element => {
+}): JSX.Element => {
   return (
     <BarSeries
       {...rest}

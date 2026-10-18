@@ -21,7 +21,7 @@
 import React from 'react';
 import {SeriesComponentType} from 'seriesComponentType';
 
-import {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps} from './abstract-series-hook';
 import {LineSeries} from './line-series';
 import {MarkSeries} from './mark-series';
 
@@ -37,7 +37,7 @@ export const LineMarkSeries: SeriesComponentType<LineMarkSeriesProps> = ({
   lineStyle = {},
   markStyle = {},
   ...restProps
-}: LineMarkSeriesProps): JSX.Element => {
+}): JSX.Element => {
   const props = {...restProps, className, stack, style};
   return (
     <g className="rv-xy-plot__series rv-xy-plot__series--linemark">

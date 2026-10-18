@@ -33,17 +33,12 @@ export interface LineSeriesCanvasProps extends AbstractSeriesProps<any> {
   curve?: string | ((arg: any) => any);
 }
 
-interface LineSeriesCanvasComponent {
-  (props: LineSeriesCanvasProps): JSX.Element;
-  renderLayer: (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
-}
-
 export const LineSeriesCanvas: SeriesComponentType<LineSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
   strokeWidth = 2,
-}: LineSeriesCanvasProps): JSX.Element => <div />) as LineSeriesCanvasComponent;
+}): JSX.Element => <div />);
 
 LineSeriesCanvas.requiresSVG = false;
 LineSeriesCanvas.isCanvas = true;

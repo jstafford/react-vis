@@ -75,7 +75,7 @@ export const TreemapLeaf: SeriesComponentType<TreemapLeafProps> = ({
   y1,
   style,
   ...rest
-}: TreemapLeafProps): JSX.Element => {
+}): JSX.Element => {
 
   if (animation) {
     const allProps = {...rest, animation,

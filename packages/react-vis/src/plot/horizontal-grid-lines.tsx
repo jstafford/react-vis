@@ -22,17 +22,12 @@ import React from 'react';
 import {SeriesComponentType} from 'seriesComponentType';
 
 import {DIRECTION} from 'utils/axis-utils';
-import {GridLines} from 'plot/grid-lines';
+import {GridLines, GridLinesProps} from 'plot/grid-lines';
 
 const {HORIZONTAL} = DIRECTION;
 
-export const HorizontalGridLines: SeriesComponentType<React.ComponentProps<typeof GridLines>> = ({
-  direction = HORIZONTAL,
-  attr = 'y',
-  _requiresSVG,
-  ...restProps
-}: any) => {
-  return <GridLines {...restProps} direction={direction} attr={attr} />;
+export const HorizontalGridLines: SeriesComponentType<Omit<GridLinesProps, 'direction' | 'attr'>> = (props) => {
+  return <GridLines {...props} direction={HORIZONTAL} attr={'y'} />;
 };
 HorizontalGridLines.displayName = 'HorizontalGridLines';
 HorizontalGridLines.requiresSVG = true;

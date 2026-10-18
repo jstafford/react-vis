@@ -77,7 +77,7 @@ export const Crosshair: SeriesComponentType<CrosshairProps> = ({
   titleFormat = defaultTitleFormat,
   itemsFormat = defaultItemsFormat,
   ...restProps
-}: CrosshairProps) => {
+}) => {
   const renderCrosshairItems = () => {
     const items = itemsFormat(values);
     if (!items) {

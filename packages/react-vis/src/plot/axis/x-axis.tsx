@@ -32,7 +32,7 @@ export const XAxis: SeriesComponentType<AxisProps> = ({
   attr = 'x',
   attrAxis = 'y',
   ...restProps
-}: AxisProps) => {
+}) => {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 };
 

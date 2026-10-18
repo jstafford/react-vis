@@ -168,7 +168,7 @@ export const RadialChart: SeriesComponentType<RadialChartProps> = ({
   style,
   width,
   ...rest
-}: RadialChartProps): JSX.Element => {
+}): JSX.Element => {
   const mappedData = getWedgesToRender({
     data,
     height,

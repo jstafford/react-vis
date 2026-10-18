@@ -79,7 +79,7 @@ const renderCircle = (d: any,
 export const MarkSeries: SeriesComponentType<MarkSeriesProps> = ({
   getNull: defaultGetNull = () => true,
   ...rest
-}: MarkSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const props = {...rest, getNull: defaultGetNull};
   const {
     animation, className, data, marginLeft, marginTop, strokeWidth, style,

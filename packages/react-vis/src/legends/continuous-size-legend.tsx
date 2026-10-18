@@ -45,7 +45,7 @@ export const ContinuousSizeLegend: SeriesComponentType<ContinuousSizeLegendProps
   height,
   width,
   className = ''
-}: ContinuousSizeLegendProps): JSX.Element => {
+}): JSX.Element => {
   const circles: React.ReactNode[] = [];
   const step = (endSize - startSize) / (circlesTotal - 1);
 

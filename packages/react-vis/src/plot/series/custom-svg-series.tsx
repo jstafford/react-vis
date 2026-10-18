@@ -143,7 +143,7 @@ export const CustomSVGSeries: SeriesComponentType<CustomSVGSeriesProps> = ({
   customComponent = 'circle',
   size = 2,
   ...restProps
-}: CustomSVGSeriesProps): JSX.Element | null => {
+}): JSX.Element | null => {
   const allProps: CustomSVGSeriesProps = {
     ...restProps,
     className,

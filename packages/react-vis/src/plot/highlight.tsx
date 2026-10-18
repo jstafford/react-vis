@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {SeriesComponentType} from 'seriesComponentType';
 
-import {AbstractSeriesProps} from './series/abstract-series';
+import {AbstractSeriesProps} from './series/abstract-series-hook';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -22,7 +22,7 @@ interface HighlightState {
 }
 
 interface HighlightProps extends AbstractSeriesProps<any> {
-  className: string;
+  className?: string;
   enableX?: boolean;
   enableY?: boolean;
   drag?: boolean;
@@ -30,8 +30,8 @@ interface HighlightProps extends AbstractSeriesProps<any> {
   opacity?: number;
   highlightHeight?: number;
   highlightWidth?: number;
-  highlightX?: number;
-  highlightY?: number;
+  highlightX?: number | string;
+  highlightY?: number | string;
   innerWidth?: number;
   innerHeight?: number;
   marginLeft?: number;
@@ -56,7 +56,7 @@ const getLocs = (evt: any) => {
   return {xLoc, yLoc};
 }
 
-export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightProps): JSX.Element => {
+export const Highlight: SeriesComponentType<HighlightProps> = (props): JSX.Element => {
   const [state, setState] = useState<HighlightState>({
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},

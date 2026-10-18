@@ -32,7 +32,7 @@ export const YAxis: SeriesComponentType<AxisProps> = ({
   attr = 'y',
   attrAxis = 'x',
   ...restProps
-}: AxisProps) => {
+}) => {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 };
 YAxis.displayName = 'YAxis';

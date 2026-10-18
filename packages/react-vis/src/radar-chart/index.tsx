@@ -314,7 +314,7 @@ const getPolygonPoints = (props: any): React.ReactNode[] | undefined => {
   });
 };
 
-export const RadarChart: SeriesComponentType<RadarChartProps> = (props: RadarChartProps): JSX.Element => {
+export const RadarChart: SeriesComponentType<RadarChartProps> = (props): JSX.Element => {
   const {
     animation,
     className = '',

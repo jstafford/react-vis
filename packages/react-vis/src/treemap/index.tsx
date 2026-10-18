@@ -184,7 +184,7 @@ export const Treemap: SeriesComponentType<TreemapProps> = ({
   getLabel = (datum: any) => datum.title,
   renderMode,
   ...restProps
-}: TreemapProps): JSX.Element => {
+}): JSX.Element => {
   const props = {
     ...restProps,
     className,

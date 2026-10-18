@@ -139,7 +139,7 @@ export const Axis: SeriesComponentType<AxisProps> = ({
   tickPadding = 8,
   orientation = BOTTOM,
   ...restProps
-}: AxisProps) => {
+}) => {
     const allProps = {
       ...restProps,
       animation,
