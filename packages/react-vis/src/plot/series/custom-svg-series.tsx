@@ -47,32 +47,50 @@ const predefinedComponents = (type: string,
       return (
         <polygon
           style={style}
-          points={`0 0 ${size / 2} ${size / 2} 0 ${size} ${-size / 2} ${size /
-            2} 0 0`}
+          // Jason points={`0 0 ${size / 2} ${size / 2} 0 ${size} ${-size / 2} ${size /
+          // Jason    2} 0 0`}
+          points={`0 ${size} ${size} 0 0 ${-size} ${-size} 0 0 ${size}`}
         />
       );
     case 'star': {
-      const starPoints = [...new Array(5)]
-        .map((c, index) => {
-          const angle = (index / 5) * Math.PI * 2;
-          const innerAngle = angle + Math.PI / 10;
-          const outerAngle = angle - Math.PI / 10;
-          // ratio of inner polygon to outer polgyon
-          const innerRadius = size / 2.61;
-          return `
-        ${Math.cos(outerAngle) * size} ${Math.sin(outerAngle) * size}
-        ${Math.cos(innerAngle) * innerRadius} ${Math.sin(innerAngle) *
-            innerRadius}
-      `;
-        })
-        .join(' ');
+      // Jason
+      // const starPoints = [...new Array(5)]
+      //   .map((c, index) => {
+      //     const angle = (index / 5) * Math.PI * 2;
+      //     const innerAngle = angle + Math.PI / 10;
+      //     const outerAngle = angle - Math.PI / 10;
+      //     // ratio of inner polygon to outer polgyon
+      //     const innerRadius = size / 2.61;
+      //     return `
+      //   ${Math.cos(outerAngle) * size} ${Math.sin(outerAngle) * size}
+      //   ${Math.cos(innerAngle) * innerRadius} ${Math.sin(innerAngle) *
+      //       innerRadius}
+      // `;
+      //   })
+      //   .join(' ');
+      // return (
+      //   <polygon
+      //     points={starPoints}
+      //     x="0"
+      //     y="0"
+      //     height={size}
+      //     width={size}
+      //     style={style}
+      //   />
+      // );
+      const radiusRatio = Math.sin(0.1*Math.PI)/Math.sin(0.7*Math.PI);
+      const starPoints = [...new Array(5)].map((c, index) => {
+        const angle = index / 5 * Math.PI * 2;
+        const innerAngle = angle + Math.PI / 10;
+        const outerAngle = angle - Math.PI / 10;
+        // ratio of inner polygon to outer polgyon
+        const outerRadius = size
+        const innerRadius = outerRadius * radiusRatio;
+        return `${Math.cos(outerAngle) * outerRadius} ${Math.sin(outerAngle) * outerRadius} ${Math.cos(innerAngle) * innerRadius} ${Math.sin(innerAngle) * innerRadius}`;
+      }).join(' ');
       return (
         <polygon
           points={starPoints}
-          x="0"
-          y="0"
-          height={size}
-          width={size}
           style={style}
         />
       );
@@ -87,9 +105,54 @@ const predefinedComponents = (type: string,
           style={style}
         />
       );
-    default:
+
+    // Jason
+    case 'plus':
+      return (
+        <polygon
+          style={style}
+          points={`${size} ${size/6} ${size/6} ${size/6} ${size/6} ${size} ${-size/6} ${size} ${-size/6} ${size/6} ${-size} ${size/6} ${-size} ${-size/6} ${-size/6} ${-size/6} ${-size/6} ${-size} ${size/6} ${-size} ${size/6} ${-size/6} ${size} ${-size/6} ${size} ${size/6}`}
+        />
+      );
+
+    case 'triangle': {
+      const sinOneThirdPi = Math.sin(Math.PI/3)
+      const yOffset = size * (2 * sinOneThirdPi - 1) / (4 * sinOneThirdPi)
+      return (
+        <polygon
+          style={style}
+          points={`0 ${-size - yOffset} ${size} ${size - yOffset} ${-size} ${size - yOffset} 0 ${-size - yOffset}`}
+        />
+      );
+    }
+
+    case 'x':
+      return (
+        <polygon
+          style={style}
+          points={`${size/3} 0 ${size} ${2*size/3} ${2*size/3} ${size} 0 ${size/3} ${-2*size/3} ${size} ${-size} ${2*size/3} ${-size/3} 0 ${-size} ${-2*size/3} ${-2*size/3} ${-size} 0 ${-size/3} ${2*size/3} ${-size} ${size} ${-2*size/3} ${size/3} 0`}
+        />
+      );
+
     case 'circle':
-      return <circle cx="0" cy="0" r={size / 2} style={style} />;
+      return (
+        <circle
+          cx="0"
+          cy="0"
+          r={size}
+          style={style}
+        />
+      );
+  
+    default:
+      return (
+        <g />
+      )
+
+    // Jason
+    // default:
+    // case 'circle':
+    //   return <circle cx="0" cy="0" r={size / 2} style={style} />;
   }
 };
 

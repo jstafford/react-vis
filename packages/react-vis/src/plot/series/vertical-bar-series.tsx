@@ -31,11 +31,13 @@ export const VerticalBarSeries: SeriesComponentType<VerticalBarSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
+  barSizeFactor = 0.85,
   ...rest
 }): JSX.Element => {
   return (
     <BarSeries
       {...rest}
+      barSizeFactor={barSizeFactor}
       className={className}
       stack={stack}
       style={style}

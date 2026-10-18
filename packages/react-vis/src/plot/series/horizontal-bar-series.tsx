@@ -30,11 +30,13 @@ export const HorizontalBarSeries: SeriesComponentType<HorizontalBarSeriesProps> 
   className = '',
   stack = false,
   style = {},
+  barSizeFactor = 0.85,
   ...props
 }): JSX.Element => {
   return (
     <BarSeries
       {...props}
+      barSizeFactor={barSizeFactor}
       className={className}
       stack={stack}
       style={style}

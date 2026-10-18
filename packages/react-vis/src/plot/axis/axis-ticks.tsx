@@ -34,6 +34,7 @@ export interface AxisTicksStyle {
 
 export interface AxisTicksProps {
   attr: string;
+  axisLineOffset: number;
   height: number;
   orientation: string;
   style?: AxisTicksStyle;
@@ -148,6 +149,7 @@ export const AxisTicks: SeriesComponentType<AxisTicksProps> = ({
    */
   const getTickLineProps = (): {[key: string]: number} => {
     const {
+      axisLineOffset, // JPS
       tickSize,
       tickSizeOuter = tickSize,
       tickSizeInner = tickSize
@@ -159,8 +161,8 @@ export const AxisTicks: SeriesComponentType<AxisTicksProps> = ({
     return {
       [`${tickXAttr}1`]: 0,
       [`${tickXAttr}2`]: 0,
-      [`${tickYAttr}1`]: -wrap * (tickSizeInner as number),
-      [`${tickYAttr}2`]: wrap * (tickSizeOuter as number)
+      [`${tickYAttr}1`]: -wrap * (tickSizeInner as number) + axisLineOffset, // JPS
+      [`${tickYAttr}2`]: wrap * (tickSizeOuter as number) + axisLineOffset // JPS
     };
   };
 

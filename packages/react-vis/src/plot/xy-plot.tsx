@@ -247,8 +247,20 @@ export const XYPlotImplementation: SeriesComponentType<XYPlotProps> = (props): R
   const seriesRefs = React.useRef<Record<number, ParentSeriesComponent | null>>({});
   const stateRef = React.useRef<XYPlotState | null>(null);
   const children = getSeriesChildren(props.children);
-  const data = getStackedData(children, props.stackBy as string);
-  const nextScaleMixins = getScaleMixins(data, props);
+  // JPS/Jason edits to VIS
+  // Next 2 lines replace commented out 3rd line
+  const nextData: PlotData = []
+  children.forEach( thisChild => nextData.push( thisChild.props.data ) )
+  // const data = getStackedData(children, props.stackBy as string);
+
+  // Function getStackedData calculates the Y stacking values. And
+  // as a result returns the data series with a different (new address).
+  // Hence by calling getStackedData, every stacked plot will re-render
+  // even if there is no change in the plot.
+  // HOWEVER, we can just skip the call to getStackedData.  We already
+  // handle the stacking values getY0, getY in our own code. 
+
+  const nextScaleMixins = getScaleMixins(nextData, props); // JPS/Jason
 
   if (
     !stateRef.current ||
@@ -258,7 +270,7 @@ export const XYPlotImplementation: SeriesComponentType<XYPlotProps> = (props): R
       props.hasTreeStructure
     )
   ) {
-    stateRef.current = {data, scaleMixins: nextScaleMixins};
+    stateRef.current = {data: nextData, scaleMixins: nextScaleMixins}; // Jason
   }
   const state = stateRef.current;
   const {animation} = props;

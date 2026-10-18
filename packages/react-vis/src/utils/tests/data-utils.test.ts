@@ -7,7 +7,7 @@ import {
 
 describe('data-utils', () => {
   test('returns unique values from an accessor', () => {
-    expect(getUniquePropertyValues([{value: 1}, {value: 2}, {value: 1}], item => item.value)).toEqual([
+    expect(getUniquePropertyValues([{value: 1}, {value: 2}, {value: 1}], item => item.value, {index: 0})).toEqual([
       1,
       2
     ]);

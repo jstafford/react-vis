@@ -515,11 +515,12 @@ const _normalizeValues = (data: any[],
  * @returns {{domain0: number, domainN: number, distance: number}} Result.
  * @private
  */
+// JPS/Jason Added props argument so getUniquePropertyValues can be called with series index
 export const _getScaleDistanceAndAdjustedDomain = (data: any[],
-  scaleObject: ScaleObject): {domain0: any; domainN: any; distance: number} => {
+  scaleObject: ScaleObject, props: {[key: string]: any} ): {domain0: any; domainN: any; distance: number} => {
   const {domain, type, accessor, accessor0} = scaleObject;
 
-  const uniqueValues = getUniquePropertyValues(data, accessor);
+  const uniqueValues = getUniquePropertyValues(data, accessor, props); // JPS/Jason
 
   // Fix time scale if a data has only one value.
   const values = _normalizeValues(data, uniqueValues, accessor0, type);
@@ -596,9 +597,11 @@ const _adjustContinuousScale = (props: {[key: string]: any},
       return;
     }
     if (data && data.length) {
+      // JPS/Jason Added props argument to _getScaleDistanceAndAdjustedDomain so getUniquePropertyValues can be called with series index
       const {domain0, domainN, distance} = _getScaleDistanceAndAdjustedDomain(
         data,
-        scaleObject
+        scaleObject,
+        props
       );
       scaleDomain0 = Math.min(scaleDomain0, domain0);
       scaleDomainN = Math.max(scaleDomainN, domainN);
@@ -680,8 +683,8 @@ export const getAttributeScale = (props: {[key: string]: any},
  * @returns {*} Value of the point.
  * @private
  */
-const _getAttrValue = (d: any, accessor: (d: any) => any): any => {
-  return accessor(d.data ? d.data : d);
+const _getAttrValue = (d: any, index: number, accessor: (d: any, index: number) => any): any => {
+  return accessor(d.data ? d.data : d, index);
 };
 
 const _isDefined = (value: any): boolean => {
@@ -717,7 +720,7 @@ export const getAttributeFunctor = (props: {[key: string]: any},
   const scaleObject = getScaleObjectFromProps(props, attr);
   if (scaleObject) {
     const scaleFn = getScaleFnFromScaleObject(scaleObject);
-    return (d: any) => scaleFn(_getAttrValue(d, scaleObject.accessor));
+    return (d: any) => scaleFn(_getAttrValue(d, props.index, scaleObject.accessor));
   }
   return null;
 };
@@ -738,7 +741,8 @@ export const getAttr0Functor = (props: {[key: string]: any},
     const {baseValue = domain[0]} = scaleObject;
     const scaleFn = getScaleFnFromScaleObject(scaleObject);
     return (d: any) => {
-      const value = _getAttrValue(d, scaleObject.accessor0);
+      // JPS/Jason Bug Fix:  (Also added index argument to getters )
+      const value = _getAttrValue(d, props.index, scaleObject.accessor0);
       return scaleFn(_isDefined(value) ? value : baseValue);
     };
   }

@@ -73,6 +73,7 @@ describe('Axis and AxisTicks', () => {
         <AxisTicks
           {...scaleProps}
           attr="x"
+          axisLineOffset={0}
           orientation={ORIENTATION.TOP}
           width={100}
           height={80}

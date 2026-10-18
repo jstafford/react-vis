@@ -129,6 +129,9 @@ export const LineSeries: SeriesComponentType<LineSeriesProps> = ({
           strokeDasharray: STROKE_STYLES[strokeStyle as string] || strokeDasharray,
           strokeWidth,
           stroke,
+          // JPS: Added fill none.  Otherwise non-vis applications (ppt)
+          // will 'fill' our line series which is hard to explain, but clearly wrong.
+          fill:'none',
           ...(style as React.CSSProperties)
         }}
       />

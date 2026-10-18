@@ -53,6 +53,7 @@ export interface AxisProps {
   orientation?: string;
   attr: string;
   attrAxis?: string;
+  axisLineOffset?: number; // JPS
   width?: number;
   height?: number;
   top?: number;
@@ -138,11 +139,13 @@ export const Axis: SeriesComponentType<AxisProps> = ({
   tickSize = 6,
   tickPadding = 8,
   orientation = BOTTOM,
+  axisLineOffset = 0,
   ...restProps
 }) => {
     const allProps = {
       ...restProps,
       animation,
+      axisLineOffset,
       className,
       on0,
       style,
@@ -217,7 +220,7 @@ export const Axis: SeriesComponentType<AxisProps> = ({
           />
         )}
         {!hideTicks && (
-          <AxisTicks {...(mergedProps as any)} style={{...style, ...(style as any).ticks}} />
+          <AxisTicks {...(mergedProps as any)} axisLineOffset={axisLineOffset} style={{...style, ...(style as any).ticks}} />
         )}
         {title ? (
           <AxisTitle

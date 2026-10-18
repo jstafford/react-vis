@@ -24,9 +24,11 @@
  * @param {Function} accessor Accessor function.
  * @returns {Array} Array of unique values.
  */
+// JPS/Jason Added props argument so acccessor can be called with series index
 export const getUniquePropertyValues = <T, V>(arr: T[],
-  accessor: (item: T) => V): V[] => {
-  const setOfValues = new Set(arr.map(accessor));
+  accessor: (item: T, index: number) => V,
+  props: {[key: string]: any}): V[] => {
+  const setOfValues = new Set(arr.map((d) => accessor(d, props.index))); // JPS
   return Array.from(setOfValues);
 };
 

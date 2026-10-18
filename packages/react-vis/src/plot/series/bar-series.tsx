@@ -35,14 +35,14 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   lineSizeAttr?: string;
   valueSizeAttr?: string;
   cluster?: string;
-  barWidth?: number;
+  barSizeFactor?: number; // Jason
 }
 
 export const BarSeries: SeriesComponentType<BarSeriesProps> = ({
-  barWidth = 0.85,
+  barSizeFactor = 0.85, // Jason
   ...restProps
 }): JSX.Element | null => {
-  const allProps = {...restProps, barWidth};
+  const allProps = {...restProps, barSizeFactor}; // Jason
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
     marginTop, style, valuePosAttr, valueSizeAttr,
@@ -75,7 +75,7 @@ export const BarSeries: SeriesComponentType<BarSeriesProps> = ({
       getAttributeFunctor('stroke') || getAttributeFunctor('color');
     const opacityFunctor = getAttributeFunctor('opacity');
 
-    const halfSpace = (distance / 2) * (barWidth as number);
+    const halfSpace = (distance / 2) * (barSizeFactor as number); // Jason
 
     return (
       <g

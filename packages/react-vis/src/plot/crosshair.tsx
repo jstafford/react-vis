@@ -130,10 +130,14 @@ export const Crosshair: SeriesComponentType<CrosshairProps> = ({
   const x = getAttributeFunctor(props, 'x') as (datum: any) => number;
   const innerLeft = x(value);
 
+  // JPS added left/right offset of pallette to the green line.
+  // Seemed too close as default behavior
+  // Added margin of:
+  const JPS_ADDED_MARGIN = 40
   const {
     orientation = innerLeft > innerWidth / 2 ? 'left' : 'right'
   } = props;
-  const left = marginLeft + innerLeft;
+  const left = marginLeft + innerLeft - JPS_ADDED_MARGIN; // JPS
   const top = marginTop;
   const innerClassName = `rv-crosshair__inner rv-crosshair__inner--${orientation}`;
 
@@ -142,10 +146,13 @@ export const Crosshair: SeriesComponentType<CrosshairProps> = ({
         className={getCombinedClassName('rv-crosshair', className)}
         style={{left: `${left}px`, top: `${top}px`}}
       >
+        {/*
+        // REMOVED BY JPS
         <div
           className="rv-crosshair__line"
           style={{height: `${innerHeight}px`, ...style.line}}
         />
+        */}
 
         <div className={innerClassName}>
           {children ? (
@@ -162,4 +169,5 @@ export const Crosshair: SeriesComponentType<CrosshairProps> = ({
       </div>
   );
 }
+
 Crosshair.displayName = 'Crosshair';

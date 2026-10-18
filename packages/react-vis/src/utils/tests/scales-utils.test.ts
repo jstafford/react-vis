@@ -95,7 +95,7 @@ describe('ScaleUtils', () => {
       accessor0: (d: {y:number, y0:number}) => d.y0
     } as any;
 
-    expect(_getScaleDistanceAndAdjustedDomain([{y: 2}, {y: 2}], scaleObject)).toMatchObject({
+    expect(_getScaleDistanceAndAdjustedDomain([{y: 2}, {y: 2}], scaleObject, {index: 0})).toMatchObject({
       domain0: expect.any(Number),
       domainN: expect.any(Number),
       distance: expect.any(Number)

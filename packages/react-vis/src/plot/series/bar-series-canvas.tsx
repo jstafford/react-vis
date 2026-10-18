@@ -60,6 +60,7 @@ BarSeriesCanvas.displayName = 'BarSeriesCanvas';
 BarSeriesCanvas.getParentConfig = defaultGetParentConfig;
 BarSeriesCanvas.renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
+      barSizeFactor, // Jason
       data,
       linePosAttr,
       lineSizeAttr,
@@ -77,12 +78,14 @@ BarSeriesCanvas.renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRendering
     const value0 = getAttr0Functor(props, valuePosAttr as string);
     const fill =
       getAttributeFunctor(props, 'fill') || getAttributeFunctor(props, 'color');
-    const stroke =
-      getAttributeFunctor(props, 'stroke') ||
-      getAttributeFunctor(props, 'color');
+    // JPS
+    // const stroke =
+    //   getAttributeFunctor(props, 'stroke') ||
+    //   getAttributeFunctor(props, 'color');
     const opacity = getAttributeFunctor(props, 'opacity');
 
-    const halfSpace = (distance / 2) * 0.85;
+    // Jason const halfSpace = (distance / 2) * 0.85;
+    const halfSpace = (distance / 2) * barSizeFactor; // Jason
     // totalSpaceAvailable is the space we have available to draw all the
     // bars of a same 'linePosAttr' value (a.k.a. sameTypeTotal)
     const totalSpaceAvailable = halfSpace * 2;
@@ -100,7 +103,7 @@ BarSeriesCanvas.renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRendering
         totalSpaceAvailable / sameTypeTotal - spaceTakenByInterBarsPixels;
 
       const fillColor = rgb(fill!(row));
-      const strokeColor = rgb(stroke!(row));
+      // JPS const strokeColor = rgb(stroke!(row));
       const rowOpacity = opacity!(row) || DEFAULT_OPACITY;
 
       // linePos is the first pixel were we can start drawing sameTypeIndex bar
@@ -118,7 +121,12 @@ BarSeriesCanvas.renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRendering
       ctx.rect(x + (marginBottom as number), y + (marginTop as number), width, height);
       ctx.fillStyle = `rgba(${fillColor.r}, ${fillColor.g}, ${fillColor.b}, ${rowOpacity})`;
       ctx.fill();
-      ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
-      ctx.stroke();
+      // JPS edit Dec 2021 -
+      // External vis interface does not seem to give access to the 'outline' around the bars.
+      // Outline by default is 1px and same color.
+      // Unfortunately, bars of zero width appear as 2px tall outline.
+      // Here we remove the outline.  Also line 74 above.
+      // ctx.strokeStyle = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${rowOpacity})`;
+      // ctx.stroke();
     });
 };
