@@ -72,7 +72,7 @@ const getSeriesTypeName = (child: React.ReactElement): string => {
 
 /**
  * Check if the component is series or not.
- * @param {React.Component} child Component.
+ * @param {React.ReactElement} child Component.
  * @returns {boolean} True if the child is series, false otherwise.
  */
 export const isSeriesChild = (child: React.ReactElement): boolean => {

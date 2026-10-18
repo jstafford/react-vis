@@ -34,14 +34,7 @@ describe('XYPlot', () => {
   test('updates scale mixins from props and routes event handlers through parent and series callbacks', () => {
     const onMouseDown = vi.fn();
     const onTouchStart = vi.fn();
-    const onSeriesMouseDown = vi.fn();
-    const series = new (class extends React.Component<any> {
-      onParentMouseDown = onSeriesMouseDown;
-      onParentTouchStart = onTouchStart;
-      render() {
-        return <g />;
-      }
-    })({});
+    const series = (): React.ReactElement => <g />;
 
     const nextProps = {
       width: 300,

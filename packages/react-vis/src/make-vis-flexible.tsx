@@ -22,8 +22,6 @@ import React from 'react';
 import {XYPlot} from 'plot/xy-plot';
 import {getDOMNode} from 'utils/react-utils';
 
-const CONTAINER_REF = 'container';
-
 // As a performance enhancement, we want to only listen once
 const resizeSubscribers: Array<() => void> = [];
 const DEBOUNCE_DURATION = 100;
@@ -85,7 +83,7 @@ const removeSubscriber = (cb: () => void): void => {
 
 /**
  * Helper for getting a display name for the child component.
- * @param {*} Component React class for the child component.
+ * @param {*} Component React component to wrap.
  * @returns {String} The child component's name
  */
 const getDisplayName = (Component: React.ComponentType<any>): string => {
@@ -99,106 +97,72 @@ interface FlexibleState {
 
 /**
  * Add the ability to stretch the visualization on window resize.
- * @param {*} Component React class for the child component.
+ * @param {*} Component React component to wrap.
  * @param {boolean} isWidthFlexible Whether width should flex with container.
  * @param {boolean} isHeightFlexible Whether height should flex with container.
  * @returns {*} Flexible component.
  */
 const makeFlexible = <P extends {height?: number; width?: number},>(Component: React.ComponentType<P>,
   isWidthFlexible: boolean,
-  isHeightFlexible: boolean): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
-  const ResultClass = class extends React.Component<
-    Omit<P, 'height' | 'width'>,
-    FlexibleState
-  > {
+  isHeightFlexible: boolean): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
+  const Result: React.FunctionComponent<Omit<P, 'height' | 'width'>> = props => {
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [dimensions, setDimensions] = React.useState<FlexibleState>({
+      height: 0,
+      width: 0
+    });
 
-    [CONTAINER_REF]: Element | null = null;
-    cancelSubscription!: () => void;
-
-    constructor(props: Omit<P, 'height' | 'width'>) {
-      super(props);
-      this.state = {
-        height: 0,
-        width: 0
-      };
-    }
-
-    /**
-     * Get the dimensions of the container and update state.
-     * @private
-     */
-    _onResize = (): void => {
-      const containerElement = getDOMNode(this[CONTAINER_REF]);
+    const onResize = React.useCallback((): void => {
+      const containerElement = getDOMNode(containerRef.current) as HTMLElement | null;
       if (!containerElement) {
         return;
       }
-      const {offsetHeight, offsetWidth} = containerElement as HTMLElement;
+      const {offsetHeight, offsetWidth} = containerElement;
+      setDimensions(current => (
+        current.height === offsetHeight && current.width === offsetWidth
+          ? current
+          : {height: offsetHeight, width: offsetWidth}
+      ));
+    }, []);
 
-      const newState: Partial<FlexibleState> = {};
-      if (this.state.height !== offsetHeight) {
-        newState.height = offsetHeight;
-      }
-      if (this.state.width !== offsetWidth) {
-        newState.width = offsetWidth;
-      }
-      if (Object.keys(newState).length > 0) {
-        this.setState(newState as FlexibleState);
-      }
+    React.useLayoutEffect(onResize);
+
+    React.useEffect(() => subscribeToDebouncedResize(onResize), [onResize]);
+
+    const {height, width} = dimensions;
+    const updatedDimensions = {
+      ...(isHeightFlexible ? {height} : {}),
+      ...(isWidthFlexible ? {width} : {})
     };
+    const componentProps = {
+      ...updatedDimensions,
+      ...props,
+      animation:
+        height === 0 && width === 0
+          ? null
+          : (props as P & {animation?: unknown}).animation
+    } as unknown as P;
 
-    componentDidMount(): void {
-      this._onResize();
-      this.cancelSubscription = subscribeToDebouncedResize(this._onResize);
-    }
-
-    UNSAFE_componentWillReceiveProps(): void {
-      this._onResize();
-    }
-
-    componentWillUnmount(): void {
-      this.cancelSubscription();
-    }
-
-    render(): React.ReactNode {
-      const {height, width} = this.state;
-      const props = {
-        ...this.props,
-        animation:
-          height === 0 && width === 0
-            ? null
-            : (this.props as any).animation
-      } as unknown as P;
-
-      const updatedDimensions = {
-        ...(isHeightFlexible ? {height} : {}),
-        ...(isWidthFlexible ? {width} : {})
-      };
-
-      return (
-        <div
-          ref={ref => (this[CONTAINER_REF] = ref)}
-          style={{width: '100%', height: '100%'}}
-        >
-          <Component {...updatedDimensions} {...props} />
-        </div>
-      );
-    }
+    return (
+      <div ref={containerRef} style={{width: '100%', height: '100%'}}>
+        <Component {...componentProps} />
+      </div>
+    );
   };
 
-  (ResultClass as any).displayName = `Flexible${getDisplayName(Component)}`;
-
-  return ResultClass;
+  Result.displayName = `Flexible${getDisplayName(Component)}`;
+  return Result;
 };
 
-export const makeHeightFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
+export const makeHeightFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, false, true);
 };
 
-export const makeVisFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
+export const makeVisFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, true);
 };
 
-export const makeWidthFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
+export const makeWidthFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, false);
 };
 
