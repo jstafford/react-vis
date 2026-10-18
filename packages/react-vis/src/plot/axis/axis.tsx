@@ -85,7 +85,7 @@ const predefinedClassName = 'rv-xy-plot__axis';
 const VERTICAL_CLASS_NAME = 'rv-xy-plot__axis--vertical';
 const HORIZONTAL_CLASS_NAME = 'rv-xy-plot__axis--horizontal';
 
-function getDefaultAxisProps(props: AxisProps) {
+const getDefaultAxisProps = (props: AxisProps) => {
     const {
       innerWidth,
       innerHeight,
@@ -127,7 +127,7 @@ function getDefaultAxisProps(props: AxisProps) {
       width: marginRight,
       height: innerHeight
     };
-}
+};
 
 export const Axis: any = ({
   animation,

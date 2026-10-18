@@ -71,7 +71,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export function GridLines(props: GridLinesProps): JSX.Element {
+export const GridLines = (props: GridLinesProps): JSX.Element => {
   const {
     direction = VERTICAL,
     innerWidth = 0,

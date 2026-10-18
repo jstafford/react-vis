@@ -44,7 +44,7 @@ interface CrosshairProps {
   [key: string]: any;
 }
 
-function defaultTitleFormat(values: any[]) {
+const defaultTitleFormat = (values: any[]) => {
   const value = getFirstNonEmptyValue(values);
   if (value) {
     return {
@@ -54,17 +54,17 @@ function defaultTitleFormat(values: any[]) {
   }
 }
 
-function defaultItemsFormat(values: any[]): { title: any; value: number; }[] {
+const defaultItemsFormat = (values: any[]): { title: any; value: number; }[] => {
   return values.filter((v) => Boolean(v)).map((v, i) => {
       return {value: v.y, title: i};
   });
 }
 
-function getFirstNonEmptyValue(values: any[]) {
+const getFirstNonEmptyValue = (values: any[]) => {
   return (values || []).find(v => Boolean(v));
 }
 
-export function Crosshair({
+export const Crosshair = ({
   children,
   className,
   values = [],
@@ -76,7 +76,7 @@ export function Crosshair({
   titleFormat = defaultTitleFormat,
   itemsFormat = defaultItemsFormat,
   ...restProps
-}: CrosshairProps) {
+}: CrosshairProps) => {
   const renderCrosshairItems = () => {
     const items = itemsFormat(values);
     if (!items) {
@@ -84,7 +84,7 @@ export function Crosshair({
     }
     return items
       .filter(Boolean)
-      .map(function renderValue(item: any, i: number) {
+      .map((item: any, i: number) => {
         return (
           <div className="rv-crosshair__item" key={`item${i}`}>
             <span className="rv-crosshair__item__title">{item.title}</span>

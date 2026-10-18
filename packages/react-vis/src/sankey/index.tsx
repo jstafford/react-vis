@@ -103,7 +103,7 @@ export interface SankeyProps {
   [key: string]: any;
 }
 
-export function Sankey(props: SankeyProps): JSX.Element {
+export const Sankey = (props: SankeyProps): JSX.Element => {
   const {
     align = 'justify',
     animation,
@@ -250,5 +250,5 @@ export function Sankey(props: SankeyProps): JSX.Element {
       {children}
     </XYPlot>
   );
-}
+};
 (Sankey as any).displayName = 'Sankey';

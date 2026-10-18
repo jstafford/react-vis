@@ -67,11 +67,11 @@ interface HintProps {
   [key: string]: any;
 }
 
-function defaultFormat(value: {[key: string]: any}) {
-  return Object.keys(value).map(function getProp(key) {
+const defaultFormat = (value: {[key: string]: any}) => {
+  return Object.keys(value).map(key => {
     return {title: key, value: transformValueToString(value[key])};
   });
-}
+};
 
 export const Hint: any = ({
   format = defaultFormat,
@@ -81,7 +81,7 @@ export const Hint: any = ({
 }: HintProps) => {
   const allProps = {...restProps, format, align, style};
 
-  function getAlign(x: number, y: number): AlignShape {
+  const getAlign = (x: number, y: number): AlignShape => {
     const {
       innerWidth = 0,
       innerHeight = 0,
@@ -99,57 +99,57 @@ export const Hint: any = ({
       align.vertical = y > innerHeight / 2 ? ALIGN.TOP : ALIGN.BOTTOM;
     }
     return align;
-  }
+  };
 
-  function getAlignClassNames(align: AlignShape) {
+  const getAlignClassNames = (align: AlignShape) => {
     const {orientation} = allProps;
     const orientationClass = orientation
       ? `rv-hint--orientation-${orientation}`
       : '';
     return `${orientationClass} rv-hint--horizontalAlign-${align.horizontal}
      rv-hint--verticalAlign-${align.vertical}`;
-  }
+  };
 
-  function getAlignStyle(align: AlignShape, x: number, y: number): React.CSSProperties {
+  const getAlignStyle = (align: AlignShape, x: number, y: number): React.CSSProperties => {
     return {
       ...getXCSS(align.horizontal, x),
       ...getYCSS(align.vertical, y)
     };
-  }
+  };
 
-  function getCSSBottom(y: number | null | undefined): React.CSSProperties {
+  const getCSSBottom = (y: number | null | undefined): React.CSSProperties => {
     if (y === undefined || y === null) {
       return {bottom: 0};
     }
     const {innerHeight = 0, marginBottom = 0} = allProps;
     return {bottom: marginBottom + innerHeight - y};
-  }
+  };
 
-  function getCSSLeft(x: number | null | undefined): React.CSSProperties {
+  const getCSSLeft = (x: number | null | undefined): React.CSSProperties => {
     if (x === undefined || x === null) {
       return {left: 0};
     }
     const {marginLeft = 0} = allProps;
     return {left: marginLeft + x};
-  }
+  };
 
-  function getCSSRight(x: number | null | undefined): React.CSSProperties {
+  const getCSSRight = (x: number | null | undefined): React.CSSProperties => {
     if (x === undefined || x === null) {
       return {right: 0};
     }
     const {innerWidth = 0, marginRight = 0} = allProps;
     return {right: marginRight + innerWidth - x};
-  }
+  };
 
-  function getCSSTop(y: number | null | undefined): React.CSSProperties {
+  const getCSSTop = (y: number | null | undefined): React.CSSProperties => {
     if (y === undefined || y === null) {
       return {top: 0};
     }
     const {marginTop = 0} = allProps;
     return {top: marginTop + y};
-  }
+  };
 
-  function getPositionInfo() {
+  const getPositionInfo = () => {
     const {value = {}, getAlignStyle: customAlignStyle} = allProps;
 
     const xFunctor = getAttributeFunctor(allProps, 'x') as (datum: any) => number;
@@ -165,9 +165,9 @@ export const Hint: any = ({
         : getAlignStyle(align, x, y),
       positionClassName: getAlignClassNames(align)
     };
-  }
+  };
 
-  function getXCSS(horizontal: string, x: number): React.CSSProperties {
+  const getXCSS = (horizontal: string, x: number): React.CSSProperties => {
     switch (horizontal) {
       case ALIGN.LEFT_EDGE:
         return getCSSLeft(null);
@@ -179,9 +179,9 @@ export const Hint: any = ({
       default:
         return getCSSLeft(x);
     }
-  }
+  };
 
-  function getYCSS(verticalAlign: string, y: number): React.CSSProperties {
+  const getYCSS = (verticalAlign: string, y: number): React.CSSProperties => {
     switch (verticalAlign) {
       case ALIGN.TOP_EDGE:
         return getCSSTop(null);
@@ -193,9 +193,9 @@ export const Hint: any = ({
       default:
         return getCSSBottom(y);
     }
-  }
+  };
 
-  function mapOrientationToAlign(orientation: string): AlignShape {
+  const mapOrientationToAlign = (orientation: string): AlignShape => {
     switch (orientation) {
       case ORIENTATION.BOTTOM_LEFT:
         return {horizontal: ALIGN.LEFT, vertical: ALIGN.BOTTOM};
@@ -208,7 +208,7 @@ export const Hint: any = ({
       default:
         return {horizontal: ALIGN.RIGHT, vertical: ALIGN.BOTTOM};
     }
-  }
+  };
 
   const {
     value = {},

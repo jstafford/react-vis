@@ -38,11 +38,9 @@ export interface CustomSVGSeriesProps extends AbstractSeriesProps<any> {
   size?: number;
 }
 
-function predefinedComponents(
-  type: string,
+const predefinedComponents = (type: string,
   size: number = 2,
-  style: React.CSSProperties = DEFAULT_STYLE
-): JSX.Element {
+  style: React.CSSProperties = DEFAULT_STYLE): JSX.Element => {
   switch (type) {
     case 'diamond':
       return (
@@ -92,9 +90,9 @@ function predefinedComponents(
     case 'circle':
       return <circle cx="0" cy="0" r={size / 2} style={style} />;
   }
-}
+};
 
-function getInnerComponent({
+const getInnerComponent = ({
   customComponent,
   defaultType,
   positionInPixels,
@@ -108,7 +106,7 @@ function getInnerComponent({
   positionFunctions: {x: any; y: any};
   style: React.CSSProperties | {[key: string]: any};
   propsSize: number;
-}): JSX.Element {
+}): JSX.Element => {
   const {size} = customComponent;
   const aggStyle = {...style, ...(customComponent.style || {})};
   const innerComponent = customComponent.customComponent;
@@ -134,9 +132,9 @@ function getInnerComponent({
     aggStyle,
     positionFunctions
   );
-}
+};
 
-export function CustomSVGSeries({
+export const CustomSVGSeries = ({
   className = '',
   stack = false,
   style = {},
@@ -144,7 +142,7 @@ export function CustomSVGSeries({
   customComponent = 'circle',
   size = 2,
   ...restProps
-}: CustomSVGSeriesProps): JSX.Element | null {
+}: CustomSVGSeriesProps): JSX.Element | null => {
   const allProps: CustomSVGSeriesProps = {
     ...restProps,
     className,
@@ -207,6 +205,6 @@ export function CustomSVGSeries({
         {contents}
       </g>
     );
-  }
+  };
 (CustomSVGSeries as any).displayName = 'CustomSVGSeries';
 (CustomSVGSeries as any).requiresSVG = true;

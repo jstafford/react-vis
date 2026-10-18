@@ -36,7 +36,7 @@ export interface ContourSeriesProps extends AbstractSeriesProps<any> {
   colorRange?: string[];
 }
 
-function getDomain(data: Array<{value: number}>): {min: number; max: number} {
+const getDomain = (data: Array<{value: number}>): {min: number; max: number} => {
   return data.reduce(
     (acc, row) => {
       return {
@@ -46,15 +46,15 @@ function getDomain(data: Array<{value: number}>): {min: number; max: number} {
     },
     {min: Infinity, max: -Infinity}
   );
-}
+};
 
-export function ContourSeries({
+export const ContourSeries = ({
   className = '',
   stack = false,
   style = {},
   bandwidth = 40,
   ...restProps
-}: ContourSeriesProps): JSX.Element | null {
+}: ContourSeriesProps): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,
@@ -122,7 +122,7 @@ export function ContourSeries({
         })}
       </g>
     );
-  }
+  };
 
 (ContourSeries as any).displayName = 'ContourSeries';
 (ContourSeries as any).requiresSVG = true;

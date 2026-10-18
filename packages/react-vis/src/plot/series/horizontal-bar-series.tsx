@@ -25,13 +25,13 @@ import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface HorizontalBarSeriesProps extends AbstractSeriesProps<any> {}
 
-export function HorizontalBarSeries({
+export const HorizontalBarSeries = ({
   className = '',
   stack = false,
   style = {},
   _requiresSVG,
   ...props
-}: HorizontalBarSeriesProps): JSX.Element {
+}: HorizontalBarSeriesProps): JSX.Element => {
   return (
     <BarSeries
       {...props}
@@ -44,7 +44,7 @@ export function HorizontalBarSeries({
       valueSizeAttr="width"
     />
   );
-}
+};
 
 (HorizontalBarSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'y';

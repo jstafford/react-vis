@@ -26,13 +26,13 @@ import {Axis, AxisProps} from './axis';
 
 const {LEFT, RIGHT} = ORIENTATION;
 
-export function YAxis({
+export const YAxis = ({
   orientation = LEFT,
   attr = 'y',
   attrAxis = 'x',
   ...restProps
-}: AxisProps) {
+}: AxisProps) => {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
-}
+};
 (YAxis as any).displayName = 'YAxis';
 (YAxis as any).requiresSVG = true;

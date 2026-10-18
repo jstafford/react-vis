@@ -31,12 +31,12 @@ export interface AxisLineProps {
   width: number;
 }
 
-export function AxisLine({
+export const AxisLine = ({
   orientation,
   width,
   height,
   style = {},
-}: AxisLineProps) {
+}: AxisLineProps) => {
   let lineProps;
   if (orientation === LEFT) {
     lineProps = {
@@ -70,5 +70,5 @@ export function AxisLine({
   return (
     <line {...lineProps} className="rv-xy-plot__axis__line" style={style} />
   );
-}
+};
 (AxisLine as any).displayName = 'AxisLine';

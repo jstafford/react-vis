@@ -62,9 +62,7 @@ export const abstractSeriesDefaultProps = {
   style: {}
 };
 
-export function useAbstractSeries<T extends RVDatum = RVDatum>(
-  props: AbstractSeriesProps<T>
-) {
+export const useAbstractSeries = <T extends RVDatum = RVDatum,>(props: AbstractSeriesProps<T>) => {
   const {
     data,
     marginTop = 0,
@@ -238,4 +236,4 @@ export function useAbstractSeries<T extends RVDatum = RVDatum>(
     onSeriesClickHandler: createSeriesHandler(callbacks.onSeriesClick),
     onSeriesRightClickHandler: createSeriesHandler(callbacks.onSeriesRightClick)
   };
-}
+};

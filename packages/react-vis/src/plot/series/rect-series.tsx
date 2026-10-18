@@ -35,9 +35,9 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
 }
 
-export function RectSeries({
+export const RectSeries = ({
   ...rest
-}: RectSeriesProps): JSX.Element | null {
+}: RectSeriesProps): JSX.Element | null => {
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
     marginTop, style, valuePosAttr, valueSizeAttr, getAttributeFunctor,
@@ -93,6 +93,6 @@ export function RectSeries({
         })}
       </g>
     );
-  }
+  };
 (RectSeries as any).displayName = 'RectSeries';
 (RectSeries as any).requiresSVG = true;

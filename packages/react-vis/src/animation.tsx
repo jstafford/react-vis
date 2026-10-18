@@ -35,7 +35,7 @@ interface AnimationState {}
  */
 const VALID_PRESETS: Presets = presets;
 
-function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): AnimationStyle {
+export const getAnimationStyle = (animationStyle: AnimationParam = presets.noWobble): AnimationStyle => {
   if (typeof animationStyle === 'string' && animationStyle in VALID_PRESETS) {
     return VALID_PRESETS[animationStyle] || presets.noWobble;
   }
@@ -55,7 +55,7 @@ function getAnimationStyle(animationStyle: AnimationParam = presets.noWobble): A
  * @param {Object} props Props.
  * @returns {Object} Object of animated props.
  */
-export function extractAnimatedPropValues(props: AnimationProps): {[key: string]: any} {
+export const extractAnimatedPropValues = (props: AnimationProps): {[key: string]: any} => {
   const {animatedProps, ...otherProps} = props;
 
   return animatedProps.reduce((result: {[key: string]: any}, animatedPropName: string) => {

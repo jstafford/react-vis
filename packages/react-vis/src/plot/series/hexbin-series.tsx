@@ -39,23 +39,21 @@ export interface HexbinSeriesProps extends AbstractSeriesProps<any> {
   yOffset?: number;
 }
 
-function getColorDomain(
-  props: HexbinSeriesProps,
-  hexes: Array<any[]>
-): [number, number] {
+const getColorDomain = (props: HexbinSeriesProps,
+  hexes: Array<any[]>): [number, number] => {
   if (props.countDomain) {
     return props.countDomain;
   }
   return [0, Math.max(...hexes.map(row => row.length))];
-}
+};
 
-export function HexbinSeries({
+export const HexbinSeries = ({
   radius = 20,
   colorRange = CONTINUOUS_COLOR_RANGE,
   xOffset = 0,
   yOffset = 0,
   ...restProps
-}: HexbinSeriesProps): JSX.Element | null {
+}: HexbinSeriesProps): JSX.Element | null => {
   const allProps = {
     ...restProps,
     radius,
@@ -131,6 +129,6 @@ export function HexbinSeries({
         })}
       </g>
     );
-  }
+  };
 (HexbinSeries as any).displayName = 'HexbinSeries';
 (HexbinSeries as any).requiresSVG = true;

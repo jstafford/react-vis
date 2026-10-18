@@ -47,10 +47,8 @@ export interface ChartProps {
  * @param {Object} defaultMargins Object with default margins.
  * @returns {Object} Dimensions of the component.
  */
-export function getInnerDimensions(
-  props: ChartProps,
-  defaultMargins: Margin
-): InnerDimensions {
+export const getInnerDimensions = (props: ChartProps,
+  defaultMargins: Margin): InnerDimensions => {
   const {margin, width, height} = props;
   const marginProps: Margin = {
     ...defaultMargins,
@@ -77,7 +75,7 @@ export function getInnerDimensions(
     innerHeight: height - marginBottom - marginTop,
     innerWidth: width - marginLeft - marginRight
   };
-}
+};
 
 /**
  * Calculate the margin of the sunburst,
@@ -87,11 +85,9 @@ export function getInnerDimensions(
  * @param  {Number} radius - the max radius of the sunburst
  * @return {Object} an object includes {bottom, left, right, top}
  */
-export function getRadialLayoutMargin(
-  width: number,
+export const getRadialLayoutMargin = (width: number,
   height: number,
-  radius: number
-): Required<Margin> {
+  radius: number): Required<Margin> => {
   const marginX = width / 2 - radius;
   const marginY = height / 2 - radius;
   return {
@@ -100,7 +96,7 @@ export function getRadialLayoutMargin(
     right: marginX,
     top: marginY
   };
-}
+};
 
 export const DEFAULT_MARGINS: Required<Margin> = {
   left: 40,

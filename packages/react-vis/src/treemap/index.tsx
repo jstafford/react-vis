@@ -147,7 +147,7 @@ export interface TreemapProps {
  * @returns {Object} Map of scale functions.
  * @private
  */
-function _getScaleFns(props: TreemapProps): TreemapScales {
+const _getScaleFns = (props: TreemapProps): TreemapScales => {
   const {data} = props;
   const allData = data?.children || [];
 
@@ -160,9 +160,9 @@ function _getScaleFns(props: TreemapProps): TreemapScales {
     opacity: getAttributeFunctor(compatibleProps, 'opacity') as (datum: any) => any,
     color: getAttributeFunctor(compatibleProps, 'color') as (datum: any) => any
   };
-}
+};
 
-export function Treemap({
+export const Treemap = ({
   className = '',
   colorRange = CONTINUOUS_COLOR_RANGE,
   _colorValue = DEFAULT_COLOR,
@@ -182,7 +182,7 @@ export function Treemap({
   getLabel = (datum: any) => datum.title,
   renderMode,
   ...restProps
-}: TreemapProps): JSX.Element {
+}: TreemapProps): JSX.Element => {
   const props = {
     ...restProps,
     className,
@@ -207,7 +207,7 @@ export function Treemap({
   const scales = _getScaleFns(props);
   const innerDimensions = getInnerDimensions(props, margin);
 
-  function _getNodesToRender(): TreemapNode[] {
+  const _getNodesToRender = (): TreemapNode[] => {
     const {innerWidth, innerHeight} = innerDimensions;
     const {
       data,
@@ -259,11 +259,11 @@ export function Treemap({
       .sum(getSize)
       .sort((a, b) => sortFunction(a, b, getSize));
     return treemapingFunction(structuredInput).descendants() as any[];
-  }
+  };
 
   const nodes = _getNodesToRender();
   const TreemapElement = renderMode === 'SVG' ? TreemapSVG : TreemapDOM;
 
   return <TreemapElement {...props} nodes={nodes} scales={scales} />;
-}
+};
 (Treemap as any).displayName = 'Treemap';

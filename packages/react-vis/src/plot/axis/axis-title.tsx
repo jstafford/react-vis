@@ -141,14 +141,14 @@ const transformation = (
   }
 });
 
-export function AxisTitle({
+export const AxisTitle = ({
   orientation,
   width,
   height,
   style,
   title,
   position = 'end'
-}: AxisTitleProps) {
+}: AxisTitleProps) => {
   const outerGroupTranslateX = orientation === LEFT ? width : 0;
   const outerGroupTranslateY = orientation === TOP ? height : 0;
   const outerGroupTransform = `translate(${outerGroupTranslateX}, ${outerGroupTranslateY})`;
@@ -164,5 +164,5 @@ export function AxisTitle({
       </g>
     </g>
   );
-}
+};
 (AxisTitle as any).displayName = 'AxisTitle';

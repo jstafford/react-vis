@@ -37,10 +37,10 @@ export interface BarSeriesCanvasProps extends AbstractSeriesProps<any> {
   marginBottom?: number;
 }
 
-function getScaleDistance(props: BarSeriesCanvasProps, attr: string): number {
+const getScaleDistance = (props: BarSeriesCanvasProps, attr: string): number => {
   const scaleObject = getScaleObjectFromProps(props, attr);
   return scaleObject ? scaleObject.distance : 0;
-}
+};
 
 interface BarSeriesCanvasComponent {
   (props: BarSeriesCanvasProps): null;

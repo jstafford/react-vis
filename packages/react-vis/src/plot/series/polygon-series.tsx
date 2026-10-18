@@ -44,10 +44,10 @@ export interface PolygonSeriesProps extends AbstractSeriesProps<any> {
   color: string;
 }
 
-export function PolygonSeries({
+export const PolygonSeries = ({
   color = DEFAULT_COLOR,
   ...rest
-}: PolygonSeriesProps): JSX.Element | null {
+}: PolygonSeriesProps): JSX.Element | null => {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, onSeriesMouseOverHandler, onSeriesMouseOutHandler,
@@ -83,6 +83,6 @@ export function PolygonSeries({
         }}
       />
     );
-  }
+  };
 (PolygonSeries as any).displayName = 'PolygonSeries';
 (PolygonSeries as any).requiresSVG = true;

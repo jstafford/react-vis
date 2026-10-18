@@ -49,7 +49,7 @@ export interface ArcSeriesProps extends AbstractSeriesProps<any> {
  * @param {Object} row - coordinate object to be modifed
  * @return {Object} angle corrected object
  */
-function modifyRow(row: any): any {
+const modifyRow = (row: any): any => {
   const {radius, angle, angle0} = row;
   const truedAngle = -1 * angle + Math.PI / 2;
   const truedAngle0 = -1 * angle0 + Math.PI / 2;
@@ -60,9 +60,9 @@ function modifyRow(row: any): any {
     angle: truedAngle,
     angle0: truedAngle0
   };
-}
+};
 
-function getDefaultScaleProps(props: ArcSeriesProps): {[key: string]: any} {
+const getDefaultScaleProps = (props: ArcSeriesProps): {[key: string]: any} => {
   const {innerWidth, innerHeight} = props;
   const radius = Math.min((innerWidth ?? 0) / 2, (innerHeight ?? 0) / 2);
   return {
@@ -70,9 +70,9 @@ function getDefaultScaleProps(props: ArcSeriesProps): {[key: string]: any} {
     _radiusValue: radius,
     angleType: 'literal'
   };
-}
+};
 
-function getAllScaleProps(props: ArcSeriesProps): {[key: string]: any} {
+const getAllScaleProps = (props: ArcSeriesProps): {[key: string]: any} => {
   const defaultScaleProps = getDefaultScaleProps(props);
   const userScaleProps = extractScalePropsFromProps(props, ATTRIBUTES);
   const missingScaleProps = getMissingScaleProps(
@@ -89,9 +89,9 @@ function getAllScaleProps(props: ArcSeriesProps): {[key: string]: any} {
     ...userScaleProps,
     ...missingScaleProps
   };
-}
+};
 
-export function ArcSeries({
+export const ArcSeries = ({
   center = {x: 0, y: 0},
   arcClassName = '',
   className = '',
@@ -99,7 +99,7 @@ export function ArcSeries({
   style = {},
   padAngle = 0,
   ...restProps
-}: ArcSeriesProps): JSX.Element | null {
+}: ArcSeriesProps): JSX.Element | null => {
     const allProps: ArcSeriesProps = {
       ...restProps,
       center,
@@ -221,7 +221,7 @@ export function ArcSeries({
         })}
       </g>
     );
-}
+};
 
 (ArcSeries as any).displayName = 'ArcSeries';
 (ArcSeries as any).requiresSVG = true;

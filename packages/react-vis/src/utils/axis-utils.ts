@@ -54,7 +54,7 @@ export const DIRECTION: DirectionType = {
  * @param {number} size Size of the axis in pixels.
  * @returns {number} Total amount of ticks.
  */
-export function getTicksTotalFromSize(size: number): number {
+export const getTicksTotalFromSize = (size: number): number => {
   if (size < 700) {
     if (size > 300) {
       return 10;
@@ -62,7 +62,7 @@ export function getTicksTotalFromSize(size: number): number {
     return 5;
   }
   return 20;
-}
+};
 
 export interface D3Scale {
   ticks?: (count?: number) => any[];
@@ -76,17 +76,15 @@ export interface D3Scale {
  * @param {Array} tickValues Array of tick values if they exist.
  * @returns {Array} Array of tick values.
  */
-export function getTickValues(
-  scale: D3Scale,
+export const getTickValues = (scale: D3Scale,
   tickTotal: number,
-  tickValues?: any[]
-): any[] {
+  tickValues?: any[]): any[] => {
   return !tickValues
     ? scale.ticks
       ? scale.ticks(tickTotal)
       : scale.domain()
     : tickValues;
-}
+};
 
 export interface AxisPoint {
   x: number;
@@ -109,7 +107,7 @@ export interface FitResult {
  * the start position of the decorative axis
  * @returns {Object} Object describing each the line in coordinates
  */
-export function generateFit(axisStart: AxisPoint, axisEnd: AxisPoint): FitResult {
+export const generateFit = (axisStart: AxisPoint, axisEnd: AxisPoint): FitResult => {
   // address the special case when the slope is infinite
   if (axisStart.x === axisEnd.x) {
     return {
@@ -127,7 +125,7 @@ export function generateFit(axisStart: AxisPoint, axisEnd: AxisPoint): FitResult
     slope,
     offset: axisStart.y - slope * axisStart.x
   };
-}
+};
 
 export interface GeneratePointsParams {
   axisStart: AxisPoint;
@@ -159,12 +157,12 @@ export interface GeneratePointsResult {
  * props.@param {Array.Numbers} axisDomain The values to be interpolated across for the axis
  * @returns {Object} Object describing the slope and the specific coordinates of the points
  */
-export function generatePoints({
+export const generatePoints = ({
   axisStart,
   axisEnd,
   numberOfTicks,
   axisDomain
-}: GeneratePointsParams): GeneratePointsResult {
+}: GeneratePointsParams): GeneratePointsResult => {
   const {left, right, slope, offset} = generateFit(axisStart, axisEnd);
   // construct a linear band of points, then map them
   const pointSlope = (right - left) / numberOfTicks;
@@ -184,7 +182,7 @@ export function generatePoints({
       })
       .slice(0, numberOfTicks + 1)
   };
-}
+};
 
 /**
  * Compute the angle (in radians) of a decorative axis
@@ -194,9 +192,9 @@ export function generatePoints({
  * the start position of the decorative axis
  * @returns {Number} Angle in radians
  */
-export function getAxisAngle(axisStart: AxisPoint, axisEnd: AxisPoint): number {
+export const getAxisAngle = (axisStart: AxisPoint, axisEnd: AxisPoint): number => {
   if (axisStart.x === axisEnd.x) {
     return axisEnd.y > axisStart.y ? Math.PI / 2 : (3 * Math.PI) / 2;
   }
   return Math.atan((axisEnd.y - axisStart.y) / (axisEnd.x - axisStart.x));
-}
+};

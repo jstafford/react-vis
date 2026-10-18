@@ -26,13 +26,13 @@ import {AbstractSeriesProps} from './abstract-series-hook';
 export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {
 }
 
-export function VerticalRectSeries({
+export const VerticalRectSeries = ({
   className = '',
   stack = false,
   style = {},
   _requiresSVG,
   ...rest
-}: VerticalRectSeriesProps): JSX.Element {
+}: VerticalRectSeriesProps): JSX.Element => {
   return (
     <RectSeries
       {...rest}
@@ -45,7 +45,7 @@ export function VerticalRectSeries({
       valueSizeAttr="height"
     />
   );
-}
+};
 
 (VerticalRectSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = false;

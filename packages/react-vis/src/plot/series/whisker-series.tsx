@@ -188,7 +188,7 @@ const renderWhiskerMark = (whiskerMarkProps: WhiskerMarkProps) => (
   );
 };
 
-export function WhiskerSeries({
+export const WhiskerSeries = ({
   className: defaultClassName = '',
   stack: defaultStack = false,
   style: defaultStyle = {},
@@ -196,7 +196,7 @@ export function WhiskerSeries({
   size: defaultSize = 0,
   strokeWidth: defaultStrokeWidth = DEFAULT_STROKE_WIDTH,
   ...restProps
-}: WhiskerSeriesProps): JSX.Element | null {
+}: WhiskerSeriesProps): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className: defaultClassName,
@@ -246,7 +246,7 @@ export function WhiskerSeries({
         {data.map(renderWhiskerMark(whiskerMarkProps))}
       </g>
     );
-  }
+  };
 
 (WhiskerSeries as any).displayName = 'WhiskerSeries';
 (WhiskerSeries as any).requiresSVG = true;

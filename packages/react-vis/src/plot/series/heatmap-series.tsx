@@ -32,9 +32,9 @@ const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--heatmap';
 export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {
 }
 
-export function HeatmapSeries({
+export const HeatmapSeries = ({
   ...restProps
-}: HeatmapSeriesProps): JSX.Element | null {
+}: HeatmapSeriesProps): JSX.Element | null => {
   const {
     animation, className, data, marginLeft, marginTop, style,
     getAttributeFunctor, getScaleDistance,
@@ -88,12 +88,10 @@ export function HeatmapSeries({
         })}
       </g>
     );
-  }
-
-export namespace HeatmapSeries {
-  export function getParentConfig(attr: string): {isDomainAdjustmentNeeded: boolean} {
-    return {isDomainAdjustmentNeeded: attr === 'x' || attr === 'y'};
-  }
 }
+
+(HeatmapSeries as any).getParentConfig = (attr: string): {isDomainAdjustmentNeeded: boolean} => {
+  return {isDomainAdjustmentNeeded: attr === 'x' || attr === 'y'};
+};
 (HeatmapSeries as any).displayName = 'HeatmapSeries';
 (HeatmapSeries as any).requiresSVG = true;

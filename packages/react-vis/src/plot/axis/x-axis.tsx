@@ -26,14 +26,14 @@ import {Axis, AxisProps} from './axis';
 
 const {BOTTOM} = ORIENTATION;
 
-export function XAxis({
+export const XAxis = ({
   orientation = BOTTOM,
   attr = 'x',
   attrAxis = 'y',
   ...restProps
-}: AxisProps) {
+}: AxisProps) => {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
-}
+};
 
 XAxis.displayName = 'XAxis';
 XAxis.requiresSVG = true;

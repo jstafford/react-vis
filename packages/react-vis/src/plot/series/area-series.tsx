@@ -37,14 +37,12 @@ export interface AreaSeriesProps extends AbstractSeriesProps<any> {
   nullAccessor?: (d: any) => boolean;
 }
 
-function renderArea(
-  data: any[],
+const renderArea = (data: any[],
   x: (d: any) => any,
   y0: (d: any) => any,
   y: (d: any) => any,
   curve: string | ((arg: any) => any) | null,
-  getNull: (d: any) => boolean
-): string | null {
+  getNull: (d: any) => boolean): string | null => {
     let area = d3Shape.area<any>();
     if (curve !== null) {
       if (typeof curve === 'string' && (d3Shape as any)[curve]) {
@@ -59,15 +57,15 @@ function renderArea(
       .y0(y0)
       .y1(y);
     return area(data);
-  }
+  };
 
-export function AreaSeries({
+export const AreaSeries = ({
   className = '',
   stack = false,
   style = {},
   getNull = () => true,
   ...restProps
-}: AreaSeriesProps): JSX.Element | null {
+}: AreaSeriesProps): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,
@@ -134,7 +132,7 @@ export function AreaSeries({
         }}
       />
     );
-  }
+  };
 
 (AreaSeries as any).displayName = 'AreaSeries';
 (AreaSeries as any).requiresSVG = true;

@@ -34,7 +34,7 @@ interface TreemapSVGProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-export function TreemapSVG({
+export const TreemapSVG = ({
   animation,
   className,
   height,
@@ -48,14 +48,14 @@ export function TreemapSVG({
   style,
   width,
   ...rest
-}: TreemapSVGProps): JSX.Element {
-  function getCircularNodes(): {
+}: TreemapSVGProps): JSX.Element => {
+  const getCircularNodes = (): {
     updatedNodes: JSX.Element;
     minY: number;
     maxY: number;
     minX: number;
     maxX: number;
-  } {
+  } => {
 
     const {rows, minY, maxY, minX, maxX} = nodes.reduce(
       (acc, node, index) => {
@@ -107,15 +107,15 @@ export function TreemapSVG({
       minX,
       maxX
     };
-  }
+  };
 
-  function getNonCircularNodes(): {
+  const getNonCircularNodes = (): {
     updatedNodes: JSX.Element[];
     minY: number;
     maxY: number;
     minX: number;
     maxX: number;
-  } {
+  } => {
     const {color} = scales;
     return nodes.reduce(
       (acc, node, index) => {
@@ -167,7 +167,7 @@ export function TreemapSVG({
         minX: Infinity
       }
     );
-  }
+  };
 
     const useCirclePacking = mode === 'circlePack';
 
@@ -208,5 +208,5 @@ export function TreemapSVG({
         <LabelSeries data={labels} />
       </XYPlot>
     );
-}
+};
 (TreemapSVG as any).displayName = 'TreemapSVG';

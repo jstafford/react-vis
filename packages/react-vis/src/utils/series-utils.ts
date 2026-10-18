@@ -65,33 +65,31 @@ const seriesNames = [
 
 const seriesNamesSet = new Set(seriesNames)
 
-function getSeriesTypeName(child: React.ReactElement): string {
+const getSeriesTypeName = (child: React.ReactElement): string => {
   const type = child.type as any;
   return type.displayName || type.name || '';
-}
+};
 
 /**
  * Check if the component is series or not.
  * @param {React.Component} child Component.
  * @returns {boolean} True if the child is series, false otherwise.
  */
-export function isSeriesChild(child: React.ReactElement): boolean {
+export const isSeriesChild = (child: React.ReactElement): boolean => {
   const displayName = getSeriesTypeName(child);
   return Boolean(displayName && seriesNamesSet.has(displayName));
-}
+};
 
 /**
  * Get all series from the 'children' object of the component.
  * @param {Object} children Children.
  * @returns {Array} Array of children.
  */
-export function getSeriesChildren(
-  children: React.ReactNode
-): React.ReactElement[] {
+export const getSeriesChildren = (children: React.ReactNode): React.ReactElement[] => {
   return (React.Children.toArray(children) as React.ReactElement[]).filter(
     child => child && isSeriesChild(child)
   );
-}
+};
 
 /**
  * Collect the map of repetitions of the series type for all children.
@@ -99,9 +97,7 @@ export function getSeriesChildren(
  * @returns {{}} Map of repetitions where sameTypeTotal is the total amount and
  * sameTypeIndex is always 0.
  */
-function collectSeriesTypesInfo(
-  children: React.ReactElement[]
-): {[displayName: string]: SeriesTypeInfo} {
+const collectSeriesTypesInfo = (children: React.ReactElement[]): {[displayName: string]: SeriesTypeInfo} => {
   const result: {[displayName: string]: SeriesTypeInfo} = {};
   children.filter(isSeriesChild).forEach(child => {
     const displayName = getSeriesTypeName(child);
@@ -117,19 +113,19 @@ function collectSeriesTypesInfo(
     result[displayName].sameTypeTotal++;
   });
   return result;
-}
+};
 
 /**
  * Check series to see if it has angular data that needs to be converted
  * @param {Array} data - an array of objects to check
  * @returns {Boolean} whether or not this series contains polar configuration
  */
-function seriesHasAngleRadius(data: RVDatum[] = []): boolean {
+const seriesHasAngleRadius = (data: RVDatum[] = []): boolean => {
   if (!data) {
     return false;
   }
   return data.some(row => row.radius && row.angle);
-}
+};
 
 /**
  * Possibly convert polar coordinates to x/y for computing domain
@@ -137,7 +133,7 @@ function seriesHasAngleRadius(data: RVDatum[] = []): boolean {
  * @param {String} attr - the property being checked
  * @returns {Boolean} whether or not this series contains polar configuration
  */
-function prepareData(data: RVDatum[]): RVDatum[] {
+const prepareData = (data: RVDatum[]): RVDatum[] => {
   if (!seriesHasAngleRadius(data)) {
     return data;
   }
@@ -147,7 +143,7 @@ function prepareData(data: RVDatum[]): RVDatum[] {
     x: row.radius * Math.cos(row.angle),
     y: row.radius * Math.sin(row.angle)
   }));
-}
+};
 
 /**
  * Collect the stacked data for all children in use. If the children don't have
@@ -159,10 +155,8 @@ function prepareData(data: RVDatum[]): RVDatum[] {
  * @param {string} attr Attribute to stack by.
  * @returns {Array} New array of children for the series.
  */
-export function getStackedData(
-  children: Array<React.ReactElement | null>,
-  attr: string
-): Array<RVDatum[] | null> {
+export const getStackedData = (children: Array<React.ReactElement | null>,
+  attr: string): Array<RVDatum[] | null> => {
   const areSomeSeriesStacked = children.some(
     series => series && series.props.stack
   );
@@ -234,7 +228,7 @@ export function getStackedData(
     },
     []
   );
-}
+};
 
 /**
  * Get the list of series props for a child.
@@ -242,9 +236,7 @@ export function getStackedData(
  * @returns {Array} Array of series props for each child. If a child is not a
  * series, than it's undefined.
  */
-export function getSeriesPropsFromChildren(
-  children: React.ReactElement[]
-): Array<{[key: string]: any} | undefined> {
+export const getSeriesPropsFromChildren = (children: React.ReactElement[]): Array<{[key: string]: any} | undefined> => {
   const result: Array<{[key: string]: any} | undefined> = [];
   const seriesTypesInfo = collectSeriesTypesInfo(children);
   let seriesIndex = 0;
@@ -274,7 +266,7 @@ export function getSeriesPropsFromChildren(
     result.push(props);
   });
   return result;
-}
+};
 
 /**
  * Find the max radius value from the nodes to be rendered after they have been
@@ -283,9 +275,9 @@ export function getSeriesPropsFromChildren(
  * it is an array of objects!
  * @returns {number} the maximum value in coordinates for the radial variable
  */
-export function getRadialDomain(data: RVDatum[]): number {
+export const getRadialDomain = (data: RVDatum[]): number => {
   return data.reduce((res, row) => Math.max(row.radius, res), 0);
-}
+};
 
 export const ANIMATED_SERIES_PROPS: string[] = [
   'xRange',
@@ -324,13 +316,13 @@ export const ANIMATED_SERIES_PROPS: string[] = [
   'innerRadius'
 ];
 
-export function getStackParams(props: {
+export const getStackParams = (props: {
   _stackBy?: string;
   valuePosAttr?: string;
   cluster?: string;
   sameTypeTotal?: number;
   sameTypeIndex?: number;
-}): {sameTypeTotal: number; sameTypeIndex: number} {
+}): {sameTypeTotal: number; sameTypeIndex: number} => {
   const {_stackBy, valuePosAttr, cluster} = props;
   let {sameTypeTotal = 1, sameTypeIndex = 0} = props;
 
@@ -341,4 +333,4 @@ export function getStackParams(props: {
     sameTypeIndex = 0;
   }
   return {sameTypeTotal, sameTypeIndex};
-}
+};

@@ -128,38 +128,34 @@ interface XYPlotState {
   scaleMixins: ScaleMixins;
 }
 
-function getSeriesComponentType(
-  componentType: React.ReactElement['type']
-): SeriesComponentType | null {
+const getSeriesComponentType = (componentType: React.ReactElement['type']): SeriesComponentType | null => {
   return typeof componentType === 'string'
     ? null
     : (componentType as SeriesComponentType);
-}
+};
 
-function requiresSVG(component: React.ReactElement): boolean {
+const requiresSVG = (component: React.ReactElement): boolean => {
   const componentType = getSeriesComponentType(component.type);
   return componentType ? Boolean(componentType.requiresSVG) : false;
-}
+};
 
-function isCanvasComponent(component: React.ReactElement): boolean {
+const isCanvasComponent = (component: React.ReactElement): boolean => {
   const componentType = getSeriesComponentType(component.type);
   return componentType ? Boolean(componentType.isCanvas) : false;
-}
+};
 
-function cleanseData(data: PlotData): PlotData {
+const cleanseData = (data: PlotData): PlotData => {
   return data.map(series => {
     if (!Array.isArray(series)) {
       return series;
     }
     return series.map(row => ({...row, parent: null}));
   });
-}
+};
 
-function checkIfMixinsAreEqual(
-  nextScaleMixins: ScaleMixins,
+const checkIfMixinsAreEqual = (nextScaleMixins: ScaleMixins,
   scaleMixins: ScaleMixins,
-  hasTreeStructure?: boolean
-): boolean {
+  hasTreeStructure?: boolean): boolean => {
   const newMixins = {
     ...nextScaleMixins,
     _allData: hasTreeStructure
@@ -173,9 +169,9 @@ function checkIfMixinsAreEqual(
       : scaleMixins._allData
   };
   return equal(newMixins, oldMixins);
-}
+};
 
-function getDefaultScaleProps(props: XYPlotProps): {[key: string]: any} {
+const getDefaultScaleProps = (props: XYPlotProps): {[key: string]: any} => {
   const {innerWidth, innerHeight} = getInnerDimensions(props, DEFAULT_MARGINS);
   const colorRanges = ['color', 'fill', 'stroke'].reduce(
     (acc: {[key: string]: any}, attr) => {
@@ -195,9 +191,9 @@ function getDefaultScaleProps(props: XYPlotProps): {[key: string]: any} {
     opacityType: OPACITY_TYPE,
     sizeRange: SIZE_RANGE
   };
-}
+};
 
-function getScaleMixins(data: PlotData, props: XYPlotProps): ScaleMixins {
+const getScaleMixins = (data: PlotData, props: XYPlotProps): ScaleMixins => {
   const filteredData = data.filter((datum): datum is RVDatum[] => Boolean(datum));
   const allData = ([] as RVDatum[]).concat(...filteredData);
   const attributes = ATTRIBUTES as unknown as string[];
@@ -252,13 +248,13 @@ function getScaleMixins(data: PlotData, props: XYPlotProps): ScaleMixins {
     _adjustWhat: Array.from(adjustWhat),
     _stackBy: props.stackBy
   };
-}
+};
 
-function isPlotEmpty(data: PlotData): boolean {
+const isPlotEmpty = (data: PlotData): boolean => {
   return !data || !data.length || !data.some(series => series && series.some(d => d));
-}
+};
 
-export function XYPlotImplementation(props: XYPlotProps): React.ReactElement {
+export const XYPlotImplementation = (props: XYPlotProps): React.ReactElement => {
   const seriesRefs = React.useRef<Record<number, ParentSeriesComponent | null>>({});
   const stateRef = React.useRef<XYPlotState | null>(null);
   const children = getSeriesChildren(props.children);
@@ -315,10 +311,8 @@ export function XYPlotImplementation(props: XYPlotProps): React.ReactElement {
     });
   });
 
-  function notifySeries(
-    handlerName: keyof ParentSeriesComponent,
-    event: PlotEvent
-  ): void {
+  const notifySeries = (handlerName: keyof ParentSeriesComponent,
+    event: PlotEvent): void => {
     const seriesChildren = getSeriesChildren(props.children);
     seriesChildren.forEach((_child, index) => {
       const component = seriesRefs.current[index];
@@ -327,7 +321,7 @@ export function XYPlotImplementation(props: XYPlotProps): React.ReactElement {
         handler.call(component, event);
       }
     });
-  }
+  };
 
   const handleEvent = (
     event: PlotEvent,
@@ -421,7 +415,7 @@ export function XYPlotImplementation(props: XYPlotProps): React.ReactElement {
       )}
     </div>
   );
-}
+};
 
 (XYPlotImplementation as any).displayName = 'XYPlot';
 (XYPlotImplementation as any).defaultProps = {className: ''};

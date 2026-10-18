@@ -58,7 +58,7 @@ export interface TreemapLeafProps {
   [key: string]: any;
 }
 
-export function TreemapLeaf({
+export const TreemapLeaf = ({
   animation,
   getLabel = (datum: any) => datum.title,
   mode,
@@ -74,7 +74,7 @@ export function TreemapLeaf({
   y1,
   style,
   ...rest
-}: TreemapLeafProps): JSX.Element {
+}: TreemapLeafProps): JSX.Element => {
 
   if (animation) {
     const allProps = {...rest, animation,
@@ -128,5 +128,5 @@ export function TreemapLeaf({
       <div className="rv-treemap__leaf__content">{title}</div>
     </div>
   );
-}
+};
 (TreemapLeaf as any).displayName = 'TreemapLeaf';

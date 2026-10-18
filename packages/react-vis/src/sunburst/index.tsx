@@ -80,13 +80,13 @@ const LISTENERS_TO_OVERWRITE = [
    props.getSize {function} - accessor for the size
  * @returns {Array} Array of nodes.
  */
-function getNodesToRender({
+const getNodesToRender = ({
   data,
   height,
   hideRootNode,
   width,
   getSize
-}: any): SunburstDatum[] {
+}: any): SunburstDatum[] => {
   const partitionFunction = partition();
   const structuredInput = hierarchy(data).sum(getSize);
   const radius = Math.min(width, height) / 2 - 10;
@@ -112,7 +112,7 @@ function getNodesToRender({
         }
       ]);
     }, []);
-}
+};
 
 /**
  * Convert arc nodes into label rows.
@@ -121,7 +121,7 @@ function getNodesToRender({
  * @param {Object} accessors - object of accessors
  * @returns {Array} array of node for rendering as labels
  */
-function buildLabels(mappedData: SunburstDatum[], accessors: any): any[] {
+const buildLabels = (mappedData: SunburstDatum[], accessors: any): any[] => {
   const {getAngle, getAngle0, getLabel, getRadius0} = accessors;
 
   return mappedData.filter(getLabel).map(row => {
@@ -151,11 +151,11 @@ function buildLabels(mappedData: SunburstDatum[], accessors: any): any[] {
         : null
     };
   });
-}
+};
 
 const NOOP = () => {};
 
-export function Sunburst(props: SunburstProps): JSX.Element {
+export const Sunburst = (props: SunburstProps): JSX.Element => {
   const {
     getAngle = (d: any) => d.angle,
     getAngle0 = (d: any) => d.angle0,
@@ -243,5 +243,5 @@ export function Sunburst(props: SunburstProps): JSX.Element {
       {children}
     </XYPlot>
   );
-}
+};
 (Sunburst as any).displayName = 'Sunburst';

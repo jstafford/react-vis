@@ -41,7 +41,7 @@ export interface SankeyLinkProps {
   [key: string]: any;
 }
 
-export function SankeyLink({
+export const SankeyLink = ({
   animation,
   data,
   node,
@@ -53,7 +53,7 @@ export function SankeyLink({
   onLinkMouseOver = () => undefined,
   onLinkMouseOut = () => undefined,
   ...rest
-}:SankeyLinkProps): JSX.Element {
+}:SankeyLinkProps): JSX.Element => {
   if (animation) {
     const allProps = {
     animation,
@@ -88,6 +88,6 @@ export function SankeyLink({
       fill="none"
     />
   );
-}
+};
 (SankeyLink as any).displayName = 'SankeyLink';
 (SankeyLink as any).requiresSVG = true;

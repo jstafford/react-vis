@@ -44,12 +44,10 @@ export interface CanvasWrapperProps {
  * @param {Number} width - width of the canvas
  * @param {Array} layers - the layer objects to render
  */
-function engageDrawLoop(
-  ctx: CanvasRenderingContext2D,
+const engageDrawLoop = (ctx: CanvasRenderingContext2D,
   height: number,
   width: number,
-  layers: any[]
-): void {
+  layers: any[]): void => {
   let drawIteration = 0;
   // using setInterval because request animation frame goes too fast
   const drawCycle = setInterval(() => {
@@ -63,7 +61,7 @@ function engageDrawLoop(
     }
     drawIteration += 1;
   }, 1);
-}
+};
 
 /**
  * Loops across each of the layers to be drawn and draws them
@@ -73,13 +71,11 @@ function engageDrawLoop(
  * @param {Array} layers - the layer objects to render
  * @param {Number} drawIteration - width of the canvas
  */
-function drawLayers(
-  ctx: CanvasRenderingContext2D,
+const drawLayers = (ctx: CanvasRenderingContext2D,
   height: number,
   width: number,
   layers: any[],
-  drawIteration: number
-): void {
+  drawIteration: number): void => {
   ctx.clearRect(0, 0, width, height);
   layers.forEach(layer => {
     const {interpolator, newProps, animation} = layer;
@@ -97,7 +93,7 @@ function drawLayers(
       ctx
     );
   });
-}
+};
 
 /**
  * Build an array of layer of objects the contain the method for drawing each series
@@ -106,7 +102,7 @@ function drawLayers(
  * @param {Object} oldChildren the old children to be rendered.
  * @returns {Array} Object for rendering
  */
-function buildLayers(newChildren: React.ReactElement[], oldChildren: React.ReactElement[]): any[] {
+const buildLayers = (newChildren: React.ReactElement[], oldChildren: React.ReactElement[]): any[] => {
   return newChildren.map((child, index) => {
     const oldProps = oldChildren[index] ? oldChildren[index].props : {};
     const newProps = child.props;
@@ -130,7 +126,7 @@ function buildLayers(newChildren: React.ReactElement[], oldChildren: React.React
       interpolator
     };
   });
-}
+};
 
 export const CanvasWrapper: any = ({
   pixelRatio = (window && window.devicePixelRatio) || 1,
@@ -147,11 +143,9 @@ export const CanvasWrapper: any = ({
    * @param {CanvasRenderingContext2D} ctx the canvas context to be drawn on.
    * @returns {Array} Object for rendering
    */
-  function drawChildren(
-    oldProps: CanvasWrapperProps | null,
+  const drawChildren = (oldProps: CanvasWrapperProps | null,
     newProps: CanvasWrapperProps,
-    ctx: CanvasRenderingContext2D
-  ): void {
+    ctx: CanvasRenderingContext2D): void => {
     const {
       children,
       innerHeight,
@@ -183,7 +177,7 @@ export const CanvasWrapper: any = ({
     }
 
     engageDrawLoop(ctx, height, width, layers);
-  }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;

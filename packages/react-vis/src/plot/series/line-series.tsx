@@ -45,13 +45,11 @@ export interface LineSeriesProps extends AbstractSeriesProps<any> {
   strokeWidth?: number | string;
 }
 
-function renderLine(
-    data: any[],
+const renderLine = (data: any[],
     x: (d: any) => any,
     y: (d: any) => any,
     curve: string | ((arg: any) => any) | null,
-    getNull: (d: any) => boolean
-  ): string | null {
+    getNull: (d: any) => boolean): string | null => {
     let line = d3Shape.line<any>();
     if (curve !== null) {
       if (typeof curve === 'string' && (d3Shape as any)[curve]) {
@@ -63,9 +61,9 @@ function renderLine(
     line = line.defined(getNull);
     line = line.x(x).y(y);
     return line(data);
-  }
+  };
 
-export function LineSeries({
+export const LineSeries = ({
   className = '',
   stack = false,
   style = {},
@@ -74,7 +72,7 @@ export function LineSeries({
   curve = null,
   getNull = () => true,
   ...restProps
-}: LineSeriesProps): JSX.Element | null {
+}: LineSeriesProps): JSX.Element | null => {
   const allprops: LineSeriesProps = {
     ...restProps,
     className,
@@ -133,6 +131,6 @@ export function LineSeries({
         }}
       />
     );
-  }
+  };
 (LineSeries as any).displayName = 'LineSeries';
 (LineSeries as any).requiresSVG = true;

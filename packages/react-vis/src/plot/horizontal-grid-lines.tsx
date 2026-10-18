@@ -25,13 +25,13 @@ import {GridLines} from 'plot/grid-lines';
 
 const {HORIZONTAL} = DIRECTION;
 
-export function HorizontalGridLines({
+export const HorizontalGridLines = ({
   direction = HORIZONTAL,
   attr = 'y',
   _requiresSVG,
   ...restProps
-}: any) {
+}: any) => {
   return <GridLines {...restProps} direction={direction} attr={attr} />;
-}
+};
 (HorizontalGridLines as any).displayName = 'HorizontalGridLines';
 (HorizontalGridLines as any).requiresSVG = true;

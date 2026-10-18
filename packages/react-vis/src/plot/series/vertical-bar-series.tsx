@@ -26,12 +26,12 @@ import {AbstractSeriesProps} from './abstract-series-hook';
 export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {
 }
 
-export function VerticalBarSeries({
+export const VerticalBarSeries = ({
   className = '',
   stack = false,
   style = {},
   ...rest
-}: VerticalBarSeriesProps): JSX.Element {
+}: VerticalBarSeriesProps): JSX.Element => {
   return (
     <BarSeries
       {...rest}
@@ -44,7 +44,7 @@ export function VerticalBarSeries({
       valueSizeAttr="height"
     />
   );
-}
+};
 
 (VerticalBarSeries as any).getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'x';

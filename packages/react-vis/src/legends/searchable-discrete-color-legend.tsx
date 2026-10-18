@@ -47,7 +47,7 @@ const defaultSearchFn = (items: LegendItemValue[], search: string) =>
     )
 
 
-export function SearchableDiscreteColorLegend({
+export const SearchableDiscreteColorLegend = ({
   className = '',
   colors,
   height,
@@ -62,8 +62,7 @@ export function SearchableDiscreteColorLegend({
   onSearchChange,
   searchPlaceholder,
   searchFn = defaultSearchFn,
-}: SearchableDiscreteColorLegendProps
-): JSX.Element {
+}: SearchableDiscreteColorLegendProps): JSX.Element => {
   const onChange = onSearchChange
     ? ({target: {value}}: React.ChangeEvent<HTMLInputElement>) =>
         onSearchChange(value)

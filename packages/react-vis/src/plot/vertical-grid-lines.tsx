@@ -25,13 +25,13 @@ import {DIRECTION} from 'utils/axis-utils';
 
 const {VERTICAL} = DIRECTION;
 
-export function VerticalGridLines({
+export const VerticalGridLines = ({
   direction = VERTICAL,
   attr = 'x',
   ...restProps
-}: any) {
+}: any) => {
   return <GridLines {...restProps} direction={direction} attr={attr} />;
-}
+};
 
 (VerticalGridLines as any).displayName = 'VerticalGridLines';
 (VerticalGridLines as any).requiresSVG = true;

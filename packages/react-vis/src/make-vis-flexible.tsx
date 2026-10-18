@@ -32,7 +32,7 @@ let timeoutId: number | null = null;
 /**
  * Calls each subscriber, debounced to the DEBOUNCE_DURATION.
  */
-function debounceEmitResize(): void {
+const debounceEmitResize = (): void => {
   window.clearTimeout(timeoutId as number | undefined);
   timeoutId = window.setTimeout(emitResize, DEBOUNCE_DURATION) as unknown as number;
 }
@@ -40,7 +40,7 @@ function debounceEmitResize(): void {
 /**
  * Calls each subscriber once synchronously.
  */
-function emitResize(): void {
+const emitResize = (): void => {
   resizeSubscribers.forEach(cb => cb());
 }
 
@@ -53,14 +53,14 @@ function emitResize(): void {
  * @param {Function} cb - Subscriber callback function
  * @returns {Function} Unsubscribe function
  */
-function subscribeToDebouncedResize(cb: () => void): () => void {
+const subscribeToDebouncedResize = (cb: () => void): () => void => {
   resizeSubscribers.push(cb);
 
   // if we go from zero to one Flexible components instances, add the listener
   if (resizeSubscribers.length === 1) {
     window.addEventListener('resize', debounceEmitResize);
   }
-  return function unsubscribe() {
+  return () => {
     removeSubscriber(cb);
 
     // if we have no Flexible components, remove the listener
@@ -76,7 +76,7 @@ function subscribeToDebouncedResize(cb: () => void): () => void {
  *
  * @param {Function} cb - Subscriber callback function
  */
-function removeSubscriber(cb: () => void): void {
+const removeSubscriber = (cb: () => void): void => {
   const index = resizeSubscribers.indexOf(cb);
   if (index > -1) {
     resizeSubscribers.splice(index, 1);
@@ -88,7 +88,7 @@ function removeSubscriber(cb: () => void): void {
  * @param {*} Component React class for the child component.
  * @returns {String} The child component's name
  */
-function getDisplayName(Component: React.ComponentType<any>): string {
+const getDisplayName = (Component: React.ComponentType<any>): string => {
   return Component.displayName || Component.name || 'Component';
 }
 
@@ -104,11 +104,9 @@ interface FlexibleState {
  * @param {boolean} isHeightFlexible Whether height should flex with container.
  * @returns {*} Flexible component.
  */
-function makeFlexible<P extends {height?: number; width?: number}>(
-  Component: React.ComponentType<P>,
+const makeFlexible = <P extends {height?: number; width?: number},>(Component: React.ComponentType<P>,
   isWidthFlexible: boolean,
-  isHeightFlexible: boolean
-): React.ComponentClass<Omit<P, 'height' | 'width'>> {
+  isHeightFlexible: boolean): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
   const ResultClass = class extends React.Component<
     Omit<P, 'height' | 'width'>,
     FlexibleState
@@ -190,25 +188,19 @@ function makeFlexible<P extends {height?: number; width?: number}>(
   (ResultClass as any).displayName = `Flexible${getDisplayName(Component)}`;
 
   return ResultClass;
-}
+};
 
-export function makeHeightFlexible<P extends {height?: number; width?: number}>(
-  component: React.ComponentType<P>
-): React.ComponentClass<Omit<P, 'height' | 'width'>> {
+export const makeHeightFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, false, true);
-}
+};
 
-export function makeVisFlexible<P extends {height?: number; width?: number}>(
-  component: React.ComponentType<P>
-): React.ComponentClass<Omit<P, 'height' | 'width'>> {
+export const makeVisFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, true);
-}
+};
 
-export function makeWidthFlexible<P extends {height?: number; width?: number}>(
-  component: React.ComponentType<P>
-): React.ComponentClass<Omit<P, 'height' | 'width'>> {
+export const makeWidthFlexible = <P extends {height?: number; width?: number},>(component: React.ComponentType<P>): React.ComponentClass<Omit<P, 'height' | 'width'>> => {
   return makeFlexible(component, true, false);
-}
+};
 
 export const FlexibleWidthXYPlot = makeWidthFlexible(XYPlot);
 export const FlexibleHeightXYPlot = makeHeightFlexible(XYPlot);

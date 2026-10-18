@@ -71,7 +71,7 @@ export interface DecorativeAxisProps extends Omit<AbstractSeriesProps, 'style'> 
   style?: DecorativeAxisStyle;
 }
 
-export function DecorativeAxis(props: DecorativeAxisProps): JSX.Element {
+export const DecorativeAxis = (props: DecorativeAxisProps): JSX.Element => {
   const {
     animation,
     className = '',
@@ -129,7 +129,7 @@ export function DecorativeAxis(props: DecorativeAxisProps): JSX.Element {
       </g>
     </g>
   );
-}
+};
 
 const DEFAULT_FORMAT = formatTickValue;
 

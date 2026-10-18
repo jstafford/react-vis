@@ -24,13 +24,11 @@
  * @param {Function} accessor Accessor function.
  * @returns {Array} Array of unique values.
  */
-export function getUniquePropertyValues<T, V>(
-  arr: T[],
-  accessor: (item: T) => V
-): V[] {
+export const getUniquePropertyValues = <T, V>(arr: T[],
+  accessor: (item: T) => V): V[] => {
   const setOfValues = new Set(arr.map(accessor));
   return Array.from(setOfValues);
-}
+};
 
 /**
  * Add zero to the domain.
@@ -38,7 +36,7 @@ export function getUniquePropertyValues<T, V>(
  * @param {Number} value Add zero to domain.
  * @returns {Array} Adjusted domain.
  */
-export function addValueToArray(arr: number[], value: number): number[] {
+export const addValueToArray = (arr: number[], value: number): number[] => {
   const result = ([] as number[]).concat(arr);
   if (result[0] > value) {
     result[0] = value;
@@ -47,13 +45,13 @@ export function addValueToArray(arr: number[], value: number): number[] {
     result[result.length - 1] = value;
   }
   return result;
-}
+};
 
 /**
  * Transforms a value ( number or date ) to a string.
  * @param {Date | number} value The value as date or number.
  * @returns {string | number} The value as string.
  */
-export function transformValueToString(value: Date | number): string | number {
+export const transformValueToString = (value: Date | number): string | number => {
   return value instanceof Date ? value.toDateString() : value;
-}
+};

@@ -48,22 +48,20 @@ export interface AxisTicksProps {
   [key: string]: any;
 }
 
-function _getTickFormatFn(
-  scale: any,
+const _getTickFormatFn = (scale: any,
   tickTotal: number | undefined,
-  tickFormat: AxisTicksProps['tickFormat']
-) {
+  tickFormat: AxisTicksProps['tickFormat']) => {
   return !tickFormat
     ? scale.tickFormat
       ? scale.tickFormat(tickTotal)
       : (v: any) => v
     : tickFormat;
-}
+};
 
-export function AxisTicks({
+export const AxisTicks = ({
   style = {},
   ...restProps
-}: AxisTicksProps) {
+}: AxisTicksProps) => {
   const allProps = {...restProps, style};
 
   /**
@@ -71,12 +69,12 @@ export function AxisTicks({
    * @returns {boolean} True if mirrored.
    * @private
    */
-  function areTicksWrapped(): boolean {
+  const areTicksWrapped = (): boolean => {
     const {orientation} = allProps;
     return orientation === LEFT || orientation === TOP;
-  }
+  };
 
-  function getTickContainerPropsGetterFn(): (pos: number, offset?: number) => {transform: string} {
+  const getTickContainerPropsGetterFn = (): ((pos: number, offset?: number) => {transform: string}) => {
     if (isAxisVertical()) {
       return pos => {
         return {transform: `translate(0, ${pos})`};
@@ -85,14 +83,14 @@ export function AxisTicks({
     return pos => {
       return {transform: `translate(${pos}, 0)`};
     };
-  }
+  };
 
   /**
    * Get attributes for the label of the tick.
    * @returns {Object} Object with properties.
    * @private
    */
-  function getTickLabelProps(): {textAnchor: string; dy: string; transform: string} {
+  const getTickLabelProps = (): {textAnchor: string; dy: string; transform: string} => {
     const {
       orientation,
       tickLabelAngle,
@@ -140,14 +138,14 @@ export function AxisTicks({
       dy,
       transform
     };
-  }
+  };
 
   /**
    * Get the props of the tick line.
    * @returns {Object} Props.
    * @private
    */
-  function getTickLineProps(): {[key: string]: number} {
+  const getTickLineProps = (): {[key: string]: number} => {
     const {
       tickSize,
       tickSizeOuter = tickSize,
@@ -163,17 +161,17 @@ export function AxisTicks({
       [`${tickYAttr}1`]: -wrap * (tickSizeInner as number),
       [`${tickYAttr}2`]: wrap * (tickSizeOuter as number)
     };
-  }
+  };
 
   /**
    * Gets if the axis is vertical.
    * @returns {boolean} True if vertical.
    * @private
    */
-  function isAxisVertical(): boolean {
+  const isAxisVertical = (): boolean => {
     const {orientation} = allProps;
     return orientation === LEFT || orientation === RIGHT;
-  }
+  };
 
   const {
       attr,
@@ -248,6 +246,6 @@ export function AxisTicks({
         {ticks}
       </g>
   );
-}
+};
 (AxisTicks as any).displayName = 'AxisTicks';
 (AxisTicks as any).requiresSVG = true;

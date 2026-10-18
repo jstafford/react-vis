@@ -19,26 +19,24 @@ const baseScaleProps = {
   marginBottom: 10
 };
 
-function renderInSvg(child: React.ReactNode): HTMLDivElement {
+const renderInSvg = (child: React.ReactNode): HTMLDivElement => {
   const container = document.createElement('div');
   act(() => {
     ReactDOM.render(<svg>{child}</svg>, container);
   });
   return container;
-}
+};
 
-function unmount(container: HTMLDivElement): void {
+const unmount = (container: HTMLDivElement): void => {
   act(() => {
     ReactDOM.unmountComponentAtNode(container);
   });
-}
+};
 
-function dispatchMouseEvent(
-  target: Element,
+const dispatchMouseEvent = (target: Element,
   type: string,
   offsetX: number,
-  offsetY: number
-): void {
+  offsetY: number): void => {
   const event = new MouseEvent(type, {bubbles: true});
   Object.defineProperties(event, {
     offsetX: {value: offsetX},
@@ -47,7 +45,7 @@ function dispatchMouseEvent(
   act(() => {
     target.dispatchEvent(event);
   });
-}
+};
 
 describe('Highlight', () => {
   test('renders the mouse target, dimensions, and styles', () => {
@@ -99,7 +97,7 @@ describe('Highlight', () => {
       <Highlight
         {...baseScaleProps}
         onBrushStart={onBrushStart}
-        onBrush={onBrush}
+        const onBrush ={onBrush}
         onBrushEnd={onBrushEnd}
       />
     );

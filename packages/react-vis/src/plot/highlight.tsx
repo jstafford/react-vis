@@ -46,13 +46,13 @@ type HighlightCoordinates = Partial<
   Record<'left' | 'right' | 'top' | 'bottom', number>
 >;
 
-function getLocs(evt: any) {
+const getLocs = (evt: any) => {
   const xLoc = evt.type === 'touchstart' ? evt.pageX : evt.offsetX;
   const yLoc = evt.type === 'touchstart' ? evt.pageY : evt.offsetY;
   return {xLoc, yLoc};
 }
 
-export function Highlight(props: HighlightProps): JSX.Element {
+export const Highlight = (props: HighlightProps): JSX.Element => {
   const [state, setState] = useState<HighlightState>({
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},
@@ -62,7 +62,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     dragArea: null
   });
 
-  function getDrawArea(xLoc: number, yLoc: number) {
+  const getDrawArea = (xLoc: number, yLoc: number) => {
     const {startLocX, startLocY} = state;
     const {
       enableX,
@@ -89,7 +89,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     };
   }
 
-  function getDragArea(xLoc: number, yLoc: number) {
+  const getDragArea = (xLoc: number, yLoc: number) => {
     const {enableX, enableY} = props;
     const {startLocX, startLocY, dragArea, brushArea} = state;
     const area = dragArea || brushArea;
@@ -102,7 +102,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     };
   }
 
-  function clickedOutsideDrag(xLoc: number, yLoc: number) {
+  const clickedOutsideDrag = (xLoc: number, yLoc: number) => {
     const {enableX, enableY} = props;
     const {
       dragArea,
@@ -122,7 +122,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     return true;
   }
 
-  function convertAreaToCoordinates(brushArea: BrushArea): HighlightCoordinates {
+  const convertAreaToCoordinates = (brushArea: BrushArea): HighlightCoordinates => {
     const {enableX, enableY, marginLeft = 0, marginTop = 0} = props;
     const xScale = getAttributeScale(props, 'x') as any;
     const yScale = getAttributeScale(props, 'y') as any;
@@ -153,7 +153,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     return {};
   }
 
-  function startBrushing(e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) {
+  const startBrushing = (e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => {
     const {onBrushStart, onDragStart, drag} = props;
     const {dragArea} = state;
     const {xLoc, yLoc} = getLocs((e as any).nativeEvent);
@@ -193,7 +193,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     }
   }
 
-  function stopBrushing() {
+  const stopBrushing = () => {
     const {brushing, dragging, brushArea} = state;
     if (!brushing && !dragging) {
       return;
@@ -220,7 +220,7 @@ export function Highlight(props: HighlightProps): JSX.Element {
     }
   }
 
-  function onBrush(e: React.MouseEvent<SVGElement>) {
+  const onBrush = (e: React.MouseEvent<SVGElement>) => {
     const {onBrush, onDrag, drag} = props;
     const {brushing, dragging} = state;
     const {xLoc, yLoc} = getLocs((e as any).nativeEvent);

@@ -41,7 +41,7 @@ const STROKE_STYLES: Record<StrokeStyle, string | null> = {
   solid: null
 };
 
-export function DiscreteColorLegendItem({
+export const DiscreteColorLegendItem = ({
   color,
   strokeDasharray,
   strokeStyle = 'solid',
@@ -52,7 +52,7 @@ export function DiscreteColorLegendItem({
   onMouseEnter,
   onMouseLeave,
   title
-}: DiscreteColorLegendItemProps): JSX.Element {
+}: DiscreteColorLegendItemProps): JSX.Element => {
   let className = `rv-discrete-color-legend-item ${orientation}`;
   if (disabled) {
     className += ' disabled';

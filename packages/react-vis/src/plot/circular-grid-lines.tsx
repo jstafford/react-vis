@@ -60,12 +60,12 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export function CircularGridLines({
+export const CircularGridLines = ({
   animation,
   centerX = 0,
   centerY = 0,
   ...restProps
-}: CircularGridLinesProps) {
+}: CircularGridLinesProps) => {
   const defaultProps = {
     left: restProps.marginLeft || 0,
     top: restProps.marginTop || 0,

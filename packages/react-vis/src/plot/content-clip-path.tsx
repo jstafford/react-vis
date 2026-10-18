@@ -6,11 +6,11 @@ interface ContentClipPathProps {
   innerHeight?: number;
 }
 
-export function ContentClipPath({
+export const ContentClipPath = ({
   id = 'content-area',
   innerWidth,
   innerHeight
-}: ContentClipPathProps) {
+}: ContentClipPathProps) => {
   return (
     <defs>
       <clipPath id={id}>

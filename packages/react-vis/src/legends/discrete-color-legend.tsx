@@ -64,28 +64,26 @@ export interface DiscreteColorLegendProps {
   width?: number;
 }
 
-function getItemTitle(item: LegendItemValue): React.ReactNode {
+const getItemTitle = (item: LegendItemValue): React.ReactNode => {
   return typeof item === 'object' && item && 'title' in item && (item as LegendItem).title
     ? (item as LegendItem).title
     : item;
 }
 
-function getItemColor(item: LegendItemValue, colors: string[], index: number): string {
+const getItemColor = (item: LegendItemValue, colors: string[], index: number): string => {
   return typeof item === 'object' && item && 'color' in item && (item as LegendItem).color
     ? (item as LegendItem).color as string
     : colors[index % colors.length];
 }
 
-function getOptionalLegendProp<T extends keyof LegendItem>(
-  item: LegendItemValue,
-  propName: T
-): LegendItem[T] | undefined {
+const getOptionalLegendProp = <T extends keyof LegendItem,>(item: LegendItemValue,
+  propName: T): LegendItem[T] | undefined => {
   return typeof item === 'object' && item && propName in item
     ? (item as LegendItem)[propName]
     : undefined;
-}
+};
 
-export function DiscreteColorLegend({
+export const DiscreteColorLegend = ({
   className = '',
   colors = DISCRETE_COLOR_RANGE,
   height,
@@ -96,7 +94,7 @@ export function DiscreteColorLegend({
   orientation = 'vertical',
   style,
   width
-}: DiscreteColorLegendProps): JSX.Element {
+}: DiscreteColorLegendProps): JSX.Element => {
   return (
     <div
       className={getCombinedClassName(

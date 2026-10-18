@@ -49,7 +49,7 @@ const getDominantBaseline = (labelAnchorY: string | undefined, aboveMiddle: bool
     : 'text-after-edge';
 };
 
-export function LabelSeries({
+export const LabelSeries = ({
   className = '',
   stack = false,
   style = {},
@@ -57,7 +57,7 @@ export function LabelSeries({
   rotation = 0,
   getLabel = (d: any) => d.label,
   ...restProps
-}: LabelSeriesProps): JSX.Element | null {
+}: LabelSeriesProps): JSX.Element | null => {
   const allProps = {
     ...restProps,
     className,
@@ -135,6 +135,6 @@ export function LabelSeries({
         }, [])}
       </g>
     );
-  }
+  };
 (LabelSeries as any).displayName = 'LabelSeries';
 (LabelSeries as any).requiresSVG = true;

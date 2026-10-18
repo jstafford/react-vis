@@ -102,12 +102,12 @@ const DEFAULT_STYLE: ParallelStyle = {
   }
 };
 
-function getAxes({
+const getAxes = ({
   animation,
   domains,
   style = {},
   tickFormat = DEFAULT_FORMAT
-}: ParallelCoordinatesProps): JSX.Element[] {
+}: ParallelCoordinatesProps): JSX.Element[] => {
   return domains.map((domain, index) => {
     const domainTickFormat = (tick: number) =>
       domain.tickFormat ? domain.tickFormat(tick) : tickFormat(tick);
@@ -132,7 +132,7 @@ type GetLabelsProps = {
   style?: React.CSSProperties;
 };
 
-function getLabels({domains, style}: GetLabelsProps): any[] {
+const getLabels = ({domains, style}: GetLabelsProps): any[] => {
   return domains.map(domain => ({
     x: domain.name,
     y: 1.1,
@@ -151,7 +151,7 @@ type GetLinesProps = {
   style?: ParallelStyle;
 };
 
-function getLines({
+const getLines = ({
   animation,
   brushFilters,
   colorRange = DISCRETE_COLOR_RANGE,
@@ -159,7 +159,7 @@ function getLines({
   domains,
   showMarks,
   style = {},
-}: GetLinesProps): JSX.Element[] {
+}: GetLinesProps): JSX.Element[] => {
   const scales = domains.reduce((result: {[key: string]: any}, domain) => {
     result[domain.name] = scaleLinear().domain(domain.domain).range([0, 1]);
     return result;

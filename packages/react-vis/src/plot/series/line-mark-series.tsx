@@ -29,14 +29,14 @@ export interface LineMarkSeriesProps extends AbstractSeriesProps<any> {
   markStyle?: React.CSSProperties | {[key: string]: any};
 }
 
-export function LineMarkSeries({
+export const LineMarkSeries = ({
   className = '',
   stack = false,
   style = {},
   lineStyle = {},
   markStyle = {},
   ...restProps
-}: LineMarkSeriesProps): JSX.Element {
+}: LineMarkSeriesProps): JSX.Element => {
   const props = {...restProps, className, stack, style};
   return (
     <g className="rv-xy-plot__series rv-xy-plot__series--linemark">
@@ -44,6 +44,6 @@ export function LineMarkSeries({
       <MarkSeries {...props} style={{...style, ...markStyle}} />
     </g>
   );
-}
+};
 (LineMarkSeries as any).displayName = 'LineMarkSeries';
 (LineMarkSeries as any).requiresSVG = true;

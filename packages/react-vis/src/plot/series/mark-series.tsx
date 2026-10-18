@@ -37,8 +37,7 @@ export interface MarkSeriesProps extends AbstractSeriesProps<any> {
   strokeWidth?: number;
 }
 
-function renderCircle(
-    d: any,
+const renderCircle = (d: any,
     i: number,
     strokeWidth: number | undefined,
     style: React.CSSProperties | {[key: string]: any},
@@ -53,8 +52,7 @@ function renderCircle(
       onValueRightClickHandler?: (d: any, e: React.MouseEvent<SVGElement>) => void;
       onValueMouseOverHandler?: (d: any, e: React.MouseEvent<SVGElement>) => void;
       onValueMouseOutHandler?: (d: any, e: React.MouseEvent<SVGElement>) => void;
-    }
-  ): JSX.Element {
+    }): JSX.Element => {
     const {fill, opacity, size, stroke, x, y} = scalingFunctions;
 
     const attrs = {
@@ -75,12 +73,12 @@ function renderCircle(
       onMouseOut: (e: React.MouseEvent<SVGElement>) => scalingFunctions.onValueMouseOutHandler?.(d, e)
     };
     return <circle {...attrs} />;
-  }
+  };
 
-export function MarkSeries({
+export const MarkSeries = ({
   getNull: defaultGetNull = () => true,
   ...rest
-}: MarkSeriesProps): JSX.Element | null {
+}: MarkSeriesProps): JSX.Element | null => {
   const props = {...rest, getNull: defaultGetNull};
   const {
     animation, className, data, marginLeft, marginTop, strokeWidth, style,
@@ -134,6 +132,6 @@ export function MarkSeries({
         })}
       </g>
     );
-  }
+  };
 (MarkSeries as any).displayName = 'MarkSeries';
 (MarkSeries as any).requiresSVG = true;

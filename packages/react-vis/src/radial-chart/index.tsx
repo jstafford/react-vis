@@ -77,7 +77,7 @@ const DEFAULT_RADIUS_MARGIN = 15;
    props.data {Object} - tree structured data (each node has a name anc an array of children)
  * @returns {Array} Array of nodes.
  */
-function getWedgesToRender({data, getAngle}: any): any[] {
+const getWedgesToRender = ({data, getAngle}: any): any[] => {
   const pie = pieBuilder<any>()
     .sort(null)
     .value(getAngle);
@@ -92,13 +92,11 @@ function getWedgesToRender({data, getAngle}: any): any[] {
       color: row.data.color || index
     };
   });
-}
+};
 
-function generateLabels(
-  mappedData: RadialDatum[],
+const generateLabels = (mappedData: RadialDatum[],
   accessors: any,
-  labelsRadiusMultiplier = 1.1
-): any[] {
+  labelsRadiusMultiplier = 1.1): any[] => {
   const {getLabel, getSubLabel} = accessors;
   return mappedData.reduce((res: any[], row: any) => {
     const {angle, angle0, radius} = row;
@@ -128,7 +126,7 @@ function generateLabels(
     return res.concat(newLabels);
   }, []);
   // could add force direction here to make sure the labels dont overlap
-}
+};
 
 /**
  * Get the max radius so the chart can extend to the margin.
@@ -136,11 +134,11 @@ function generateLabels(
  * @param  {Number} height - container height
  * @return {Number} radius
  */
-function getMaxRadius(width: number, height: number): number {
+const getMaxRadius = (width: number, height: number): number => {
   return Math.min(width, height) / 2 - DEFAULT_RADIUS_MARGIN;
-}
+};
 
-export function RadialChart({
+export const RadialChart = ({
   animation,
   className = '',
   children,
@@ -168,7 +166,7 @@ export function RadialChart({
   style,
   width,
   ...rest
-}: RadialChartProps): JSX.Element {
+}: RadialChartProps): JSX.Element => {
   const mappedData = getWedgesToRender({
     data,
     height,
@@ -249,5 +247,5 @@ export function RadialChart({
       )}
     </XYPlot>
   );
-}
+};
 (RadialChart as any).displayName = 'RadialChart';

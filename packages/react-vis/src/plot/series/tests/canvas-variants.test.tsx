@@ -17,7 +17,7 @@ const linearProps = {
   marginBottom: 0
 };
 
-function context() {
+const context = () => {
   return {
     beginPath: vi.fn(),
     rect: vi.fn(),
@@ -32,7 +32,7 @@ function context() {
     strokeStyle: '',
     lineWidth: 1
   } as any;
-}
+};
 
 describe('Canvas variants', () => {
   test('draws bar and rect layers', () => {

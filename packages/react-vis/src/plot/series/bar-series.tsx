@@ -38,10 +38,10 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   barWidth?: number;
 }
 
-export function BarSeries({
+export const BarSeries = ({
   barWidth = 0.85,
   ...restProps
-}: BarSeriesProps): JSX.Element | null {
+}: BarSeriesProps): JSX.Element | null => {
   const allProps = {...restProps, barWidth};
   const {
     animation, className, data, linePosAttr, lineSizeAttr, marginLeft,
@@ -121,7 +121,7 @@ export function BarSeries({
         })}
       </g>
     );
-  }
+  };
 
 (BarSeries as any).displayName = 'BarSeries';
 (BarSeries as any).requiresSVG = true;

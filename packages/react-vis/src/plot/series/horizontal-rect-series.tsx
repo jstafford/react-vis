@@ -27,12 +27,12 @@ export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {
   
 }
 
-export function HorizontalRectSeries({
+export const HorizontalRectSeries = ({
   className = '',
   stack = false,
   style = {},
   ...props
-}: HorizontalRectSeriesProps): JSX.Element {
+}: HorizontalRectSeriesProps): JSX.Element => {
   return (
     <RectSeries
       {...props}
@@ -45,7 +45,7 @@ export function HorizontalRectSeries({
       valueSizeAttr="width"
     />
   );
-}
+};
 
 (HorizontalRectSeries as any).requiresSVG = true;
 (HorizontalRectSeries as any).getParentConfig = (attr?: string) => {

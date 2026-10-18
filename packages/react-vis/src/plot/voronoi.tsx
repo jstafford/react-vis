@@ -26,7 +26,7 @@ interface VoronoiProps {
   [key: string]: any;
 }
 
-function getNodeIndex(evt: React.TouchEvent<SVGElement>) {
+const getNodeIndex = (evt: React.TouchEvent<SVGElement>) => {
   const {
     nativeEvent: {pageX, pageY}
   } = evt as any;
@@ -39,16 +39,16 @@ function getNodeIndex(evt: React.TouchEvent<SVGElement>) {
     return -1;
   }
   return Array.prototype.indexOf.call(parentNode.childNodes, target);
-}
+};
 
-function getExtent({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProps) {
+const getExtent = ({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProps) => {
   return [
     [marginLeft || 0, marginTop || 0],
     [(innerWidth || 0) + (marginLeft || 0), (innerHeight || 0) + (marginTop || 0)]
   ] as [[number, number], [number, number]];
-}
+};
 
-export function Voronoi({
+export const Voronoi = ({
   className,
   extent,
   nodes,
@@ -62,7 +62,7 @@ export function Voronoi({
   x,
   y,
   ...restProps
-}: VoronoiProps) {
+}: VoronoiProps) => {
   const allProps = {
     ...restProps,
     className,
@@ -132,6 +132,6 @@ export function Voronoi({
       ))}
     </g>
   );
-}
+};
 (Voronoi as any).displayName = 'Voronoi';
 (Voronoi as any).requiresSVG = true;

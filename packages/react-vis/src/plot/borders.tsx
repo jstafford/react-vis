@@ -46,7 +46,7 @@ const CLASSES = {
   top: 'rv-xy-plot__borders-top'
 };
 
-export function Borders({
+export const Borders = ({
   marginTop = 0,
   marginBottom = 0,
   marginLeft = 0,
@@ -61,7 +61,7 @@ export function Borders({
     top: {}
   },
   className = ''
-}: BordersProps) {
+}: BordersProps) => {
   const height = innerHeight + marginTop + marginBottom;
   const width = innerWidth + marginLeft + marginRight;
   return (

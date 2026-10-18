@@ -37,7 +37,7 @@ export interface ContinuousColorLegendProps {
   width?: number;
 }
 
-export function ContinuousColorLegend({
+export const ContinuousColorLegend = ({
   startColor = CONTINUOUS_COLOR_RANGE[0],
   midColor,
   endColor = CONTINUOUS_COLOR_RANGE[1],
@@ -47,7 +47,7 @@ export function ContinuousColorLegend({
   height,
   width,
   className = ''
-}: ContinuousColorLegendProps): JSX.Element {
+}: ContinuousColorLegendProps): JSX.Element => {
   const colors = [startColor];
   if (midColor) {
     colors.push(midColor);
