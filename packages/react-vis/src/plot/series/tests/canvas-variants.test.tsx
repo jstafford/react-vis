@@ -1,7 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
-import BarSeriesCanvas from '../bar-series-canvas';
-import RectSeriesCanvas from '../rect-series-canvas';
-import LineMarkSeriesCanvas from '../line-mark-series-canvas';
+import {BarSeriesCanvas} from '../bar-series-canvas';
+import {RectSeriesCanvas} from '../rect-series-canvas';
+import {LineMarkSeriesCanvas} from '../line-mark-series-canvas';
 
 const linearProps = {
   xRange: [0, 100],

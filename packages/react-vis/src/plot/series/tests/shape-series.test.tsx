@@ -1,9 +1,9 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import AreaSeries from '../area-series';
-import MarkSeries from '../mark-series';
-import PolygonSeries from '../polygon-series';
+import {AreaSeries} from '../area-series';
+import {MarkSeries} from '../mark-series';
+import {PolygonSeries} from '../polygon-series';
 
 const scaleProps = {
   xRange: [0, 100],

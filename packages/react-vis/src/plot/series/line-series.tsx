@@ -21,7 +21,7 @@
 import React from 'react';
 import * as d3Shape from 'd3-shape';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {DEFAULT_OPACITY} from 'theme';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
@@ -43,7 +43,6 @@ export interface LineSeriesProps extends AbstractSeriesProps<any> {
   nullAccessor?: (d: any) => boolean;
   strokeDasharray?: string;
   strokeWidth?: number | string;
-  _displayName?: string;
 }
 
 function renderLine(
@@ -74,7 +73,6 @@ export function LineSeries({
   opacity = 1,
   curve = null,
   getNull = () => true,
-  _displayName: defaultDisplayName = 'LineSeries',
   ...restProps
 }: LineSeriesProps): JSX.Element | null {
   const allprops: LineSeriesProps = {
@@ -136,3 +134,5 @@ export function LineSeries({
       />
     );
   }
+(LineSeries as any).displayName = 'LineSeries';
+(LineSeries as any).requiresSVG = true;

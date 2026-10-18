@@ -67,7 +67,7 @@ const seriesNamesSet = new Set(seriesNames)
 
 function getSeriesTypeName(child: React.ReactElement): string {
   const type = child.type as any;
-  return child.props._displayName || type.displayName || type.name || '';
+  return type.displayName || type.name || '';
 }
 
 /**

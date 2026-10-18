@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {hexbin} from 'd3-hexbin';
 import {scaleLinear} from 'd3-scale';
 
@@ -37,7 +37,6 @@ export interface HexbinSeriesProps extends AbstractSeriesProps<any> {
   sizeHexagonsWithCount?: boolean;
   xOffset?: number;
   yOffset?: number;
-  _displayName?: string;
 }
 
 function getColorDomain(
@@ -55,7 +54,6 @@ export function HexbinSeries({
   colorRange = CONTINUOUS_COLOR_RANGE,
   xOffset = 0,
   yOffset = 0,
-  _displayName = 'HexbinSeries',
   ...restProps
 }: HexbinSeriesProps): JSX.Element | null {
   const allProps = {
@@ -134,3 +132,5 @@ export function HexbinSeries({
       </g>
     );
   }
+(HexbinSeries as any).displayName = 'HexbinSeries';
+(HexbinSeries as any).requiresSVG = true;

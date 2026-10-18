@@ -36,7 +36,6 @@ interface BordersProps {
   innerWidth?: number;
   innerHeight?: number;
   className?: string;
-  _displayName?: string
 }
 
 const CLASSES = {
@@ -47,7 +46,7 @@ const CLASSES = {
   top: 'rv-xy-plot__borders-top'
 };
 
-function Borders({
+export function Borders({
   marginTop = 0,
   marginBottom = 0,
   marginLeft = 0,
@@ -61,8 +60,7 @@ function Borders({
     right: {},
     top: {}
   },
-  className = '',
-  _displayName = 'Borders'
+  className = ''
 }: BordersProps) {
   const height = innerHeight + marginTop + marginBottom;
   const width = innerWidth + marginLeft + marginRight;
@@ -104,6 +102,5 @@ function Borders({
   );
 }
 
+(Borders as any).displayName = 'Borders';
 (Borders as any).requiresSVG = true;
-
-export default Borders;

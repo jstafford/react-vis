@@ -22,7 +22,7 @@ import React, {PureComponent} from 'react';
 
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
-import Animation from 'animation';
+import {Animation} from 'animation';
 
 import {
   getTicksTotalFromSize,
@@ -71,7 +71,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-class GridLines extends PureComponent<GridLinesProps> {
+export class GridLines extends PureComponent<GridLinesProps> {
   _getDefaultProps() {
     const {
       innerWidth = 0,
@@ -155,5 +155,3 @@ class GridLines extends PureComponent<GridLinesProps> {
 (GridLines as any).displayName = 'GridLines';
 (GridLines as any).defaultProps = defaultProps;
 (GridLines as any).requiresSVG = true;
-
-export default GridLines;

@@ -20,7 +20,7 @@
 
 import React from 'react';
 
-import Animation, {AnimationParam} from 'animation';
+import {Animation, AnimationParam} from 'animation';
 import {getFontColorFromBackground} from 'utils/scales-utils';
 import {TreemapNode, TreemapScales} from './index';
 
@@ -73,7 +73,6 @@ export function TreemapLeaf({
   y0,
   y1,
   style,
-  _displayName = 'TreemapLeaf',
   ...rest
 }: TreemapLeafProps): JSX.Element {
 
@@ -130,3 +129,4 @@ export function TreemapLeaf({
     </div>
   );
 }
+(TreemapLeaf as any).displayName = 'TreemapLeaf';

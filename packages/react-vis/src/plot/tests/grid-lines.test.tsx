@@ -1,10 +1,10 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import GridLines from '../grid-lines';
-import CircularGridLines from '../circular-grid-lines';
-import HorizontalGridLines from '../horizontal-grid-lines';
-import VerticalGridLines from '../vertical-grid-lines';
+import {GridLines} from '../grid-lines';
+import {CircularGridLines} from '../circular-grid-lines';
+import {HorizontalGridLines} from '../horizontal-grid-lines';
+import {VerticalGridLines} from '../vertical-grid-lines';
 
 const scaleProps = {
   xRange: [0, 100],

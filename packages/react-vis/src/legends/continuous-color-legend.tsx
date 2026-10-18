@@ -35,10 +35,9 @@ export interface ContinuousColorLegendProps {
   startColor?: string;
   startTitle: LegendTitle;
   width?: number;
-  _displayName?: string;
 }
 
-function ContinuousColorLegend({
+export function ContinuousColorLegend({
   startColor = CONTINUOUS_COLOR_RANGE[0],
   midColor,
   endColor = CONTINUOUS_COLOR_RANGE[1],
@@ -47,8 +46,7 @@ function ContinuousColorLegend({
   endTitle,
   height,
   width,
-  className = '',
-  _displayName = 'ContinuousColorLegend'
+  className = ''
 }: ContinuousColorLegendProps): JSX.Element {
   const colors = [startColor];
   if (midColor) {
@@ -75,4 +73,4 @@ function ContinuousColorLegend({
   );
 }
 
-export default ContinuousColorLegend;
+(ContinuousColorLegend as any).displayName = 'ContinuousColorLegend';

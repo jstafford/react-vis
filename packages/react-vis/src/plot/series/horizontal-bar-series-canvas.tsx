@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import {AbstractSeriesProps} from './abstract-series-hook';
-import BarSeriesCanvas from './bar-series-canvas';
+import {BarSeriesCanvas} from './bar-series-canvas';
 
 export interface HorizontalBarSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
@@ -28,15 +28,15 @@ interface HorizontalBarSeriesCanvasComponent {
   renderLayer: (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const HorizontalBarSeriesCanvas = (({
+export const HorizontalBarSeriesCanvas = (({
   className = '',
   stack = false,
   style = {},
-  _displayName = 'HorizontalBarSeriesCanvas'
 }: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
 
 (HorizontalBarSeriesCanvas as any).requiresSVG = false;
 (HorizontalBarSeriesCanvas as any).isCanvas = true;
+(HorizontalBarSeriesCanvas as any).displayName = 'HorizontalBarSeriesCanvas';
 (HorizontalBarSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = attr === 'y';
     const zeroBaseValue = attr === 'x';
@@ -57,5 +57,3 @@ const HorizontalBarSeriesCanvas = (({
       ctx
     );
 };
-
-export default HorizontalBarSeriesCanvas;

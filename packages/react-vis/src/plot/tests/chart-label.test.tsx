@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ChartLabel from '../chart-label';
+import {ChartLabel} from '../chart-label';
 
 describe('ChartLabel', () => {
   test('renders text at the requested position with margins', () => {

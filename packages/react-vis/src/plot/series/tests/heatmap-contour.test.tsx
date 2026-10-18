@@ -1,8 +1,8 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import HeatmapSeries from '../heatmap-series';
-import ContourSeries from '../contour-series';
+import {HeatmapSeries} from '../heatmap-series';
+import {ContourSeries} from '../contour-series';
 
 const scaleProps = {
   xRange: [0, 100],

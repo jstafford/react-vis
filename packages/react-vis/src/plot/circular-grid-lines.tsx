@@ -21,7 +21,7 @@
 import React from 'react';
 
 import {getAttributeScale} from 'utils/scales-utils';
-import Animation from 'animation';
+import {Animation} from 'animation';
 
 import {getTicksTotalFromSize, getTickValues} from '../utils/axis-utils';
 
@@ -44,8 +44,6 @@ interface CircularGridLinesProps {
   innerWidth?: number;
   innerHeight?: number;
   // [key: string]: any;
-  _displayName?: string;
-  _requiresSVG?: boolean;
 }
 
 const animatedProps = [
@@ -66,8 +64,6 @@ export function CircularGridLines({
   animation,
   centerX = 0,
   centerY = 0,
-  _displayName = 'CircularGridLines',
-  _requiresSVG = true,
   ...restProps
 }: CircularGridLinesProps) {
   const defaultProps = {
@@ -130,3 +126,5 @@ export function CircularGridLines({
       </g>
     );
 }
+(CircularGridLines as any).displayName = 'CircularGridLines';
+(CircularGridLines as any).requiresSVG = true;

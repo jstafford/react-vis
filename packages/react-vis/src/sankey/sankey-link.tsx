@@ -21,7 +21,7 @@
 import React from 'react';
 
 import {DISCRETE_COLOR_RANGE} from 'theme';
-import Animation, {AnimationParam} from 'animation';
+import {Animation, AnimationParam} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 
 const DEFAULT_LINK_COLOR = DISCRETE_COLOR_RANGE[1];
@@ -38,12 +38,10 @@ export interface SankeyLinkProps {
   opacity?: number;
   strokeWidth: number;
   style?: React.SVGProps<SVGPathElement> | React.CSSProperties;
-  _displayName?: string;
-  _requiresSVG?: boolean;
   [key: string]: any;
 }
 
-function SankeyLink({
+export function SankeyLink({
   animation,
   data,
   node,
@@ -54,8 +52,6 @@ function SankeyLink({
   onLinkClick = () => undefined,
   onLinkMouseOver = () => undefined,
   onLinkMouseOut = () => undefined,
-  _displayName = 'SankeyLink',
-  _requiresSVG = true,
   ...rest
 }:SankeyLinkProps): JSX.Element {
   if (animation) {
@@ -70,7 +66,6 @@ function SankeyLink({
     onLinkClick,
     onLinkMouseOver,
     onLinkMouseOut,
-    _requiresSVG,
     ...rest
   }
     return (
@@ -94,3 +89,5 @@ function SankeyLink({
     />
   );
 }
+(SankeyLink as any).displayName = 'SankeyLink';
+(SankeyLink as any).requiresSVG = true;

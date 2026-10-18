@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import TreemapLeaf from '../treemap-leaf';
+import {TreemapLeaf} from '../treemap-leaf';
 
 const node = {
   data: {title: 'Revenue'},

@@ -21,16 +21,17 @@
 import React from 'react';
 
 import {DIRECTION} from 'utils/axis-utils';
-import GridLines from 'plot/grid-lines';
+import {GridLines} from 'plot/grid-lines';
 
 const {HORIZONTAL} = DIRECTION;
 
 export function HorizontalGridLines({
   direction = HORIZONTAL,
   attr = 'y',
-  _displayName = 'HorizontalGridLines',
-  _requiresSVG = true,
+  _requiresSVG,
   ...restProps
 }: any) {
   return <GridLines {...restProps} direction={direction} attr={attr} />;
 }
+(HorizontalGridLines as any).displayName = 'HorizontalGridLines';
+(HorizontalGridLines as any).requiresSVG = true;

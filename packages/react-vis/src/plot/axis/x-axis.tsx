@@ -22,7 +22,7 @@ import React from 'react';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
-import Axis, {AxisProps} from './axis';
+import {Axis, AxisProps} from './axis';
 
 const {BOTTOM} = ORIENTATION;
 
@@ -30,11 +30,10 @@ export function XAxis({
   orientation = BOTTOM,
   attr = 'x',
   attrAxis = 'y',
-  _displayName = 'XAxis',
-  _requiresSVG = true,
   ...restProps
-}: AxisProps & {_displayName?: string}) {
+}: AxisProps) {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 }
 
+XAxis.displayName = 'XAxis';
 XAxis.requiresSVG = true;

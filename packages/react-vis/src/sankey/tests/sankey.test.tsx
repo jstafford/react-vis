@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Sankey from '../index';
+import {Sankey} from '../index';
 
 const nodes = [{name: 'Source'}, {name: 'Target'}];
 const links = [{source: 0, target: 1, value: 10}];

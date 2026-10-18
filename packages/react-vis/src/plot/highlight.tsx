@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AbstractSeries from './series/abstract-series';
+import {AbstractSeries} from './series/abstract-series';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -26,7 +26,7 @@ function getLocs(evt: any) {
   return {xLoc, yLoc};
 }
 
-class Highlight extends AbstractSeries<any> {
+export class Highlight extends AbstractSeries<any> {
   state: HighlightState = {
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},

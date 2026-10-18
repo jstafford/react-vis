@@ -35,7 +35,6 @@ export interface CanvasWrapperProps {
   innerWidth: number;
   pixelRatio?: number;
   children?: React.ReactNode;
-  _displayName?: string;
 }
 
 /**
@@ -133,9 +132,8 @@ function buildLayers(newChildren: React.ReactElement[], oldChildren: React.React
   });
 }
 
-const CanvasWrapper: any = ({
+export const CanvasWrapper: any = ({
   pixelRatio = (window && window.devicePixelRatio) || 1,
-  _displayName = 'CanvasWrapper',
   ...restProps
 }: CanvasWrapperProps): JSX.Element => {
   const props = {...restProps, pixelRatio};
@@ -235,4 +233,4 @@ const CanvasWrapper: any = ({
   }
 };
 
-export default CanvasWrapper;
+CanvasWrapper.displayName = 'CanvasWrapper';

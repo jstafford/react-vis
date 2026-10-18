@@ -21,7 +21,7 @@
 import React from 'react';
 import * as d3Shape from 'd3-shape';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {DEFAULT_OPACITY} from 'theme';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
@@ -35,7 +35,6 @@ export interface AreaSeriesProps extends AbstractSeriesProps<any> {
   curve?: string | ((arg: any) => any) | null;
   getNull?: (d: any) => boolean;
   nullAccessor?: (d: any) => boolean;
-  _displayName?: string;
 }
 
 function renderArea(
@@ -67,7 +66,6 @@ export function AreaSeries({
   stack = false,
   style = {},
   getNull = () => true,
-  _displayName = 'AreaSeries',
   ...restProps
 }: AreaSeriesProps): JSX.Element | null {
   const allProps = {
@@ -137,3 +135,6 @@ export function AreaSeries({
       />
     );
   }
+
+(AreaSeries as any).displayName = 'AreaSeries';
+(AreaSeries as any).requiresSVG = true;

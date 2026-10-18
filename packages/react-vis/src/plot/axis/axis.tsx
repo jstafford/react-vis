@@ -20,14 +20,14 @@
 
 import React from 'react';
 
-import Animation, {AnimationParam} from 'animation';
+import {Animation, AnimationParam} from 'animation';
 import {ORIENTATION, getTicksTotalFromSize} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
-import AxisLine from './axis-line';
-import AxisTicks from './axis-ticks';
-import AxisTitle from './axis-title';
+import {AxisLine} from './axis-line';
+import {AxisTicks} from './axis-ticks';
+import {AxisTitle} from './axis-title';
 
 const defaultAnimatedProps = [
   'xRange',
@@ -78,7 +78,6 @@ export interface AxisProps {
   innerHeight?: number;
   animation?: AnimationParam;
   position?: string;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -130,7 +129,7 @@ function getDefaultAxisProps(props: AxisProps) {
     };
 }
 
-const Axis: any = ({
+export const Axis: any = ({
   animation,
   className = '',
   on0 = false,
@@ -138,8 +137,6 @@ const Axis: any = ({
   tickSize = 6,
   tickPadding = 8,
   orientation = BOTTOM,
-  _displayName = 'Axis',
-  _requiresSVG = true,
   ...restProps
 }: AxisProps) => {
     const allProps = {
@@ -235,4 +232,5 @@ const Axis: any = ({
     );
   };
 
+(Axis as any).displayName = 'Axis';
 (Axis as any).requiresSVG = true;

@@ -1,7 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import RadarChart from '../index';
+import {RadarChart} from '../index';
 
 const domains = [
   {name: 'speed', domain: [0, 100]},

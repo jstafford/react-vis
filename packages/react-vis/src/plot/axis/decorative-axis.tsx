@@ -21,9 +21,9 @@
 import React from 'react';
 import {format} from 'd3-format';
 
-import AbstractSeries, {AbstractSeriesProps, RVDatum} from 'plot/series/abstract-series';
-import DecorativeAxisTicks from './decorative-axis-ticks';
-import Animation from 'animation';
+import {AbstractSeries, AbstractSeriesProps, RVDatum} from 'plot/series/abstract-series';
+import {DecorativeAxisTicks} from './decorative-axis-ticks';
+import {Animation} from 'animation';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 const predefinedClassName = 'rv-xy-manipulable-axis rv-xy-plot__axis';

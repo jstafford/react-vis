@@ -8,16 +8,16 @@ import {
   sankeyJustify
 } from 'd3-sankey';
 
-import XYPlot from 'plot/xy-plot';
-import VerticalRectSeries from 'plot/series/vertical-rect-series';
-import LabelSeries from 'plot/series/label-series';
-import Voronoi from 'plot/voronoi';
+import {XYPlot} from 'plot/xy-plot';
+import {VerticalRectSeries} from 'plot/series/vertical-rect-series';
+import {LabelSeries} from 'plot/series/label-series';
+import {Voronoi} from 'plot/voronoi';
 import {AnimationParam} from 'animation';
 import {Margin, getInnerDimensions} from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 
-import SankeyLink from './sankey-link';
+import {SankeyLink} from './sankey-link';
 
 const NOOP = (..._args: any[]) => undefined;
 
@@ -100,7 +100,6 @@ export interface SankeyProps {
   onLinkMouseOut?: (link: SankeyGraphLink, event?: React.SyntheticEvent<any>) => void;
   style?: SankeyStyle;
   width: number;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -128,8 +127,7 @@ export function Sankey(props: SankeyProps): JSX.Element {
     onLinkMouseOver = NOOP,
     onLinkMouseOut = NOOP,
     style: sankeyStyle = DEFAULT_STYLE,
-    width,
-    _displayName = 'Sankey'
+    width
   } = props;
   const {style: _ignoredStyle, ...xyPlotProps} = {
     ...props,
@@ -253,3 +251,4 @@ export function Sankey(props: SankeyProps): JSX.Element {
     </XYPlot>
   );
 }
+(Sankey as any).displayName = 'Sankey';

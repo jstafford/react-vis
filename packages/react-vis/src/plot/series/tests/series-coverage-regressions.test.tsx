@@ -2,21 +2,21 @@ import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 
-import ArcSeries from '../arc-series';
-import HeatmapSeries from '../heatmap-series';
-import HorizontalBarSeries from '../horizontal-bar-series';
-import HorizontalBarSeriesCanvas from '../horizontal-bar-series-canvas';
-import HorizontalRectSeries from '../horizontal-rect-series';
-import HorizontalRectSeriesCanvas from '../horizontal-rect-series-canvas';
-import LineMarkSeries from '../line-mark-series';
-import LineMarkSeriesCanvas from '../line-mark-series-canvas';
-import MarkSeries from '../mark-series';
-import RectSeries from '../rect-series';
-import VerticalBarSeries from '../vertical-bar-series';
-import VerticalBarSeriesCanvas from '../vertical-bar-series-canvas';
-import VerticalRectSeries from '../vertical-rect-series';
-import VerticalRectSeriesCanvas from '../vertical-rect-series-canvas';
-import WhiskerSeries from '../whisker-series';
+import {ArcSeries} from '../arc-series';
+import {HeatmapSeries} from '../heatmap-series';
+import {HorizontalBarSeries} from '../horizontal-bar-series';
+import {HorizontalBarSeriesCanvas} from '../horizontal-bar-series-canvas';
+import {HorizontalRectSeries} from '../horizontal-rect-series';
+import {HorizontalRectSeriesCanvas} from '../horizontal-rect-series-canvas';
+import {LineMarkSeries} from '../line-mark-series';
+import {LineMarkSeriesCanvas} from '../line-mark-series-canvas';
+import {MarkSeries} from '../mark-series';
+import {RectSeries} from '../rect-series';
+import {VerticalBarSeries} from '../vertical-bar-series';
+import {VerticalBarSeriesCanvas} from '../vertical-bar-series-canvas';
+import {VerticalRectSeries} from '../vertical-rect-series';
+import {VerticalRectSeriesCanvas} from '../vertical-rect-series-canvas';
+import {WhiskerSeries} from '../whisker-series';
 
 const scaleProps = {
   xRange: [0, 100],

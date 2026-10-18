@@ -2,7 +2,7 @@ import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {ORIENTATION} from 'utils/axis-utils';
-import AxisLine from '../axis-line';
+import {AxisLine} from '../axis-line';
 
 describe('AxisLine', () => {
   test.each([

@@ -1,9 +1,9 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import VerticalBarSeries from '../vertical-bar-series';
-import LabelSeries from '../label-series';
-import WhiskerSeries from '../whisker-series';
+import {VerticalBarSeries} from '../vertical-bar-series';
+import {LabelSeries} from '../label-series';
+import {WhiskerSeries} from '../whisker-series';
 
 const scaleProps = {
   xRange: [0, 100],

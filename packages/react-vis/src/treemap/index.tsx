@@ -42,8 +42,8 @@ import {AnimationParam} from 'animation';
 import {getAttributeFunctor, getMissingScaleProps} from 'utils/scales-utils';
 import {Margin, getInnerDimensions} from 'utils/chart-utils';
 
-import TreemapDOM from './treemap-dom';
-import TreemapSVG from './treemap-svg';
+import {TreemapDOM} from './treemap-dom';
+import {TreemapSVG} from './treemap-svg';
 
 const TREEMAP_TILE_MODES = {
   squarify: treemapSquarify,
@@ -138,7 +138,6 @@ export interface TreemapProps {
   opacityType?: string;
   _colorValue?: string;
   _opacityValue?: number;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -182,7 +181,6 @@ export function Treemap({
   getColor = (datum: any) => datum.color,
   getLabel = (datum: any) => datum.title,
   renderMode,
-  _displayName = 'Treemap',
   ...restProps
 }: TreemapProps): JSX.Element {
   const props = {
@@ -268,3 +266,4 @@ export function Treemap({
 
   return <TreemapElement {...props} nodes={nodes} scales={scales} />;
 }
+(Treemap as any).displayName = 'Treemap';

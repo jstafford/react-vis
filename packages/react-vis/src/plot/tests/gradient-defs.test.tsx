@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import GradientDefs from '../gradient-defs';
+import {GradientDefs} from '../gradient-defs';
 
 describe('GradientDefs', () => {
   test('renders its class name and children', () => {

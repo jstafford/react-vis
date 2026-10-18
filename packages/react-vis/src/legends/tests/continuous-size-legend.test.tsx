@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ContinuousSizeLegend from '../continuous-size-legend';
+import {ContinuousSizeLegend} from '../continuous-size-legend';
 
 describe('ContinuousSizeLegend', () => {
   test('renders circles and the configured titles', () => {

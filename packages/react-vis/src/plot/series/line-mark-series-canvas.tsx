@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import MarkSeriesCanvas from './mark-series-canvas';
-import LineSeriesCanvas from './line-series-canvas';
-import AbstractSeries from './abstract-series';
+import {MarkSeriesCanvas} from './mark-series-canvas';
+import {LineSeriesCanvas} from './line-series-canvas';
+import {AbstractSeries} from './abstract-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface LineMarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
@@ -30,19 +30,17 @@ interface LineMarkSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-const LineMarkSeriesCanvas = (({
+export const LineMarkSeriesCanvas = (({
   className = '',
   stack = false,
   style = {},
-  _displayName = 'LineMarkSeriesCanvas'
 }: LineMarkSeriesCanvasProps): null => null) as LineMarkSeriesCanvasComponent;
 
 (LineMarkSeriesCanvas as any).requiresSVG = false;
 (LineMarkSeriesCanvas as any).isCanvas = true;
+(LineMarkSeriesCanvas as any).displayName = 'LineMarkSeriesCanvas';
 (LineMarkSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
 (LineMarkSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     LineSeriesCanvas.renderLayer(props, ctx);
     MarkSeriesCanvas.renderLayer(props, ctx);
 };
-
-export default LineMarkSeriesCanvas;

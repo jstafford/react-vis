@@ -20,7 +20,8 @@
 
 import React from 'react';
 
-import DiscreteColorLegend, {
+import {
+  DiscreteColorLegend,
   DiscreteColorLegendProps,
   LegendItemValue
 } from 'legends/discrete-color-legend';
@@ -46,7 +47,7 @@ const defaultSearchFn = (items: LegendItemValue[], search: string) =>
     )
 
 
-function SearchableDiscreteColorLegend({
+export function SearchableDiscreteColorLegend({
   className = '',
   colors,
   height,
@@ -57,7 +58,6 @@ function SearchableDiscreteColorLegend({
   orientation,
   style,
   width,
-  _displayName = 'SearchableDiscreteColorLegend',
   searchText = '',
   onSearchChange,
   searchPlaceholder,
@@ -97,4 +97,4 @@ function SearchableDiscreteColorLegend({
   );
 }
 
-export default SearchableDiscreteColorLegend;
+(SearchableDiscreteColorLegend as any).displayName = 'SearchableDiscreteColorLegend';

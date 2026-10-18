@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Hint from '../hint';
+import {Hint} from '../hint';
 
 const scaleProps = {
   xRange: [0, 100],

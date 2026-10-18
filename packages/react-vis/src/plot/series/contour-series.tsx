@@ -24,7 +24,7 @@ import {geoPath} from 'd3-geo';
 import {scaleLinear} from 'd3-scale';
 
 import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {CONTINUOUS_COLOR_RANGE} from 'theme';
@@ -34,7 +34,6 @@ const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--contour';
 export interface ContourSeriesProps extends AbstractSeriesProps<any> {
   bandwidth?: number;
   colorRange?: string[];
-  _displayName?: string;
 }
 
 function getDomain(data: Array<{value: number}>): {min: number; max: number} {
@@ -49,12 +48,11 @@ function getDomain(data: Array<{value: number}>): {min: number; max: number} {
   );
 }
 
-function ContourSeries({
+export function ContourSeries({
   className = '',
   stack = false,
   style = {},
   bandwidth = 40,
-  _displayName = 'ContourSeries',
   ...restProps
 }: ContourSeriesProps): JSX.Element | null {
   const allProps = {
@@ -125,3 +123,6 @@ function ContourSeries({
       </g>
     );
   }
+
+(ContourSeries as any).displayName = 'ContourSeries';
+(ContourSeries as any).requiresSVG = true;

@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ParallelCoordinates from '../index';
+import {ParallelCoordinates} from '../index';
 
 const domains = [
   {name: 'speed', domain: [0, 100]},

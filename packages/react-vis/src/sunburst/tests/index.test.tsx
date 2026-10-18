@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Sunburst from '../index';
+import {Sunburst} from '../index';
 
 const data = {
   label: 'root',

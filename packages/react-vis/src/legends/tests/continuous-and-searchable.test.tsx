@@ -1,8 +1,8 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ContinuousColorLegend from '../continuous-color-legend';
-import SearchableDiscreteColorLegend from '../searchable-discrete-color-legend';
+import {ContinuousColorLegend} from '../continuous-color-legend';
+import {SearchableDiscreteColorLegend} from '../searchable-discrete-color-legend';
 
 describe('legend variants', () => {
   test('renders a continuous gradient with an optional midpoint', () => {

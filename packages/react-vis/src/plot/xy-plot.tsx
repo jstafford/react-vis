@@ -22,7 +22,7 @@ import React from 'react';
 import equal from 'deep-equal';
 
 import {AnimationParam} from 'animation';
-import CanvasWrapper from './series/canvas-wrapper';
+import {CanvasWrapper} from './series/canvas-wrapper';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 import {
@@ -642,7 +642,7 @@ export class XYPlotImplementation extends React.Component<XYPlotProps, XYPlotSta
   }
 }
 
-const XYPlot: any = (props: XYPlotProps): React.ReactElement => (
+export const XYPlot: any = (props: XYPlotProps): React.ReactElement => (
   <XYPlotImplementation {...props} />
 );
 

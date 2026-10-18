@@ -66,7 +66,7 @@ export function extractAnimatedPropValues(props: AnimationProps): {[key: string]
   }, {});
 }
 
-const Animation: any = (props: AnimationProps): React.ReactElement => {
+export const Animation: any = (props: AnimationProps): React.ReactElement => {
   const interpolator = React.useRef<((t: number) => any) | null>(null);
   const previousProps = React.useRef<AnimationProps | null>(null);
 
@@ -135,4 +135,4 @@ const Animation: any = (props: AnimationProps): React.ReactElement => {
   );
 };
 
-export default Animation;
+Animation.displayName = 'Animation';

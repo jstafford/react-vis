@@ -1,7 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import DiscreteColorLegend from '../discrete-color-legend';
+import {DiscreteColorLegend} from '../discrete-color-legend';
 
 describe('DiscreteColorLegend', () => {
   test('normalizes string, object, and element items', () => {

@@ -22,13 +22,13 @@ import React from 'react';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
-import XYPlot from 'plot/xy-plot';
+import {XYPlot} from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {getCombinedClassName} from 'utils/styling-utils';
-import MarkSeries from 'plot/series/mark-series';
-import PolygonSeries from 'plot/series/polygon-series';
-import LabelSeries from 'plot/series/label-series';
-import DecorativeAxis from 'plot/axis/decorative-axis';
+import {MarkSeries} from 'plot/series/mark-series';
+import {PolygonSeries} from 'plot/series/polygon-series';
+import {LabelSeries} from 'plot/series/label-series';
+import {DecorativeAxis} from 'plot/axis/decorative-axis';
 
 export interface RadarDomain {
   name: string;
@@ -72,7 +72,6 @@ export interface RadarChartProps {
   onValueMouseOut?: (info: any) => void;
   onSeriesMouseOver?: (info: any) => void;
   onSeriesMouseOut?: (info: any) => void;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -338,8 +337,7 @@ export function RadarChart(props: RadarChartProps): JSX.Element {
     onValueMouseOver,
     onValueMouseOut,
     onSeriesMouseOver,
-    onSeriesMouseOut,
-    _displayName = 'RadarChart'
+    onSeriesMouseOut
   } = props;
 
   const axes = getAxes({
@@ -407,3 +405,4 @@ export function RadarChart(props: RadarChartProps): JSX.Element {
     </XYPlot>
   );
 }
+(RadarChart as any).displayName = 'RadarChart';

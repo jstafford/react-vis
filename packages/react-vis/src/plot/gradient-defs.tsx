@@ -25,8 +25,6 @@ import {getCombinedClassName} from 'utils/styling-utils';
 interface GradientDefsProps {
   className?: string;
   children?: React.ReactNode;
-  _displayName?: string;
-  _requiresSVG?: boolean;
 }
 
 const predefinedClassName = 'rv-gradient-defs';
@@ -34,8 +32,6 @@ const predefinedClassName = 'rv-gradient-defs';
 export function GradientDefs(props: GradientDefsProps) {
   const {
     className = '',
-    _displayName = 'GradientDefs',
-    _requiresSVG = true,
     children
   } = props;
   return (
@@ -44,3 +40,5 @@ export function GradientDefs(props: GradientDefsProps) {
     </defs>
   );
 }
+(GradientDefs as any).displayName = 'GradientDefs';
+(GradientDefs as any).requiresSVG = true;

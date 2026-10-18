@@ -35,8 +35,6 @@ export function LineMarkSeries({
   style = {},
   lineStyle = {},
   markStyle = {},
-  _displayName = 'LineMarkSeries',
-  _requiresSVG = true,
   ...restProps
 }: LineMarkSeriesProps): JSX.Element {
   const props = {...restProps, className, stack, style};
@@ -47,3 +45,5 @@ export function LineMarkSeries({
     </g>
   );
 }
+(LineMarkSeries as any).displayName = 'LineMarkSeries';
+(LineMarkSeries as any).requiresSVG = true;

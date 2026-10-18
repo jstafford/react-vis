@@ -22,9 +22,9 @@ import React from 'react';
 import {hierarchy, partition} from 'd3-hierarchy';
 import {scaleLinear, scaleSqrt} from 'd3-scale';
 
-import LabelSeries from 'plot/series/label-series';
-import ArcSeries from 'plot/series/arc-series';
-import XYPlot from 'plot/xy-plot';
+import {LabelSeries} from 'plot/series/label-series';
+import {ArcSeries} from 'plot/series/arc-series';
+import {XYPlot} from 'plot/xy-plot';
 import {getRadialDomain} from 'utils/series-utils';
 import {getRadialLayoutMargin} from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -53,7 +53,6 @@ export interface SunburstProps {
   getAngle0?: (datum: SunburstDatum) => number;
   getLabel?: (datum: SunburstDatum) => string | undefined;
   getSize?: (datum: SunburstDatum) => number | undefined;
-  _displayName?: string;
   width: number;
   [key: string]: any;
 }
@@ -171,8 +170,7 @@ export function Sunburst(props: SunburstProps): JSX.Element {
     getSize = (d: any) => d.size,
     colorType = 'literal',
     getColor = (d: any) => d.color,
-    padAngle = 0,
-    _displayName = 'Sunburst'
+    padAngle = 0
   } = props;
   const propsWithDefaults = {
     ...props,
@@ -246,3 +244,4 @@ export function Sunburst(props: SunburstProps): JSX.Element {
     </XYPlot>
   );
 }
+(Sunburst as any).displayName = 'Sunburst';

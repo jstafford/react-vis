@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import React, {useMemo} from 'react';
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {arc as arcBuilder} from 'd3-shape';
 
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -39,7 +39,6 @@ export interface ArcSeriesProps extends AbstractSeriesProps<any> {
   center?: {x: number; y: number};
   arcClassName?: string;
   padAngle?: number | ((d: any) => number);
-  _displayName?: string;
 }
 
 /**
@@ -92,14 +91,13 @@ function getAllScaleProps(props: ArcSeriesProps): {[key: string]: any} {
   };
 }
 
-function ArcSeries({
+export function ArcSeries({
   center = {x: 0, y: 0},
   arcClassName = '',
   className = '',
   stack = false,
   style = {},
   padAngle = 0,
-  _displayName = 'ArcSeries',
   ...restProps
 }: ArcSeriesProps): JSX.Element | null {
     const allProps: ArcSeriesProps = {
@@ -224,3 +222,6 @@ function ArcSeries({
       </g>
     );
 }
+
+(ArcSeries as any).displayName = 'ArcSeries';
+(ArcSeries as any).requiresSVG = true;

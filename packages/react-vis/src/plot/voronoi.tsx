@@ -23,8 +23,6 @@ interface VoronoiProps {
   innerHeight?: number;
   marginLeft?: number;
   marginTop?: number;
-  _displayName?: string;
-  _requiresSVG?: boolean;
   [key: string]: any;
 }
 
@@ -63,8 +61,6 @@ export function Voronoi({
   style,
   x,
   y,
-  _displayName = 'Voronoi',
-  _requiresSVG = true,
   ...restProps
 }: VoronoiProps) {
   const allProps = {
@@ -137,3 +133,5 @@ export function Voronoi({
     </g>
   );
 }
+(Voronoi as any).displayName = 'Voronoi';
+(Voronoi as any).requiresSVG = true;

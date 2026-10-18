@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ContentClipPath from '../content-clip-path';
+import {ContentClipPath} from '../content-clip-path';
 
 describe('ContentClipPath', () => {
   test('uses the default id and supplied dimensions', () => {

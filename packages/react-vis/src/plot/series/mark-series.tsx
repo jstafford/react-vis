@@ -20,7 +20,7 @@
 
 import React from 'react';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {warning} from 'utils/react-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -35,7 +35,6 @@ export interface MarkSeriesProps extends AbstractSeriesProps<any> {
   getNull?: (d: any) => boolean;
   nullAccessor?: (d: any) => boolean;
   strokeWidth?: number;
-  _displayName?: string;
 }
 
 function renderCircle(
@@ -80,7 +79,6 @@ function renderCircle(
 
 export function MarkSeries({
   getNull: defaultGetNull = () => true,
-  _displayName: defaultDisplayName = 'MarkSeries',
   ...rest
 }: MarkSeriesProps): JSX.Element | null {
   const props = {...rest, getNull: defaultGetNull};
@@ -137,3 +135,5 @@ export function MarkSeries({
       </g>
     );
   }
+(MarkSeries as any).displayName = 'MarkSeries';
+(MarkSeries as any).requiresSVG = true;

@@ -1,9 +1,9 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import ArcSeries from '../arc-series';
-import CustomSVGSeries from '../custom-svg-series';
-import HexbinSeries from '../hexbin-series';
+import {ArcSeries} from '../arc-series';
+import {CustomSVGSeries} from '../custom-svg-series';
+import {HexbinSeries} from '../hexbin-series';
 
 const xyProps = {
   xRange: [0, 100],

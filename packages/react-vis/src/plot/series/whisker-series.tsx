@@ -20,12 +20,12 @@
 
 import React from 'react';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_OPACITY} from 'theme';
 
-import AbstractSeries, {AbstractSeriesProps} from './abstract-series';
+import {AbstractSeries, AbstractSeriesProps} from './abstract-series';
 import {useAbstractSeries} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--whisker';
@@ -35,7 +35,6 @@ const DEFAULT_CROSS_BAR_WIDTH = 6;
 export interface WhiskerSeriesProps extends AbstractSeriesProps<any> {
   strokeWidth?: number;
   crossBarWidth?: number;
-  _displayName?: string;
 }
 
 interface WhiskerMarkProps {
@@ -197,7 +196,6 @@ export function WhiskerSeries({
   crossBarWidth: defaultCrossBarWidth = DEFAULT_CROSS_BAR_WIDTH,
   size: defaultSize = 0,
   strokeWidth: defaultStrokeWidth = DEFAULT_STROKE_WIDTH,
-  _displayName: defaultDisplayName = 'WhiskerSeries',
   ...restProps
 }: WhiskerSeriesProps): JSX.Element | null {
   const allProps = {
@@ -250,3 +248,6 @@ export function WhiskerSeries({
       </g>
     );
   }
+
+(WhiskerSeries as any).displayName = 'WhiskerSeries';
+(WhiskerSeries as any).requiresSVG = true;

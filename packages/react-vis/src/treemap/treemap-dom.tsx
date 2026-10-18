@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 import React from 'react';
 
-import TreemapLeaf from './treemap-leaf';
+import {TreemapLeaf} from './treemap-leaf';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {TreemapNode, TreemapProps, TreemapScales} from './index';
 
@@ -39,7 +39,6 @@ export function TreemapDOM({
   width,
   scales,
   style,
-  _displayName = 'TreemapDOM',
   ...rest
 }: TreemapDOMProps): JSX.Element {
   const useCirclePacking = mode === 'circlePack';
@@ -79,3 +78,4 @@ export function TreemapDOM({
     </div>
   );
 }
+(TreemapDOM as any).displayName = 'TreemapDOM';

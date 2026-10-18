@@ -1,7 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import SankeyLink from '../sankey-link';
+import {SankeyLink} from '../sankey-link';
 
 describe('SankeyLink', () => {
   test('renders a styled SVG link with defaults', () => {

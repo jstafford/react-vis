@@ -64,7 +64,6 @@ interface HintProps {
   getAlignStyle?: (align: AlignShape, x: number, y: number) => React.CSSProperties;
   orientation?: string;
   children?: React.ReactNode;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -78,7 +77,6 @@ export const Hint: any = ({
   format = defaultFormat,
   align = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO},
   style = {},
-  _displayName = 'Hint',
   ...restProps
 }: HintProps) => {
   const allProps = {...restProps, format, align, style};
@@ -252,3 +250,5 @@ export const Hint: any = ({
     </div>
   );
 };
+(Hint as any).displayName = 'Hint';
+(Hint as any).ORIENTATION = ORIENTATION;

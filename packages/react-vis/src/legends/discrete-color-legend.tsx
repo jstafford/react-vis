@@ -20,7 +20,8 @@
 
 import React from 'react';
 
-import DiscreteColorLegendItem, {
+import {
+  DiscreteColorLegendItem,
   DiscreteColorLegendItemProps,
   LegendOrientation
 } from 'legends/discrete-color-legend-item';
@@ -61,7 +62,6 @@ export interface DiscreteColorLegendProps {
   orientation?: LegendOrientation;
   style?: React.CSSProperties;
   width?: number;
-  _displayName?: string;
 }
 
 function getItemTitle(item: LegendItemValue): React.ReactNode {
@@ -85,7 +85,7 @@ function getOptionalLegendProp<T extends keyof LegendItem>(
     : undefined;
 }
 
-function DiscreteColorLegend({
+export function DiscreteColorLegend({
   className = '',
   colors = DISCRETE_COLOR_RANGE,
   height,
@@ -95,8 +95,7 @@ function DiscreteColorLegend({
   onItemMouseLeave,
   orientation = 'vertical',
   style,
-  width,
-  _displayName = 'DiscreteColorLegendItem'
+  width
 }: DiscreteColorLegendProps): JSX.Element {
   return (
     <div
@@ -136,4 +135,4 @@ function DiscreteColorLegend({
   );
 }
 
-export default DiscreteColorLegend;
+(DiscreteColorLegend as any).displayName = 'DiscreteColorLegendItem';

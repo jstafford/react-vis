@@ -20,18 +20,17 @@
 
 import React from 'react';
 
-import RectSeries from './rect-series';
+import {RectSeries} from './rect-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {
   
 }
 
-function HorizontalRectSeries({
+export function HorizontalRectSeries({
   className = '',
   stack = false,
   style = {},
-  _displayName = 'HorizontalRectSeries',
   ...props
 }: HorizontalRectSeriesProps): JSX.Element {
   return (
@@ -57,3 +56,4 @@ function HorizontalRectSeries({
     zeroBaseValue
   };
 };
+(HorizontalRectSeries as any).displayName = 'HorizontalRectSeries';

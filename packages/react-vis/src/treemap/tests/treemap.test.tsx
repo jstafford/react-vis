@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Treemap from '../index';
+import {Treemap} from '../index';
 
 const data = {
   title: 'root',

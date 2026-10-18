@@ -21,9 +21,9 @@
 import React from 'react';
 import {pie as pieBuilder} from 'd3-shape';
 
-import ArcSeries from 'plot/series/arc-series';
-import LabelSeries from 'plot/series/label-series';
-import XYPlot from 'plot/xy-plot';
+import {ArcSeries} from 'plot/series/arc-series';
+import {LabelSeries} from 'plot/series/label-series';
+import {XYPlot} from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {getRadialLayoutMargin} from 'utils/chart-utils';
 import {getRadialDomain} from 'utils/series-utils';
@@ -64,7 +64,6 @@ export interface RadialChartProps {
   showLabels?: boolean;
   style?: React.CSSProperties;
   width: number;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -168,7 +167,6 @@ export function RadialChart({
   showLabels,
   style,
   width,
-  _displayName = 'RadialChart',
   ...rest
 }: RadialChartProps): JSX.Element {
   const mappedData = getWedgesToRender({
@@ -252,3 +250,4 @@ export function RadialChart({
     </XYPlot>
   );
 }
+(RadialChart as any).displayName = 'RadialChart';

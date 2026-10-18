@@ -21,7 +21,7 @@
 import React from 'react';
 
 import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -36,7 +36,6 @@ const DEFAULT_STYLE: React.CSSProperties = {
 export interface CustomSVGSeriesProps extends AbstractSeriesProps<any> {
   customComponent?: string | ((d: any, pos: any, style: any, funcs: any) => JSX.Element);
   size?: number;
-  _displayName?: string;
 }
 
 function predefinedComponents(
@@ -144,8 +143,6 @@ export function CustomSVGSeries({
   animation = false,
   customComponent = 'circle',
   size = 2,
-  _displayName = 'CustomSVGSeries',
-  _requiresSVG = true,
   ...restProps
 }: CustomSVGSeriesProps): JSX.Element | null {
   const allProps: CustomSVGSeriesProps = {
@@ -211,3 +208,5 @@ export function CustomSVGSeries({
       </g>
     );
   }
+(CustomSVGSeries as any).displayName = 'CustomSVGSeries';
+(CustomSVGSeries as any).requiresSVG = true;

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Animation, {extractAnimatedPropValues} from '../animation';
+import {Animation, extractAnimatedPropValues} from '../animation';
 
 describe('Animation', () => {
   test('extracts only declared animated properties', () => {

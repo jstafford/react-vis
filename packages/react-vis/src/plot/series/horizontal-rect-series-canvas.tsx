@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import {AbstractSeriesProps} from './abstract-series-hook';
-import RectSeriesCanvas from './rect-series-canvas';
+import {RectSeriesCanvas} from './rect-series-canvas';
 
 export interface HorizontalRectSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
@@ -28,15 +28,15 @@ interface HorizontalRectSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-const HorizontalRectSeriesCanvas = (({
+export const HorizontalRectSeriesCanvas = (({
   className = '',
   stack = false,
   style = {},
-  _displayName = 'HorizontalRectSeriesCanvas'
 }: HorizontalRectSeriesCanvasProps): null => null) as HorizontalRectSeriesCanvasComponent;
 
 (HorizontalRectSeriesCanvas as any).requiresSVG = false;
 (HorizontalRectSeriesCanvas as any).isCanvas = true;
+(HorizontalRectSeriesCanvas as any).displayName = 'HorizontalRectSeriesCanvas';
 (HorizontalRectSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = false;
     const zeroBaseValue = attr === 'x';
@@ -57,5 +57,3 @@ const HorizontalRectSeriesCanvas = (({
       ctx
     );
 };
-
-export default HorizontalRectSeriesCanvas;

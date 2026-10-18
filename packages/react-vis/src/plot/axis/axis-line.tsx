@@ -29,7 +29,6 @@ export interface AxisLineProps {
   style?: React.CSSProperties | {[key: string]: any};
   orientation: string;
   width: number;
-  _displayName?: string;
 }
 
 export function AxisLine({
@@ -37,7 +36,6 @@ export function AxisLine({
   width,
   height,
   style = {},
-  _displayName = 'AxisLine'
 }: AxisLineProps) {
   let lineProps;
   if (orientation === LEFT) {
@@ -73,3 +71,4 @@ export function AxisLine({
     <line {...lineProps} className="rv-xy-plot__axis__line" style={style} />
   );
 }
+(AxisLine as any).displayName = 'AxisLine';

@@ -35,11 +35,9 @@ interface ChartLabelProps {
   text: string;
   xPercent: number;
   yPercent: number;
-  _displayName?: string;
-  _requiresSVG?: boolean;
 }
 
-const ChartLabel: any = ({
+export const ChartLabel: any = ({
   innerHeight = 0,
   innerWidth = 0,
   marginBottom = 0,
@@ -51,9 +49,7 @@ const ChartLabel: any = ({
   style = {},
   text = '',
   xPercent = 0,
-  yPercent = 0,
-  _displayName = 'ChartLabel',
-  _requiresSVG = true
+  yPercent = 0
 }: ChartLabelProps) => {
   const width = innerWidth + (includeMargin ? marginLeft + marginRight : 0);
   const height = innerHeight + (includeMargin ? marginTop + marginBottom : 0);
@@ -68,3 +64,5 @@ const ChartLabel: any = ({
     </g>
   );
 };
+(ChartLabel as any).displayName = 'ChartLabel';
+(ChartLabel as any).requiresSVG = true;

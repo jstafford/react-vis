@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import RadialChart from '../index';
+import {RadialChart} from '../index';
 
 const data = [
   {angle: 1, label: 'one', color: 'red'},

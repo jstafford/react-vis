@@ -78,7 +78,7 @@ const defaultProps = {
   style: {}
 };
 
-class AbstractSeries<
+export class AbstractSeries<
   T extends RVDatum = RVDatum
 > extends PureComponent<AbstractSeriesProps<T>> {
   /**
@@ -373,5 +373,3 @@ class AbstractSeries<
 
 (AbstractSeries as any).displayName = 'AbstractSeries';
 (AbstractSeries as any).defaultProps = defaultProps;
-
-export default AbstractSeries;

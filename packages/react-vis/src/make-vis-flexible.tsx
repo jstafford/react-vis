@@ -19,7 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
-import XYPlot from 'plot/xy-plot';
+import {XYPlot} from 'plot/xy-plot';
 import {getDOMNode} from 'utils/react-utils';
 
 const CONTAINER_REF = 'container';

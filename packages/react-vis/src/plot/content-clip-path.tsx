@@ -4,14 +4,12 @@ interface ContentClipPathProps {
   id?: string;
   innerWidth?: number;
   innerHeight?: number;
-  _displayName?: string;
 }
 
-export default function ContentClipPath({
+export function ContentClipPath({
   id = 'content-area',
   innerWidth,
-  innerHeight,
-  _displayName = 'ContentClipPath'
+  innerHeight
 }: ContentClipPathProps) {
   return (
     <defs>
@@ -22,4 +20,5 @@ export default function ContentClipPath({
   );
 }
 
+ContentClipPath.displayName = 'ContentClipPath';
 ContentClipPath.requiresSVG = true;

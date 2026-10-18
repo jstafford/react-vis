@@ -1,12 +1,12 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Axis from '../axis';
-import AxisTicks from '../axis-ticks';
-import DecorativeAxis from '../decorative-axis';
-import DecorativeAxisTicks from '../decorative-axis-ticks';
-import XAxis from '../x-axis';
-import YAxis from '../y-axis';
+import {Axis} from '../axis';
+import {AxisTicks} from '../axis-ticks';
+import {DecorativeAxis} from '../decorative-axis';
+import {DecorativeAxisTicks} from '../decorative-axis-ticks';
+import {XAxis} from '../x-axis';
+import {YAxis} from '../y-axis';
 import {ORIENTATION} from 'utils/axis-utils';
 
 const scaleProps = {

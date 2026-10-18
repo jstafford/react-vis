@@ -20,7 +20,7 @@
 
 import React from 'react';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -33,11 +33,9 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
   valuePosAttr?: string;
   lineSizeAttr?: string;
   valueSizeAttr?: string;
-  _displayName?: string;
 }
 
 export function RectSeries({
-  _displayName = 'RectSeries',
   ...rest
 }: RectSeriesProps): JSX.Element | null {
   const {
@@ -96,3 +94,5 @@ export function RectSeries({
       </g>
     );
   }
+(RectSeries as any).displayName = 'RectSeries';
+(RectSeries as any).requiresSVG = true;

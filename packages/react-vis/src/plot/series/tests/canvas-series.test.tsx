@@ -3,9 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {act} from 'react-dom/test-utils';
 import {renderToStaticMarkup} from 'react-dom/server';
-import CanvasWrapper from '../canvas-wrapper';
+import {CanvasWrapper} from '../canvas-wrapper';
 import LineSeriesCanvas from '../line-series-canvas';
-import MarkSeriesCanvas from '../mark-series-canvas';
+import {MarkSeriesCanvas} from '../mark-series-canvas';
+import {LineSeries} from '../line-series';
+import {isSeriesChild} from 'utils/series-utils';
 
 const scaleProps = {
   xRange: [0, 100],
@@ -21,6 +23,16 @@ const scaleProps = {
 };
 
 describe('Canvas series', () => {
+  test('exposes component metadata on function types', () => {
+    expect((LineSeries as any).displayName).toBe('LineSeries');
+    expect((LineSeries as any).requiresSVG).toBe(true);
+    expect(isSeriesChild(<LineSeries data={[]} />)).toBe(true);
+
+    expect((LineSeriesCanvas as any).displayName).toBe('LineSeriesCanvas');
+    expect((LineSeriesCanvas as any).requiresSVG).toBe(false);
+    expect((LineSeriesCanvas as any).isCanvas).toBe(true);
+  });
+
   test('renders a canvas with scaled dimensions', () => {
     const markup = renderToStaticMarkup(
       <CanvasWrapper

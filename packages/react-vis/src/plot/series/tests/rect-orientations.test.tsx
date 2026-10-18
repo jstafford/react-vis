@@ -1,8 +1,8 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import HorizontalRectSeries from '../horizontal-rect-series';
-import VerticalRectSeries from '../vertical-rect-series';
+import {HorizontalRectSeries} from '../horizontal-rect-series';
+import {VerticalRectSeries} from '../vertical-rect-series';
 
 const commonProps = {
   xRange: [0, 100],

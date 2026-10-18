@@ -34,7 +34,6 @@ export interface AxisTitleProps {
   style?: React.CSSProperties | {[key: string]: any};
   title: string;
   position?: 'start' | 'middle' | 'end';
-  _displayName?: string;
 }
 
 interface TransformEntry {
@@ -148,8 +147,7 @@ export function AxisTitle({
   height,
   style,
   title,
-  position = 'end',
-  _displayName = 'AxisTitle'
+  position = 'end'
 }: AxisTitleProps) {
   const outerGroupTranslateX = orientation === LEFT ? width : 0;
   const outerGroupTranslateY = orientation === TOP ? height : 0;
@@ -167,3 +165,4 @@ export function AxisTitle({
     </g>
   );
 }
+(AxisTitle as any).displayName = 'AxisTitle';

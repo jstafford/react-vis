@@ -41,7 +41,6 @@ interface CrosshairProps {
     box?: React.CSSProperties;
   };
   children?: React.ReactNode;
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -76,7 +75,6 @@ export function Crosshair({
   style = {line: {}, title: {}, box: {}},
   titleFormat = defaultTitleFormat,
   itemsFormat = defaultItemsFormat,
-  _displayName = 'Crosshair',
   ...restProps
 }: CrosshairProps) {
   const renderCrosshairItems = () => {
@@ -163,3 +161,4 @@ export function Crosshair({
       </div>
   );
 }
+(Crosshair as any).displayName = 'Crosshair';

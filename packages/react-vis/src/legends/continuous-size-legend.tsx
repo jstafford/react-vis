@@ -33,10 +33,9 @@ export interface ContinuousSizeLegendProps {
   startSize?: number;
   startTitle: LegendTitle;
   width?: number;
-  _displayName?: string;
 }
 
-function ContinuousSizeLegend({
+export function ContinuousSizeLegend({
   startTitle,
   endTitle,
   startSize = 2,
@@ -44,8 +43,7 @@ function ContinuousSizeLegend({
   circlesTotal = 10,
   height,
   width,
-  className = '',
-  _displayName = 'ContinuousSizeLegend'
+  className = ''
 }: ContinuousSizeLegendProps): JSX.Element {
   const circles: React.ReactNode[] = [];
   const step = (endSize - startSize) / (circlesTotal - 1);
@@ -84,4 +82,4 @@ function ContinuousSizeLegend({
   );
 }
 
-export default ContinuousSizeLegend;
+(ContinuousSizeLegend as any).displayName = 'ContinuousSizeLegend';

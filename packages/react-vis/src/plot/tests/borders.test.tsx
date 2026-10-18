@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Borders from '../borders';
+import {Borders} from '../borders';
 
 describe('Borders', () => {
   test('renders four border rectangles with shared and individual styles', () => {

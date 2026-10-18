@@ -23,7 +23,7 @@ import {rgb} from 'd3-color';
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor} from 'utils/scales-utils';
 
-import AbstractSeries from './abstract-series';
+import {AbstractSeries} from './abstract-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface MarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
@@ -33,15 +33,15 @@ interface MarkSeriesCanvasComponent {
   renderLayer: (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-const MarkSeriesCanvas = (({
+export const MarkSeriesCanvas = (({
   className = '',
   stack = false,
   style = {},
-  _displayName = 'MarkSeriesCanvas'
 }: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
 
 (MarkSeriesCanvas as any).requiresSVG = false;
 (MarkSeriesCanvas as any).isCanvas = true;
+(MarkSeriesCanvas as any).displayName = 'MarkSeriesCanvas';
 (MarkSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
 (MarkSeriesCanvas as any).renderLayer = (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {data, marginLeft, marginTop} = props;
@@ -74,5 +74,3 @@ const MarkSeriesCanvas = (({
       ctx.stroke();
     });
 };
-
-export default MarkSeriesCanvas;

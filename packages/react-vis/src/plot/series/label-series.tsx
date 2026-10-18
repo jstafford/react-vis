@@ -21,7 +21,7 @@
 import React from 'react';
 
 import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -36,7 +36,6 @@ export interface LabelSeriesProps extends AbstractSeriesProps<any> {
   labelAnchorX?: string;
   labelAnchorY?: string;
   _data?: any[];
-  _displayName?: string;
 }
 
 const getTextAnchor = (labelAnchorX: string | undefined, leftOfMiddle: boolean): string => {
@@ -57,7 +56,6 @@ export function LabelSeries({
   animation = false,
   rotation = 0,
   getLabel = (d: any) => d.label,
-  _displayName = 'LabelSeries',
   ...restProps
 }: LabelSeriesProps): JSX.Element | null {
   const allProps = {
@@ -138,3 +136,5 @@ export function LabelSeries({
       </g>
     );
   }
+(LabelSeries as any).displayName = 'LabelSeries';
+(LabelSeries as any).requiresSVG = true;

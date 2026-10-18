@@ -20,7 +20,7 @@
 
 import React from 'react';
 
-import Animation from 'animation';
+import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -36,12 +36,10 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
   cluster?: string;
   barWidth?: number;
-  _displayName?: string;
 }
 
 export function BarSeries({
   barWidth = 0.85,
-  _displayName = 'BarSeries',
   ...restProps
 }: BarSeriesProps): JSX.Element | null {
   const allProps = {...restProps, barWidth};
@@ -124,3 +122,6 @@ export function BarSeries({
       </g>
     );
   }
+
+(BarSeries as any).displayName = 'BarSeries';
+(BarSeries as any).requiresSVG = true;

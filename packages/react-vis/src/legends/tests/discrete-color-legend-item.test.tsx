@@ -1,7 +1,7 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import DiscreteColorLegendItem from '../discrete-color-legend-item';
+import {DiscreteColorLegendItem} from '../discrete-color-legend-item';
 
 describe('DiscreteColorLegendItem', () => {
   test('renders clickable disabled and dashed states', () => {

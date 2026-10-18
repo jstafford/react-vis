@@ -1,6 +1,6 @@
 import {describe, expect, test, vi} from 'vitest';
 import React from 'react';
-import AbstractSeries from '../abstract-series';
+import {AbstractSeries} from '../abstract-series';
 
 class TestSeries extends AbstractSeries<any> {
   render() {

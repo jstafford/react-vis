@@ -20,10 +20,10 @@
 
 import React from 'react';
 
-import XYPlot from 'plot/xy-plot';
-import PolygonSeries from 'plot/series/polygon-series';
-import MarkSeries from 'plot/series/mark-series';
-import LabelSeries from 'plot/series/label-series';
+import {XYPlot} from 'plot/xy-plot';
+import {PolygonSeries} from 'plot/series/polygon-series';
+import {MarkSeries} from 'plot/series/mark-series';
+import {LabelSeries} from 'plot/series/label-series';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {TreemapNode, TreemapProps, TreemapScales} from './index';
 
@@ -47,7 +47,6 @@ export function TreemapSVG({
   scales,
   style,
   width,
-  _displayName = 'TreemapSVG',
   ...rest
 }: TreemapSVGProps): JSX.Element {
   function getCircularNodes(): {
@@ -197,7 +196,7 @@ export function TreemapSVG({
           useCirclePacking && 'rv-treemap-circle-paked',
           className
         )}
-        style
+        style={style}
         width={width}
         height={height}
         yDomain={[maxY, minY]}
@@ -210,3 +209,4 @@ export function TreemapSVG({
       </XYPlot>
     );
 }
+(TreemapSVG as any).displayName = 'TreemapSVG';

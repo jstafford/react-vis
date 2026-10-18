@@ -23,7 +23,7 @@ import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
 import {AnimationParam} from 'animation';
-import XYPlot from 'plot/xy-plot';
+import {XYPlot} from 'plot/xy-plot';
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {
   Margin,
@@ -31,10 +31,10 @@ import {
   DEFAULT_MARGINS
 } from 'utils/chart-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
-import LineSeries from 'plot/series/line-series';
-import LineMarkSeries from 'plot/series/line-mark-series';
-import LabelSeries from 'plot/series/label-series';
-import DecorativeAxis from 'plot/axis/decorative-axis';
+import {LineSeries} from 'plot/series/line-series';
+import {LineMarkSeries} from 'plot/series/line-mark-series';
+import {LabelSeries} from 'plot/series/label-series';
+import {DecorativeAxis} from 'plot/axis/decorative-axis';
 import Highlight from 'plot/highlight';
 
 const predefinedClassName = 'rv-parallel-coordinates-chart';
@@ -78,7 +78,6 @@ export interface ParallelCoordinatesProps {
   style?: ParallelStyle;
   tickFormat?: (value: number) => string;
   width: number;
-  _displayName?: string;
   // [key: string]: any;
 }
 
@@ -202,7 +201,7 @@ function getLines({
   });
 }
 
-const ParallelCoordinates: any = ({
+export const ParallelCoordinates: any = ({
   animation,
   brushing,
   className = '',
@@ -217,8 +216,7 @@ const ParallelCoordinates: any = ({
   showMarks,
   style = DEFAULT_STYLE,
   tickFormat = DEFAULT_FORMAT,
-  width,
-  _displayName = 'ParallelCoordinates'
+  width
 }: ParallelCoordinatesProps): JSX.Element => {
   const [brushFilters, setBrushFilters] = useState<BrushFilters>({});
 
@@ -295,4 +293,4 @@ const ParallelCoordinates: any = ({
   );
 };
 
-export default ParallelCoordinates;
+(ParallelCoordinates as any).displayName = 'ParallelCoordinates';

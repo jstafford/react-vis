@@ -1,8 +1,8 @@
 import {describe, expect, test} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import Voronoi from '../voronoi';
-import Crosshair from '../crosshair';
+import {Voronoi} from '../voronoi';
+import {Crosshair} from '../crosshair';
 
 describe('Voronoi and Crosshair', () => {
   test('renders styled Voronoi cells for nodes', () => {

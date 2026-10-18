@@ -45,7 +45,6 @@ export interface AxisTicksProps {
   tickSizeOuter?: number;
   tickTotal?: number;
   tickValues?: any[];
-  _displayName?: string;
   [key: string]: any;
 }
 
@@ -63,8 +62,6 @@ function _getTickFormatFn(
 
 export function AxisTicks({
   style = {},
-  _displayName = 'AxisTicks',
-  _requiresSVG = true,
   ...restProps
 }: AxisTicksProps) {
   const allProps = {...restProps, style};
@@ -252,3 +249,5 @@ export function AxisTicks({
       </g>
   );
 }
+(AxisTicks as any).displayName = 'AxisTicks';
+(AxisTicks as any).requiresSVG = true;

@@ -20,7 +20,7 @@
 
 import React from 'react';
 
-import RectSeries from './rect-series';
+import {RectSeries} from './rect-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface VerticalRectSeriesProps extends AbstractSeriesProps<any> {
@@ -30,8 +30,7 @@ export function VerticalRectSeries({
   className = '',
   stack = false,
   style = {},
-  _requiresSVG = true,
-  _displayName = 'VerticalRectSeries',
+  _requiresSVG,
   ...rest
 }: VerticalRectSeriesProps): JSX.Element {
   return (
@@ -56,3 +55,5 @@ export function VerticalRectSeries({
     zeroBaseValue
   };
 };
+(VerticalRectSeries as any).displayName = 'VerticalRectSeries';
+(VerticalRectSeries as any).requiresSVG = true;
