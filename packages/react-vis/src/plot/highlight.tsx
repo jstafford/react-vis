@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import {AbstractSeries} from './series/abstract-series';
+import {AbstractSeriesProps} from './series/abstract-series';
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -20,36 +20,62 @@ interface HighlightState {
   dragArea: BrushArea | null;
 }
 
+interface HighlightProps extends AbstractSeriesProps<any> {
+  enableX?: boolean;
+  enableY?: boolean;
+  drag?: boolean;
+  color?: string;
+  opacity?: number;
+  highlightHeight?: number;
+  highlightWidth?: number;
+  highlightX?: number;
+  highlightY?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  marginRight?: number;
+  marginBottom?: number;
+  onBrush?: (area: HighlightCoordinates) => void;
+  onBrushStart?: (event: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => void;
+  onBrushEnd?: (area: HighlightCoordinates | null) => void;
+  onDrag?: (area: HighlightCoordinates) => void;
+  onDragStart?: (event: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => void;
+  onDragEnd?: (area: HighlightCoordinates | null) => void;
+}
+
+type HighlightCoordinates = Partial<
+  Record<'left' | 'right' | 'top' | 'bottom', number>
+>;
+
 function getLocs(evt: any) {
   const xLoc = evt.type === 'touchstart' ? evt.pageX : evt.offsetX;
   const yLoc = evt.type === 'touchstart' ? evt.pageY : evt.offsetY;
   return {xLoc, yLoc};
 }
 
-export class Highlight extends AbstractSeries<any> {
-  state: HighlightState = {
+export function Highlight(props: HighlightProps): JSX.Element {
+  const [state, setState] = useState<HighlightState>({
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},
     brushing: false,
     startLocX: 0,
     startLocY: 0,
     dragArea: null
-  };
+  });
 
-  _getDrawArea(xLoc: number, yLoc: number) {
-    const {startLocX, startLocY} = this.state;
+  function getDrawArea(xLoc: number, yLoc: number) {
+    const {startLocX, startLocY} = state;
     const {
       enableX,
       enableY,
       highlightWidth,
       highlightHeight,
-      innerWidth,
-      innerHeight,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      marginTop
-    } = this.props;
+      innerWidth = 0,
+      innerHeight = 0,
+      marginLeft = 0,
+      marginRight = 0,
+      marginBottom = 0,
+      marginTop = 0
+    } = props;
     const plotHeight = innerHeight + marginTop + marginBottom;
     const plotWidth = innerWidth + marginLeft + marginRight;
     const touchWidth = highlightWidth || plotWidth;
@@ -63,9 +89,9 @@ export class Highlight extends AbstractSeries<any> {
     };
   }
 
-  _getDragArea(xLoc: number, yLoc: number) {
-    const {enableX, enableY} = this.props;
-    const {startLocX, startLocY, dragArea, brushArea} = this.state;
+  function getDragArea(xLoc: number, yLoc: number) {
+    const {enableX, enableY} = props;
+    const {startLocX, startLocY, dragArea, brushArea} = state;
     const area = dragArea || brushArea;
 
     return {
@@ -76,12 +102,12 @@ export class Highlight extends AbstractSeries<any> {
     };
   }
 
-  _clickedOutsideDrag(xLoc: number, yLoc: number) {
-    const {enableX, enableY} = this.props;
+  function clickedOutsideDrag(xLoc: number, yLoc: number) {
+    const {enableX, enableY} = props;
     const {
       dragArea,
       brushArea: {left, right, top, bottom}
-    } = this.state;
+    } = state;
     const clickedOutsideDragX = dragArea && (xLoc < left || xLoc > right);
     const clickedOutsideDragY = dragArea && (yLoc < top || yLoc > bottom);
     if (enableX && enableY) {
@@ -96,10 +122,10 @@ export class Highlight extends AbstractSeries<any> {
     return true;
   }
 
-  _convertAreaToCoordinates(brushArea: BrushArea) {
-    const {enableX, enableY, marginLeft = 0, marginTop = 0} = this.props;
-    const xScale = getAttributeScale(this.props, 'x') as any;
-    const yScale = getAttributeScale(this.props, 'y') as any;
+  function convertAreaToCoordinates(brushArea: BrushArea): HighlightCoordinates {
+    const {enableX, enableY, marginLeft = 0, marginTop = 0} = props;
+    const xScale = getAttributeScale(props, 'x') as any;
+    const yScale = getAttributeScale(props, 'y') as any;
 
     if (enableX && enableY) {
       return {
@@ -127,9 +153,9 @@ export class Highlight extends AbstractSeries<any> {
     return {};
   }
 
-  startBrushing(e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) {
-    const {onBrushStart, onDragStart, drag} = this.props;
-    const {dragArea} = this.state;
+  function startBrushing(e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) {
+    const {onBrushStart, onDragStart, drag} = props;
+    const {dragArea} = state;
     const {xLoc, yLoc} = getLocs((e as any).nativeEvent);
 
     const startArea = (dragging: boolean, resetDrag: any) => {
@@ -139,18 +165,19 @@ export class Highlight extends AbstractSeries<any> {
         right: xLoc,
         top: yLoc
       };
-      this.setState({
+      setState(previous => ({
+        ...previous,
         dragging,
         brushArea: dragArea && !resetDrag ? dragArea : emptyBrush,
         brushing: !dragging,
         startLocX: xLoc,
         startLocY: yLoc
-      });
+      }));
     };
 
-    const clickedOutsideDrag = this._clickedOutsideDrag(xLoc, yLoc);
-    if ((drag && !dragArea) || !drag || clickedOutsideDrag) {
-      startArea(false, clickedOutsideDrag);
+    const outsideDrag = clickedOutsideDrag(xLoc, yLoc);
+    if ((drag && !dragArea) || !drag || outsideDrag) {
+      startArea(false, outsideDrag);
 
       if (onBrushStart) {
         onBrushStart(e);
@@ -159,23 +186,23 @@ export class Highlight extends AbstractSeries<any> {
     }
 
     if (drag && dragArea) {
-      startArea(true, clickedOutsideDrag);
+      startArea(true, outsideDrag);
       if (onDragStart) {
         onDragStart(e);
       }
     }
   }
 
-  stopBrushing() {
-    const {brushing, dragging, brushArea} = this.state;
+  function stopBrushing() {
+    const {brushing, dragging, brushArea} = state;
     if (!brushing && !dragging) {
       return;
     }
-    const {onBrushEnd, onDragEnd, drag} = this.props;
+    const {onBrushEnd, onDragEnd, drag} = props;
     const noHorizontal = Math.abs(brushArea.right - brushArea.left) < 5;
     const noVertical = Math.abs(brushArea.top - brushArea.bottom) < 5;
     const isNulled = noVertical || noHorizontal;
-    this.setState({
+    setState({
       brushing: false,
       dragging: false,
       brushArea: drag ? brushArea : {top: 0, right: 0, bottom: 0, left: 0},
@@ -185,37 +212,36 @@ export class Highlight extends AbstractSeries<any> {
     });
 
     if (brushing && onBrushEnd) {
-      onBrushEnd(!isNulled ? this._convertAreaToCoordinates(brushArea) : null);
+      onBrushEnd(!isNulled ? convertAreaToCoordinates(brushArea) : null);
     }
 
     if (drag && onDragEnd) {
-      onDragEnd(!isNulled ? this._convertAreaToCoordinates(brushArea) : null);
+      onDragEnd(!isNulled ? convertAreaToCoordinates(brushArea) : null);
     }
   }
 
-  onBrush(e: React.MouseEvent<SVGElement>) {
-    const {onBrush, onDrag, drag} = this.props;
-    const {brushing, dragging} = this.state;
+  function onBrush(e: React.MouseEvent<SVGElement>) {
+    const {onBrush, onDrag, drag} = props;
+    const {brushing, dragging} = state;
     const {xLoc, yLoc} = getLocs((e as any).nativeEvent);
     if (brushing) {
-      const brushArea = this._getDrawArea(xLoc, yLoc);
-      this.setState({brushArea});
+      const brushArea = getDrawArea(xLoc, yLoc);
+      setState(previous => ({...previous, brushArea}));
 
       if (onBrush) {
-        onBrush(this._convertAreaToCoordinates(brushArea));
+        onBrush(convertAreaToCoordinates(brushArea));
       }
     }
 
     if (drag && dragging) {
-      const brushArea = this._getDragArea(xLoc, yLoc);
-      this.setState({brushArea});
+      const brushArea = getDragArea(xLoc, yLoc);
+      setState(previous => ({...previous, brushArea}));
       if (onDrag) {
-        onDrag(this._convertAreaToCoordinates(brushArea));
+        onDrag(convertAreaToCoordinates(brushArea));
       }
     }
   }
 
-  render() {
     const {
       color,
       className,
@@ -230,20 +256,20 @@ export class Highlight extends AbstractSeries<any> {
       marginTop = 0,
       marginBottom = 0,
       opacity
-    } = this.props;
+    } = props;
     const {
       brushArea: {left, right, top, bottom}
-    } = this.state;
+    } = state;
 
     let leftPos = 0;
     if (highlightX) {
-      const xScale = getAttributeScale(this.props, 'x') as (value: any) => number;
+      const xScale = getAttributeScale(props, 'x') as (value: any) => number;
       leftPos = xScale(highlightX);
     }
 
     let topPos = 0;
     if (highlightY) {
-      const yScale = getAttributeScale(this.props, 'y') as (value: any) => number;
+      const yScale = getAttributeScale(props, 'y') as (value: any) => number;
       topPos = yScale(highlightY);
     }
 
@@ -265,17 +291,17 @@ export class Highlight extends AbstractSeries<any> {
           y="0"
           width={Math.max(touchWidth, 0)}
           height={Math.max(touchHeight, 0)}
-          onMouseDown={e => this.startBrushing(e)}
-          onMouseMove={e => this.onBrush(e)}
-          onMouseUp={e => this.stopBrushing()}
-          onMouseLeave={e => this.stopBrushing()}
+          onMouseDown={startBrushing}
+          onMouseMove={onBrush}
+          onMouseUp={stopBrushing}
+          onMouseLeave={stopBrushing}
           onTouchEnd={e => {
             e.preventDefault();
-            this.stopBrushing();
+            stopBrushing();
           }}
           onTouchCancel={e => {
             e.preventDefault();
-            this.stopBrushing();
+            stopBrushing();
           }}
           onContextMenu={e => e.preventDefault()}
           onContextMenuCapture={e => e.preventDefault()}
@@ -292,7 +318,6 @@ export class Highlight extends AbstractSeries<any> {
         />
       </g>
     );
-  }
 }
 
 (Highlight as any).displayName = 'HighlightOverlay';
@@ -303,6 +328,7 @@ export class Highlight extends AbstractSeries<any> {
   enableY: true,
   opacity: 0.3
 };
+(Highlight as any).requiresSVG = true;
 
 
 export default Highlight;

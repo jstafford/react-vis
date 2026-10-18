@@ -21,10 +21,11 @@
 import React from 'react';
 import {format} from 'd3-format';
 
-import {AbstractSeries, AbstractSeriesProps, RVDatum} from 'plot/series/abstract-series';
+import {AbstractSeriesProps} from 'plot/series/abstract-series';
 import {DecorativeAxisTicks} from './decorative-axis-ticks';
 import {Animation} from 'animation';
 import {getCombinedClassName} from 'utils/styling-utils';
+import {getAttributeFunctor} from 'utils/scales-utils';
 
 const predefinedClassName = 'rv-xy-manipulable-axis rv-xy-plot__axis';
 const formatTickValue = (value: number) =>
@@ -47,7 +48,13 @@ const animatedProps = [
   'tickSizeOuter'
 ];
 
-export interface DecorativeAxisProps extends AbstractSeriesProps {
+interface DecorativeAxisStyle extends React.CSSProperties {
+  line?: React.SVGAttributes<SVGLineElement>;
+  ticks?: React.SVGAttributes<SVGLineElement>;
+  text?: React.SVGAttributes<SVGTextElement>;
+}
+
+export interface DecorativeAxisProps extends Omit<AbstractSeriesProps, 'style'> {
   axisDomain: number[];
   axisEnd: {
     x?: number | string;
@@ -61,83 +68,81 @@ export interface DecorativeAxisProps extends AbstractSeriesProps {
   numberOfTicks?: number;
   tickValue?: (d: any) => string | number;
   tickSize?: number;
+  style?: DecorativeAxisStyle;
 }
 
-export class DecorativeAxis extends AbstractSeries<RVDatum> {
-  render() {
-    const props = this.props as DecorativeAxisProps &
-      AbstractSeriesProps & {style?: any};
-    const {
-      animation,
-      className,
-      marginLeft,
-      marginTop,
-      axisStart,
-      axisEnd,
-      axisDomain,
-      numberOfTicks,
-      tickValue,
-      tickSize,
-      style
-    } = props;
-
-    if (animation) {
-      return (
-        <Animation {...props} {...{animatedProps}}>
-          <DecorativeAxis {...props} animation={null as any} />
-        </Animation>
-      );
+export function DecorativeAxis(props: DecorativeAxisProps): JSX.Element {
+  const {
+    animation,
+    className = '',
+    marginLeft = 0,
+    marginTop = 0,
+    axisStart,
+    axisEnd,
+    axisDomain,
+    numberOfTicks = 10,
+    tickValue = DEFAULT_FORMAT,
+    tickSize = 5,
+    style = {
+      line: {strokeWidth: 1},
+      ticks: {strokeWidth: 2},
+      text: {}
     }
+  } = props;
 
-    const x = this._getAttributeFunctor('x') as (datum: any) => number;
-    const y = this._getAttributeFunctor('y') as (datum: any) => number;
-
+  if (animation) {
     return (
-      <g
-        className={getCombinedClassName(predefinedClassName, className)}
-        transform={`translate(${marginLeft},${marginTop})`}
-      >
-        <line
-          {...{
-            x1: x({x: axisStart.x}),
-            x2: x({x: axisEnd.x}),
-            y1: y({y: axisStart.y}),
-            y2: y({y: axisEnd.y}),
-            ...(style as any).line
-          }}
-          className="rv-xy-plot__axis__line"
-        />
-        <g className="rv-xy-manipulable-axis__ticks">
-          {DecorativeAxisTicks({
-            axisDomain: axisDomain!,
-            axisEnd: {x: x(axisEnd), y: y(axisEnd)},
-            axisStart: {x: x(axisStart), y: y(axisStart)},
-            numberOfTicks: numberOfTicks!,
-            tickValue: tickValue!,
-            tickSize: tickSize!,
-            style: style as any
-          })}
-        </g>
-      </g>
+      <Animation {...props} {...{animatedProps}}>
+        <DecorativeAxis {...props} animation={null as any} />
+      </Animation>
     );
   }
+
+  const x = getAttributeFunctor(props, 'x') as (datum: any) => number;
+  const y = getAttributeFunctor(props, 'y') as (datum: any) => number;
+
+  return (
+    <g
+      className={getCombinedClassName(predefinedClassName, className)}
+      transform={`translate(${marginLeft},${marginTop})`}
+    >
+      <line
+        {...{
+          x1: x({x: axisStart.x}),
+          x2: x({x: axisEnd.x}),
+          y1: y({y: axisStart.y}),
+          y2: y({y: axisEnd.y}),
+          ...style.line
+        }}
+        className="rv-xy-plot__axis__line"
+      />
+      <g className="rv-xy-manipulable-axis__ticks">
+        {DecorativeAxisTicks({
+          axisDomain,
+          axisEnd: {x: x(axisEnd), y: y(axisEnd)},
+          axisStart: {x: x(axisStart), y: y(axisStart)},
+          numberOfTicks,
+          tickValue,
+          tickSize,
+          style
+        })}
+      </g>
+    </g>
+  );
 }
 
 const DEFAULT_FORMAT = formatTickValue;
 
 (DecorativeAxis as any).displayName = 'DecorativeAxis';
+(DecorativeAxis as any).requiresSVG = true;
 (DecorativeAxis as any).defaultProps = {
   className: '',
   numberOfTicks: 10,
   tickValue: (d: any) => DEFAULT_FORMAT(d),
   tickSize: 5,
   style: {
-    line: {
-      strokeWidth: 1
-    },
-    ticks: {
-      strokeWidth: 2
-    },
+    line: {strokeWidth: 1},
+    ticks: {strokeWidth: 2},
     text: {}
   }
 };

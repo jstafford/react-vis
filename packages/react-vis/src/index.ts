@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-export {AbstractSeries} from 'plot/series/abstract-series';
 export {ArcSeries} from 'plot/series/arc-series';
 export {AreaSeries} from 'plot/series/area-series';
 export {Borders} from 'plot/borders';

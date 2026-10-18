@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import React, {PureComponent} from 'react';
+import React from 'react';
 
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -71,85 +71,67 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export class GridLines extends PureComponent<GridLinesProps> {
-  _getDefaultProps() {
-    const {
-      innerWidth = 0,
-      innerHeight = 0,
-      marginTop = 0,
-      marginLeft = 0,
-      direction
-    } = this.props;
-    return {
-      left: marginLeft,
-      top: marginTop,
-      width: innerWidth,
-      height: innerHeight,
-      tickTotal: getTicksTotalFromSize(
-        direction === VERTICAL ? innerWidth : innerHeight
-      )
-    };
-  }
+export function GridLines(props: GridLinesProps): JSX.Element {
+  const {
+    direction = VERTICAL,
+    innerWidth = 0,
+    innerHeight = 0,
+    marginTop = 0,
+    marginLeft = 0,
+    animation,
+    className,
+    attr,
+    width = innerWidth,
+    height = innerHeight,
+    style,
+    tickTotal = getTicksTotalFromSize(
+      direction === VERTICAL ? innerWidth : innerHeight
+    ),
+    tickValues,
+    top = marginTop,
+    left = marginLeft
+  } = props;
 
-  render() {
-    const {animation, className} = this.props;
-    if (animation) {
-      return (
-        <Animation {...this.props} {...{animatedProps}}>
-          <GridLines {...this.props} animation={null} />
-        </Animation>
-      );
-    }
-
-    const props = {
-      ...this._getDefaultProps(),
-      ...this.props
-    };
-
-    const {
-      attr,
-      direction,
-      width,
-      height,
-      style,
-      tickTotal,
-      tickValues,
-      top,
-      left
-    } = props;
-    const isVertical = direction === VERTICAL;
-    const tickXAttr = isVertical ? 'y' : 'x';
-    const tickYAttr = isVertical ? 'x' : 'y';
-    const length = isVertical ? height : width;
-
-    const scale = getAttributeScale(props, attr) as (value: any) => number;
-    const values = getTickValues(scale as any, tickTotal, tickValues);
-
+  if (animation) {
     return (
-      <g
-        transform={`translate(${left},${top})`}
-        className={getCombinedClassName('rv-xy-plot__grid-lines', className)}
-      >
-        {values.map((v, i) => {
-          const pos = scale(v);
-          const pathProps: {[key: string]: number} = {
-            [`${tickYAttr}1`]: pos,
-            [`${tickYAttr}2`]: pos,
-            [`${tickXAttr}1`]: 0,
-            [`${tickXAttr}2`]: length
-          };
-          return (
-            <line
-              {...pathProps}
-              key={i}
-              className="rv-xy-plot__grid-lines__line"
-              style={style}
-            />
-          );
-        })}
-      </g>
+      <Animation {...props} {...{animatedProps}}>
+        <GridLines {...props} animation={null} />
+      </Animation>
     );
   }
+
+  const isVertical = direction === VERTICAL;
+  const tickXAttr = isVertical ? 'y' : 'x';
+  const tickYAttr = isVertical ? 'x' : 'y';
+  const length = isVertical ? height : width;
+
+  const scale = getAttributeScale(props, attr) as (value: any) => number;
+  const values = getTickValues(scale as any, tickTotal, tickValues);
+
+  return (
+    <g
+      transform={`translate(${left},${top})`}
+      className={getCombinedClassName('rv-xy-plot__grid-lines', className)}
+    >
+      {values.map((v, i) => {
+        const pos = scale(v);
+        const pathProps: {[key: string]: number} = {
+          [`${tickYAttr}1`]: pos,
+          [`${tickYAttr}2`]: pos,
+          [`${tickXAttr}1`]: 0,
+          [`${tickXAttr}2`]: length
+        };
+        return (
+          <line
+            {...pathProps}
+            key={i}
+            className="rv-xy-plot__grid-lines__line"
+            style={style}
+          />
+        );
+      })}
+    </g>
+  );
 }
 
 (GridLines as any).displayName = 'GridLines';

@@ -52,6 +52,10 @@ export interface AbstractSeriesProps<T extends RVDatum = RVDatum> {
   [key: string]: any;
 }
 
+export const defaultGetParentConfig = (attr?: string): Record<string, unknown> => {
+  return {};
+};
+
 export const abstractSeriesDefaultProps = {
   className: '',
   stack: false,

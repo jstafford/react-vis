@@ -22,7 +22,7 @@ import {rgb} from 'd3-color';
 
 import {DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor, getAttr0Functor} from 'utils/scales-utils';
-import {AbstractSeries, AbstractSeriesProps} from './abstract-series';
+import {AbstractSeriesProps, defaultGetParentConfig} from './abstract-series-hook';
 
 export interface RectSeriesCanvasProps extends AbstractSeriesProps<any> {
   linePosAttr?: string;
@@ -45,7 +45,7 @@ export const RectSeriesCanvas = (({
 (RectSeriesCanvas as any).requiresSVG = false;
 (RectSeriesCanvas as any).isCanvas = true;
 (RectSeriesCanvas as any).displayName = 'RectSeriesCanvas';
-(RectSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(RectSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
 (RectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     const {
       data,

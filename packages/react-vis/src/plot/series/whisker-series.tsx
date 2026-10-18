@@ -25,8 +25,7 @@ import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
 import {DEFAULT_OPACITY} from 'theme';
 
-import {AbstractSeries, AbstractSeriesProps} from './abstract-series';
-import {useAbstractSeries} from './abstract-series-hook';
+import {useAbstractSeries, AbstractSeriesProps, defaultGetParentConfig} from './abstract-series-hook';
 
 const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--whisker';
 const DEFAULT_STROKE_WIDTH = 1;
@@ -251,3 +250,4 @@ export function WhiskerSeries({
 
 (WhiskerSeries as any).displayName = 'WhiskerSeries';
 (WhiskerSeries as any).requiresSVG = true;
+(WhiskerSeries as any).getParentConfig = defaultGetParentConfig;

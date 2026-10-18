@@ -24,8 +24,7 @@ import React from 'react';
 
 import {DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor, getAttributeValue} from 'utils/scales-utils';
-import {AbstractSeries} from './abstract-series';
-import {AbstractSeriesProps} from './abstract-series-hook';
+import {AbstractSeriesProps, defaultGetParentConfig} from './abstract-series-hook';
 
 export interface LineSeriesCanvasProps extends AbstractSeriesProps<any> {
   strokeWidth?: number;
@@ -48,7 +47,7 @@ export const LineSeriesCanvas = (({
 (LineSeriesCanvas as any).requiresSVG = false;
 (LineSeriesCanvas as any).isCanvas = true;
 (LineSeriesCanvas as any).displayName = 'LineSeriesCanvas';
-(LineSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(LineSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
 (LineSeriesCanvas as any).renderLayer = (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       curve,

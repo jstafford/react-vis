@@ -20,8 +20,7 @@
 
 import {MarkSeriesCanvas} from './mark-series-canvas';
 import {LineSeriesCanvas} from './line-series-canvas';
-import {AbstractSeries} from './abstract-series';
-import {AbstractSeriesProps} from './abstract-series-hook';
+import {AbstractSeriesProps, defaultGetParentConfig} from './abstract-series-hook';
 
 export interface LineMarkSeriesCanvasProps extends AbstractSeriesProps<any> {}
 
@@ -39,7 +38,7 @@ export const LineMarkSeriesCanvas = (({
 (LineMarkSeriesCanvas as any).requiresSVG = false;
 (LineMarkSeriesCanvas as any).isCanvas = true;
 (LineMarkSeriesCanvas as any).displayName = 'LineMarkSeriesCanvas';
-(LineMarkSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(LineMarkSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
 (LineMarkSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     LineSeriesCanvas.renderLayer(props, ctx);
     MarkSeriesCanvas.renderLayer(props, ctx);

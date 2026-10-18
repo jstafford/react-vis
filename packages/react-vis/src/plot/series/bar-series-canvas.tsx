@@ -27,8 +27,7 @@ import {
   getAttr0Functor
 } from 'utils/scales-utils';
 import {getStackParams} from 'utils/series-utils';
-import {AbstractSeriesProps} from './abstract-series-hook';
-import {AbstractSeries} from './abstract-series';
+import {AbstractSeriesProps, defaultGetParentConfig} from './abstract-series-hook';
 
 export interface BarSeriesCanvasProps extends AbstractSeriesProps<any> {
   linePosAttr?: string;
@@ -57,7 +56,7 @@ export const BarSeriesCanvas = (({
 (BarSeriesCanvas as any).requiresSVG = false;
 (BarSeriesCanvas as any).isCanvas = true;
 (BarSeriesCanvas as any).displayName = 'BarSeriesCanvas';
-(BarSeriesCanvas as any).getParentConfig = (AbstractSeries as any).getParentConfig;
+(BarSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
 (BarSeriesCanvas as any).renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       data,
