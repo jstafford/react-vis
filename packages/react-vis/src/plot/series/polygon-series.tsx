@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -44,7 +45,7 @@ export interface PolygonSeriesProps extends AbstractSeriesProps<any> {
   color: string;
 }
 
-export const PolygonSeries = ({
+export const PolygonSeries: SeriesComponentType<PolygonSeriesProps> = ({
   color = DEFAULT_COLOR,
   ...rest
 }: PolygonSeriesProps): JSX.Element | null => {
@@ -84,5 +85,5 @@ export const PolygonSeries = ({
       />
     );
   };
-(PolygonSeries as any).displayName = 'PolygonSeries';
-(PolygonSeries as any).requiresSVG = true;
+PolygonSeries.displayName = 'PolygonSeries';
+PolygonSeries.requiresSVG = true;

@@ -1,6 +1,7 @@
 import React from 'react';
 import {interpolate} from 'd3-interpolate';
 import {spring, Motion, presets, Presets} from 'react-motion';
+import { SeriesComponentType } from 'seriesComponentType';
 
 export type AnimationParam =
   | string
@@ -66,7 +67,7 @@ export const extractAnimatedPropValues = (props: AnimationProps): {[key: string]
   }, {});
 }
 
-export const Animation: any = (props: AnimationProps): React.ReactElement => {
+export const Animation: SeriesComponentType<AnimationProps> = (props: AnimationProps): React.ReactElement => {
   const interpolator = React.useRef<((t: number) => any) | null>(null);
   const previousProps = React.useRef<AnimationProps | null>(null);
 

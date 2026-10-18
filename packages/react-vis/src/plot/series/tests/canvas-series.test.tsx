@@ -24,13 +24,13 @@ const scaleProps = {
 
 describe('Canvas series', () => {
   test('exposes component metadata on function types', () => {
-    expect((LineSeries as any).displayName).toBe('LineSeries');
-    expect((LineSeries as any).requiresSVG).toBe(true);
+    expect(LineSeries.displayName).toBe('LineSeries');
+    expect(LineSeries.requiresSVG).toBe(true);
     expect(isSeriesChild(<LineSeries data={[]} />)).toBe(true);
 
-    expect((LineSeriesCanvas as any).displayName).toBe('LineSeriesCanvas');
-    expect((LineSeriesCanvas as any).requiresSVG).toBe(false);
-    expect((LineSeriesCanvas as any).isCanvas).toBe(true);
+    expect(LineSeriesCanvas.displayName).toBe('LineSeriesCanvas');
+    expect(LineSeriesCanvas.requiresSVG).toBe(false);
+    expect(LineSeriesCanvas.isCanvas).toBe(true);
   });
 
   test('renders a canvas with scaled dimensions', () => {
@@ -68,11 +68,11 @@ describe('Canvas series', () => {
       lineWidth: 1
     } as any;
 
-    LineSeriesCanvas.renderLayer(
+    LineSeriesCanvas.renderLayer!(
       {...scaleProps, data: [{x: 0, y: 0}, {x: 2, y: 20}], strokeWidth: 3},
       context
     );
-    MarkSeriesCanvas.renderLayer(
+    MarkSeriesCanvas.renderLayer!(
       {...scaleProps, data: [{x: 1, y: 10}], size: 4},
       context
     );

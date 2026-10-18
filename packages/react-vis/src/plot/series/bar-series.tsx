@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS, getStackParams} from 'utils/series-utils';
@@ -38,7 +39,7 @@ export interface BarSeriesProps extends AbstractSeriesProps<any> {
   barWidth?: number;
 }
 
-export const BarSeries = ({
+export const BarSeries: SeriesComponentType<BarSeriesProps> = ({
   barWidth = 0.85,
   ...restProps
 }: BarSeriesProps): JSX.Element | null => {
@@ -123,5 +124,5 @@ export const BarSeries = ({
     );
   };
 
-(BarSeries as any).displayName = 'BarSeries';
-(BarSeries as any).requiresSVG = true;
+BarSeries.displayName = 'BarSeries';
+BarSeries.requiresSVG = true;

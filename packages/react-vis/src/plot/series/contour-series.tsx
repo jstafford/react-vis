@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {contourDensity} from 'd3-contour';
 import {geoPath} from 'd3-geo';
 import {scaleLinear} from 'd3-scale';
@@ -48,7 +50,7 @@ const getDomain = (data: Array<{value: number}>): {min: number; max: number} => 
   );
 };
 
-export const ContourSeries = ({
+export const ContourSeries: SeriesComponentType<ContourSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -124,5 +126,5 @@ export const ContourSeries = ({
     );
   };
 
-(ContourSeries as any).displayName = 'ContourSeries';
-(ContourSeries as any).requiresSVG = true;
+ContourSeries.displayName = 'ContourSeries';
+ContourSeries.requiresSVG = true;

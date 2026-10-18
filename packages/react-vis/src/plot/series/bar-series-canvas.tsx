@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {rgb} from 'd3-color';
 
 import {DEFAULT_OPACITY} from 'theme';
@@ -47,17 +48,17 @@ interface BarSeriesCanvasComponent {
   renderLayer: (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const BarSeriesCanvas = (({
+export const BarSeriesCanvas: SeriesComponentType<BarSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {}
 }: BarSeriesCanvasProps) => null) as BarSeriesCanvasComponent;
 
-(BarSeriesCanvas as any).requiresSVG = false;
-(BarSeriesCanvas as any).isCanvas = true;
-(BarSeriesCanvas as any).displayName = 'BarSeriesCanvas';
-(BarSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
-(BarSeriesCanvas as any).renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
+BarSeriesCanvas.requiresSVG = false;
+BarSeriesCanvas.isCanvas = true;
+BarSeriesCanvas.displayName = 'BarSeriesCanvas';
+BarSeriesCanvas.getParentConfig = defaultGetParentConfig;
+BarSeriesCanvas.renderLayer = (props: BarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       data,
       linePosAttr,

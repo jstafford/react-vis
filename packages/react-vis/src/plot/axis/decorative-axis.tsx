@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 import {format} from 'd3-format';
 
 import {AbstractSeriesProps} from 'plot/series/abstract-series';
@@ -71,7 +72,7 @@ export interface DecorativeAxisProps extends Omit<AbstractSeriesProps, 'style'> 
   style?: DecorativeAxisStyle;
 }
 
-export const DecorativeAxis = (props: DecorativeAxisProps): JSX.Element => {
+export const DecorativeAxis: SeriesComponentType<DecorativeAxisProps> = (props: DecorativeAxisProps): JSX.Element => {
   const {
     animation,
     className = '',
@@ -133,8 +134,8 @@ export const DecorativeAxis = (props: DecorativeAxisProps): JSX.Element => {
 
 const DEFAULT_FORMAT = formatTickValue;
 
-(DecorativeAxis as any).displayName = 'DecorativeAxis';
-(DecorativeAxis as any).requiresSVG = true;
+DecorativeAxis.displayName = 'DecorativeAxis';
+DecorativeAxis.requiresSVG = true;
 (DecorativeAxis as any).defaultProps = {
   className: '',
   numberOfTicks: 10,

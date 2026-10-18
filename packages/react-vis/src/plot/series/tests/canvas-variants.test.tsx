@@ -37,7 +37,7 @@ const context = () => {
 describe('Canvas variants', () => {
   test('draws bar and rect layers', () => {
     const canvas = context();
-    BarSeriesCanvas.renderLayer({
+    BarSeriesCanvas.renderLayer!({
       ...linearProps,
       data: [{x: 5, y: 8}],
       linePosAttr: 'x',
@@ -45,7 +45,7 @@ describe('Canvas variants', () => {
       valuePosAttr: 'y',
       valueSizeAttr: 'height'
     }, canvas);
-    RectSeriesCanvas.renderLayer({
+    RectSeriesCanvas.renderLayer!({
       ...linearProps,
       data: [{x: 2, x0: 1, y: 8, y0: 4}],
       linePosAttr: 'x',
@@ -61,7 +61,7 @@ describe('Canvas variants', () => {
 
   test('composes line and mark drawing layers', () => {
     const canvas = context();
-    LineMarkSeriesCanvas.renderLayer({
+    LineMarkSeriesCanvas.renderLayer!({
       ...linearProps,
       data: [{x: 0, y: 0}, {x: 10, y: 10}],
       size: 3

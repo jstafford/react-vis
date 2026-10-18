@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
@@ -312,7 +314,7 @@ const getPolygonPoints = (props: any): React.ReactNode[] | undefined => {
   });
 };
 
-export const RadarChart = (props: RadarChartProps): JSX.Element => {
+export const RadarChart: SeriesComponentType<RadarChartProps> = (props: RadarChartProps): JSX.Element => {
   const {
     animation,
     className = '',
@@ -405,4 +407,4 @@ export const RadarChart = (props: RadarChartProps): JSX.Element => {
     </XYPlot>
   );
 };
-(RadarChart as any).displayName = 'RadarChart';
+RadarChart.displayName = 'RadarChart';

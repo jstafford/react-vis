@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {
   DiscreteColorLegend,
@@ -47,7 +48,7 @@ const defaultSearchFn = (items: LegendItemValue[], search: string) =>
     )
 
 
-export const SearchableDiscreteColorLegend = ({
+export const SearchableDiscreteColorLegend: SeriesComponentType<SearchableDiscreteColorLegendProps> = ({
   className = '',
   colors,
   height,
@@ -96,4 +97,4 @@ export const SearchableDiscreteColorLegend = ({
   );
 }
 
-(SearchableDiscreteColorLegend as any).displayName = 'SearchableDiscreteColorLegend';
+SearchableDiscreteColorLegend.displayName = 'SearchableDiscreteColorLegend';

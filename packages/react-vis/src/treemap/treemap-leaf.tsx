@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation, AnimationParam} from 'animation';
 import {getFontColorFromBackground} from 'utils/scales-utils';
@@ -58,7 +59,7 @@ export interface TreemapLeafProps {
   [key: string]: any;
 }
 
-export const TreemapLeaf = ({
+export const TreemapLeaf: SeriesComponentType<TreemapLeafProps> = ({
   animation,
   getLabel = (datum: any) => datum.title,
   mode,
@@ -129,4 +130,4 @@ export const TreemapLeaf = ({
     </div>
   );
 };
-(TreemapLeaf as any).displayName = 'TreemapLeaf';
+TreemapLeaf.displayName = 'TreemapLeaf';

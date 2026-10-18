@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -32,7 +33,7 @@ const predefinedClassName = 'rv-xy-plot__series rv-xy-plot__series--heatmap';
 export interface HeatmapSeriesProps extends AbstractSeriesProps<any> {
 }
 
-export const HeatmapSeries = ({
+export const HeatmapSeries: SeriesComponentType<HeatmapSeriesProps> = ({
   ...restProps
 }: HeatmapSeriesProps): JSX.Element | null => {
   const {
@@ -90,8 +91,8 @@ export const HeatmapSeries = ({
     );
 }
 
-(HeatmapSeries as any).getParentConfig = (attr: string): {isDomainAdjustmentNeeded: boolean} => {
+HeatmapSeries.getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean} => {
   return {isDomainAdjustmentNeeded: attr === 'x' || attr === 'y'};
 };
-(HeatmapSeries as any).displayName = 'HeatmapSeries';
-(HeatmapSeries as any).requiresSVG = true;
+HeatmapSeries.displayName = 'HeatmapSeries';
+HeatmapSeries.requiresSVG = true;

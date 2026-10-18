@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {AbstractSeriesProps} from './series/abstract-series';
 import {getAttributeScale} from 'utils/scales-utils';
@@ -52,7 +53,7 @@ const getLocs = (evt: any) => {
   return {xLoc, yLoc};
 }
 
-export const Highlight = (props: HighlightProps): JSX.Element => {
+export const Highlight: SeriesComponentType<HighlightProps> = (props: HighlightProps): JSX.Element => {
   const [state, setState] = useState<HighlightState>({
     dragging: false,
     brushArea: {top: 0, right: 0, bottom: 0, left: 0},
@@ -320,7 +321,7 @@ export const Highlight = (props: HighlightProps): JSX.Element => {
     );
 }
 
-(Highlight as any).displayName = 'HighlightOverlay';
+Highlight.displayName = 'HighlightOverlay';
 (Highlight as any).defaultProps = {
   color: 'rgb(77, 182, 172)',
   className: '',
@@ -328,7 +329,7 @@ export const Highlight = (props: HighlightProps): JSX.Element => {
   enableY: true,
   opacity: 0.3
 };
-(Highlight as any).requiresSVG = true;
+Highlight.requiresSVG = true;
 
 
 export default Highlight;

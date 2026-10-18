@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {rgb} from 'd3-color';
 
 import {DEFAULT_OPACITY} from 'theme';
@@ -36,17 +37,17 @@ interface RectSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const RectSeriesCanvas = (({
+export const RectSeriesCanvas: SeriesComponentType<RectSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
 }: RectSeriesCanvasProps): null => null) as RectSeriesCanvasComponent;
 
-(RectSeriesCanvas as any).requiresSVG = false;
-(RectSeriesCanvas as any).isCanvas = true;
-(RectSeriesCanvas as any).displayName = 'RectSeriesCanvas';
-(RectSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
-(RectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
+RectSeriesCanvas.requiresSVG = false;
+RectSeriesCanvas.isCanvas = true;
+RectSeriesCanvas.displayName = 'RectSeriesCanvas';
+RectSeriesCanvas.getParentConfig = defaultGetParentConfig;
+RectSeriesCanvas.renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
     const {
       data,
       linePosAttr,

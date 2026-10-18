@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
@@ -141,7 +142,7 @@ const transformation = (
   }
 });
 
-export const AxisTitle = ({
+export const AxisTitle: SeriesComponentType<AxisTitleProps> = ({
   orientation,
   width,
   height,
@@ -165,4 +166,4 @@ export const AxisTitle = ({
     </g>
   );
 };
-(AxisTitle as any).displayName = 'AxisTitle';
+AxisTitle.displayName = 'AxisTitle';

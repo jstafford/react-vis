@@ -19,13 +19,14 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {BarSeries} from './bar-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
 
 export interface HorizontalBarSeriesProps extends AbstractSeriesProps<any> {}
 
-export const HorizontalBarSeries = ({
+export const HorizontalBarSeries: SeriesComponentType<HorizontalBarSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -46,7 +47,7 @@ export const HorizontalBarSeries = ({
   );
 };
 
-(HorizontalBarSeries as any).getParentConfig = (attr?: string) => {
+HorizontalBarSeries.getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'y';
   const zeroBaseValue = attr === 'x';
   return {
@@ -54,5 +55,5 @@ export const HorizontalBarSeries = ({
     zeroBaseValue
   };
 };
-(HorizontalBarSeries as any).displayName = 'HorizontalBarSeries';
-(HorizontalBarSeries as any).requiresSVG = true;
+HorizontalBarSeries.displayName = 'HorizontalBarSeries';
+HorizontalBarSeries.requiresSVG = true;

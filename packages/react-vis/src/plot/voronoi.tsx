@@ -1,4 +1,6 @@
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {voronoi} from 'd3-voronoi';
 
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -48,7 +50,7 @@ const getExtent = ({innerWidth, innerHeight, marginLeft, marginTop}: VoronoiProp
   ] as [[number, number], [number, number]];
 };
 
-export const Voronoi = ({
+export const Voronoi: SeriesComponentType<VoronoiProps> = ({
   className,
   extent,
   nodes,
@@ -133,5 +135,5 @@ export const Voronoi = ({
     </g>
   );
 };
-(Voronoi as any).displayName = 'Voronoi';
-(Voronoi as any).requiresSVG = true;
+Voronoi.displayName = 'Voronoi';
+Voronoi.requiresSVG = true;

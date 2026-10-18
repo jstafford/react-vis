@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 interface BordersProps {
@@ -46,7 +47,7 @@ const CLASSES = {
   top: 'rv-xy-plot__borders-top'
 };
 
-export const Borders = ({
+export const Borders: SeriesComponentType<BordersProps> = ({
   marginTop = 0,
   marginBottom = 0,
   marginLeft = 0,
@@ -102,5 +103,5 @@ export const Borders = ({
   );
 }
 
-(Borders as any).displayName = 'Borders';
-(Borders as any).requiresSVG = true;
+Borders.displayName = 'Borders';
+Borders.requiresSVG = true;

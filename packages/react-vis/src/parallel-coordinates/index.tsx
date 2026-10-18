@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React, {useState} from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 import {scaleLinear} from 'd3-scale';
 import {format} from 'd3-format';
 
@@ -201,7 +202,7 @@ const getLines = ({
   });
 }
 
-export const ParallelCoordinates: any = ({
+export const ParallelCoordinates: SeriesComponentType<ParallelCoordinatesProps> = ({
   animation,
   brushing,
   className = '',
@@ -293,4 +294,4 @@ export const ParallelCoordinates: any = ({
   );
 };
 
-(ParallelCoordinates as any).displayName = 'ParallelCoordinates';
+ParallelCoordinates.displayName = 'ParallelCoordinates';

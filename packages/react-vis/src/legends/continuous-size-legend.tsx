@@ -20,6 +20,7 @@
 
 import React from 'react';
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {getCombinedClassName} from 'utils/styling-utils';
 
 type LegendTitle = number | string;
@@ -35,7 +36,7 @@ export interface ContinuousSizeLegendProps {
   width?: number;
 }
 
-export const ContinuousSizeLegend = ({
+export const ContinuousSizeLegend: SeriesComponentType<ContinuousSizeLegendProps> = ({
   startTitle,
   endTitle,
   startSize = 2,
@@ -82,4 +83,4 @@ export const ContinuousSizeLegend = ({
   );
 }
 
-(ContinuousSizeLegend as any).displayName = 'ContinuousSizeLegend';
+ContinuousSizeLegend.displayName = 'ContinuousSizeLegend';

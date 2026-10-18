@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {AbstractSeriesProps} from './abstract-series-hook';
 import {BarSeriesCanvas} from './bar-series-canvas';
 
@@ -28,16 +29,16 @@ interface VerticalBarSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const VerticalBarSeriesCanvas = (({
+export const VerticalBarSeriesCanvas: SeriesComponentType<VerticalBarSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
 }: VerticalBarSeriesCanvasProps): null => null) as VerticalBarSeriesCanvasComponent;
 
-(VerticalBarSeriesCanvas as any).requiresSVG = false;
-(VerticalBarSeriesCanvas as any).isCanvas = true;
-(VerticalBarSeriesCanvas as any).displayName = 'VerticalBarSeriesCanvas';
-(VerticalBarSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
+VerticalBarSeriesCanvas.requiresSVG = false;
+VerticalBarSeriesCanvas.isCanvas = true;
+VerticalBarSeriesCanvas.displayName = 'VerticalBarSeriesCanvas';
+VerticalBarSeriesCanvas.getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = attr === 'x';
     const zeroBaseValue = attr === 'y';
     return {
@@ -45,8 +46,8 @@ export const VerticalBarSeriesCanvas = (({
       zeroBaseValue
     };
 };
-(VerticalBarSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
-    BarSeriesCanvas.renderLayer(
+VerticalBarSeriesCanvas.renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
+    BarSeriesCanvas.renderLayer!(
       {
         ...props,
         linePosAttr: 'x',

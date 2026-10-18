@@ -1,4 +1,5 @@
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 interface ContentClipPathProps {
   id?: string;
@@ -6,7 +7,7 @@ interface ContentClipPathProps {
   innerHeight?: number;
 }
 
-export const ContentClipPath = ({
+export const ContentClipPath: SeriesComponentType<ContentClipPathProps> = ({
   id = 'content-area',
   innerWidth,
   innerHeight

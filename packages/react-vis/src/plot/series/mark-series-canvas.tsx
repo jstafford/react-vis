@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {rgb} from 'd3-color';
 
 import {DEFAULT_SIZE, DEFAULT_OPACITY} from 'theme';
@@ -32,17 +33,17 @@ interface MarkSeriesCanvasComponent {
   renderLayer: (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const MarkSeriesCanvas = (({
+export const MarkSeriesCanvas: SeriesComponentType<MarkSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
 }: MarkSeriesCanvasProps): null => null) as MarkSeriesCanvasComponent;
 
-(MarkSeriesCanvas as any).requiresSVG = false;
-(MarkSeriesCanvas as any).isCanvas = true;
-(MarkSeriesCanvas as any).displayName = 'MarkSeriesCanvas';
-(MarkSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
-(MarkSeriesCanvas as any).renderLayer = (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
+MarkSeriesCanvas.requiresSVG = false;
+MarkSeriesCanvas.isCanvas = true;
+MarkSeriesCanvas.displayName = 'MarkSeriesCanvas';
+MarkSeriesCanvas.getParentConfig = defaultGetParentConfig;
+MarkSeriesCanvas.renderLayer = (props: MarkSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {data, marginLeft, marginTop} = props;
 
     const x = getAttributeFunctor(props, 'x');

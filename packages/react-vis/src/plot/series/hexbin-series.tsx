@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {Animation} from 'animation';
 import {hexbin} from 'd3-hexbin';
 import {scaleLinear} from 'd3-scale';
@@ -47,7 +49,7 @@ const getColorDomain = (props: HexbinSeriesProps,
   return [0, Math.max(...hexes.map(row => row.length))];
 };
 
-export const HexbinSeries = ({
+export const HexbinSeries: SeriesComponentType<HexbinSeriesProps> = ({
   radius = 20,
   colorRange = CONTINUOUS_COLOR_RANGE,
   xOffset = 0,
@@ -130,5 +132,5 @@ export const HexbinSeries = ({
       </g>
     );
   };
-(HexbinSeries as any).displayName = 'HexbinSeries';
-(HexbinSeries as any).requiresSVG = true;
+HexbinSeries.displayName = 'HexbinSeries';
+HexbinSeries.requiresSVG = true;

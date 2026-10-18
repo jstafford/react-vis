@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {
   DiscreteColorLegendItem,
@@ -83,7 +84,7 @@ const getOptionalLegendProp = <T extends keyof LegendItem,>(item: LegendItemValu
     : undefined;
 };
 
-export const DiscreteColorLegend = ({
+export const DiscreteColorLegend: SeriesComponentType<DiscreteColorLegendProps> = ({
   className = '',
   colors = DISCRETE_COLOR_RANGE,
   height,
@@ -133,4 +134,4 @@ export const DiscreteColorLegend = ({
   );
 }
 
-(DiscreteColorLegend as any).displayName = 'DiscreteColorLegendItem';
+DiscreteColorLegend.displayName = 'DiscreteColorLegendItem';

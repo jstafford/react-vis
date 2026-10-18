@@ -1,4 +1,6 @@
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {
   sankey,
   sankeyLinkHorizontal,
@@ -103,7 +105,7 @@ export interface SankeyProps {
   [key: string]: any;
 }
 
-export const Sankey = (props: SankeyProps): JSX.Element => {
+export const Sankey: SeriesComponentType<SankeyProps> = (props: SankeyProps): JSX.Element => {
   const {
     align = 'justify',
     animation,
@@ -251,4 +253,4 @@ export const Sankey = (props: SankeyProps): JSX.Element => {
     </XYPlot>
   );
 };
-(Sankey as any).displayName = 'Sankey';
+Sankey.displayName = 'Sankey';

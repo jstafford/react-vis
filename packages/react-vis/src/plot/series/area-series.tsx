@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 import * as d3Shape from 'd3-shape';
 
 import {Animation} from 'animation';
@@ -59,7 +60,7 @@ const renderArea = (data: any[],
     return area(data);
   };
 
-export const AreaSeries = ({
+export const AreaSeries: SeriesComponentType<AreaSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -134,5 +135,5 @@ export const AreaSeries = ({
     );
   };
 
-(AreaSeries as any).displayName = 'AreaSeries';
-(AreaSeries as any).requiresSVG = true;
+AreaSeries.displayName = 'AreaSeries';
+AreaSeries.requiresSVG = true;

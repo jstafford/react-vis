@@ -21,6 +21,7 @@
 import {rgb} from 'd3-color';
 import * as d3Shape from 'd3-shape';
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {DEFAULT_OPACITY} from 'theme';
 import {getAttributeFunctor, getAttributeValue} from 'utils/scales-utils';
@@ -37,18 +38,18 @@ interface LineSeriesCanvasComponent {
   renderLayer: (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const LineSeriesCanvas = (({
+export const LineSeriesCanvas: SeriesComponentType<LineSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
   strokeWidth = 2,
 }: LineSeriesCanvasProps): JSX.Element => <div />) as LineSeriesCanvasComponent;
 
-(LineSeriesCanvas as any).requiresSVG = false;
-(LineSeriesCanvas as any).isCanvas = true;
-(LineSeriesCanvas as any).displayName = 'LineSeriesCanvas';
-(LineSeriesCanvas as any).getParentConfig = defaultGetParentConfig;
-(LineSeriesCanvas as any).renderLayer = (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
+LineSeriesCanvas.requiresSVG = false;
+LineSeriesCanvas.isCanvas = true;
+LineSeriesCanvas.displayName = 'LineSeriesCanvas';
+LineSeriesCanvas.getParentConfig = defaultGetParentConfig;
+LineSeriesCanvas.renderLayer = (props: LineSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
     const {
       curve,
       data,

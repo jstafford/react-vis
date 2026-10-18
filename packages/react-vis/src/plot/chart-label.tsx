@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -37,7 +38,7 @@ interface ChartLabelProps {
   yPercent: number;
 }
 
-export const ChartLabel: any = ({
+export const ChartLabel: SeriesComponentType<ChartLabelProps> = ({
   innerHeight = 0,
   innerWidth = 0,
   marginBottom = 0,
@@ -64,5 +65,5 @@ export const ChartLabel: any = ({
     </g>
   );
 };
-(ChartLabel as any).displayName = 'ChartLabel';
-(ChartLabel as any).requiresSVG = true;
+ChartLabel.displayName = 'ChartLabel';
+ChartLabel.requiresSVG = true;

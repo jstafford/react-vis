@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
@@ -26,7 +27,7 @@ import {Axis, AxisProps} from './axis';
 
 const {BOTTOM} = ORIENTATION;
 
-export const XAxis = ({
+export const XAxis: SeriesComponentType<AxisProps> = ({
   orientation = BOTTOM,
   attr = 'x',
   attrAxis = 'y',

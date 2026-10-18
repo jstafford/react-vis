@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React, {useEffect, useRef} from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {interpolate} from 'd3-interpolate';
 import {extractAnimatedPropValues} from 'animation';
@@ -120,7 +121,7 @@ const buildLayers = (newChildren: React.ReactElement[], oldChildren: React.React
     const interpolator = interpolate(oldAnimatedProps, newAnimatedProps ?? {});
 
     return {
-      renderLayer: (child.type as any).renderLayer,
+      renderLayer: (child.type as SeriesComponentType).renderLayer!,
       newProps: child.props,
       animation: child.props.animation,
       interpolator
@@ -128,7 +129,7 @@ const buildLayers = (newChildren: React.ReactElement[], oldChildren: React.React
   });
 };
 
-export const CanvasWrapper: any = ({
+export const CanvasWrapper: SeriesComponentType<CanvasWrapperProps> = ({
   pixelRatio = (window && window.devicePixelRatio) || 1,
   ...restProps
 }: CanvasWrapperProps): JSX.Element => {

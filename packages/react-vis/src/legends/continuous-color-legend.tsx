@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {CONTINUOUS_COLOR_RANGE} from 'theme';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -37,7 +38,7 @@ export interface ContinuousColorLegendProps {
   width?: number;
 }
 
-export const ContinuousColorLegend = ({
+export const ContinuousColorLegend: SeriesComponentType<ContinuousColorLegendProps> = ({
   startColor = CONTINUOUS_COLOR_RANGE[0],
   midColor,
   endColor = CONTINUOUS_COLOR_RANGE[1],
@@ -73,4 +74,4 @@ export const ContinuousColorLegend = ({
   );
 }
 
-(ContinuousColorLegend as any).displayName = 'ContinuousColorLegend';
+ContinuousColorLegend.displayName = 'ContinuousColorLegend';

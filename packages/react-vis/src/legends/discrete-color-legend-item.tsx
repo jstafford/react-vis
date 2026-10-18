@@ -20,6 +20,8 @@
 
 import React from 'react';
 
+import {SeriesComponentType} from 'seriesComponentType';
+
 export type LegendOrientation = 'vertical' | 'horizontal';
 export type StrokeStyle = 'dashed' | 'solid';
 
@@ -41,7 +43,7 @@ const STROKE_STYLES: Record<StrokeStyle, string | null> = {
   solid: null
 };
 
-export const DiscreteColorLegendItem = ({
+export const DiscreteColorLegendItem: SeriesComponentType<DiscreteColorLegendItemProps> = ({
   color,
   strokeDasharray,
   strokeStyle = 'solid',
@@ -86,4 +88,4 @@ export const DiscreteColorLegendItem = ({
   );
 }
 
-(DiscreteColorLegendItem as any).displayName = 'DiscreteColorLegendItem';
+DiscreteColorLegendItem.displayName = 'DiscreteColorLegendItem';

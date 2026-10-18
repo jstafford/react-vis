@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -73,7 +74,7 @@ const defaultFormat = (value: {[key: string]: any}) => {
   });
 };
 
-export const Hint: any = ({
+export const Hint: SeriesComponentType<HintProps> & {ORIENTATION: typeof ORIENTATION} = ({
   format = defaultFormat,
   align = {horizontal: ALIGN.AUTO, vertical: ALIGN.AUTO},
   style = {},
@@ -250,5 +251,5 @@ export const Hint: any = ({
     </div>
   );
 };
-(Hint as any).displayName = 'Hint';
-(Hint as any).ORIENTATION = ORIENTATION;
+Hint.displayName = 'Hint';
+Hint.ORIENTATION = ORIENTATION;

@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {TreemapLeaf} from './treemap-leaf';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -28,7 +29,7 @@ export interface TreemapDOMProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-export const TreemapDOM = ({
+export const TreemapDOM: SeriesComponentType<TreemapDOMProps> = ({
   animation,
   className,
   height,
@@ -78,4 +79,4 @@ export const TreemapDOM = ({
     </div>
   );
 };
-(TreemapDOM as any).displayName = 'TreemapDOM';
+TreemapDOM.displayName = 'TreemapDOM';

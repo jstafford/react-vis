@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import { SeriesComponentType } from 'seriesComponentType';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
@@ -31,7 +32,7 @@ export interface AxisLineProps {
   width: number;
 }
 
-export const AxisLine = ({
+export const AxisLine: SeriesComponentType<AxisLineProps> = ({
   orientation,
   width,
   height,
@@ -71,4 +72,4 @@ export const AxisLine = ({
     <line {...lineProps} className="rv-xy-plot__axis__line" style={style} />
   );
 };
-(AxisLine as any).displayName = 'AxisLine';
+AxisLine.displayName = 'AxisLine';

@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -75,7 +76,7 @@ const renderCircle = (d: any,
     return <circle {...attrs} />;
   };
 
-export const MarkSeries = ({
+export const MarkSeries: SeriesComponentType<MarkSeriesProps> = ({
   getNull: defaultGetNull = () => true,
   ...rest
 }: MarkSeriesProps): JSX.Element | null => {
@@ -133,5 +134,5 @@ export const MarkSeries = ({
       </g>
     );
   };
-(MarkSeries as any).displayName = 'MarkSeries';
-(MarkSeries as any).requiresSVG = true;
+MarkSeries.displayName = 'MarkSeries';
+MarkSeries.requiresSVG = true;

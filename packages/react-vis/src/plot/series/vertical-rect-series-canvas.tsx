@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {AbstractSeriesProps} from './abstract-series-hook';
 import {RectSeriesCanvas} from './rect-series-canvas';
 
@@ -28,16 +29,16 @@ interface VerticalRectSeriesCanvasComponent {
   renderLayer: (props: {[key: string]: any}, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const VerticalRectSeriesCanvas = (({
+export const VerticalRectSeriesCanvas: SeriesComponentType<VerticalRectSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
 }: VerticalRectSeriesCanvasProps): null => null) as VerticalRectSeriesCanvasComponent;
 
-(VerticalRectSeriesCanvas as any).requiresSVG = false;
-(VerticalRectSeriesCanvas as any).isCanvas = true;
-(VerticalRectSeriesCanvas as any).displayName = 'VerticalRectSeriesCanvas';
-(VerticalRectSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
+VerticalRectSeriesCanvas.requiresSVG = false;
+VerticalRectSeriesCanvas.isCanvas = true;
+VerticalRectSeriesCanvas.displayName = 'VerticalRectSeriesCanvas';
+VerticalRectSeriesCanvas.getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = false;
     const zeroBaseValue = attr === 'y';
     return {
@@ -45,8 +46,8 @@ export const VerticalRectSeriesCanvas = (({
       zeroBaseValue
     };
 };
-(VerticalRectSeriesCanvas as any).renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
-    RectSeriesCanvas.renderLayer(
+VerticalRectSeriesCanvas.renderLayer = (props: {[key: string]: any}, ctx: CanvasRenderingContext2D): void => {
+    RectSeriesCanvas.renderLayer!(
       {
         ...props,
         linePosAttr: 'x',

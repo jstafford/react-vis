@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 import {XYPlot} from 'plot/xy-plot';
 import {getDOMNode} from 'utils/react-utils';
 
@@ -105,7 +106,7 @@ interface FlexibleState {
 const makeFlexible = <P extends {height?: number; width?: number},>(Component: React.ComponentType<P>,
   isWidthFlexible: boolean,
   isHeightFlexible: boolean): React.FunctionComponent<Omit<P, 'height' | 'width'>> => {
-  const Result: React.FunctionComponent<Omit<P, 'height' | 'width'>> = props => {
+  const Result: SeriesComponentType<Omit<P, 'height' | 'width'>> = props => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = React.useState<FlexibleState>({
       height: 0,

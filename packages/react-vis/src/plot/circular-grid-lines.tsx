@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {getAttributeScale} from 'utils/scales-utils';
 import {Animation} from 'animation';
@@ -60,7 +61,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export const CircularGridLines = ({
+export const CircularGridLines: SeriesComponentType<CircularGridLinesProps> = ({
   animation,
   centerX = 0,
   centerY = 0,
@@ -126,5 +127,5 @@ export const CircularGridLines = ({
       </g>
     );
 }
-(CircularGridLines as any).displayName = 'CircularGridLines';
-(CircularGridLines as any).requiresSVG = true;
+CircularGridLines.displayName = 'CircularGridLines';
+CircularGridLines.requiresSVG = true;

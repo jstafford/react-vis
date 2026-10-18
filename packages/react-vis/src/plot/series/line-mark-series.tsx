@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {AbstractSeriesProps} from './abstract-series';
 import {LineSeries} from './line-series';
@@ -29,7 +30,7 @@ export interface LineMarkSeriesProps extends AbstractSeriesProps<any> {
   markStyle?: React.CSSProperties | {[key: string]: any};
 }
 
-export const LineMarkSeries = ({
+export const LineMarkSeries: SeriesComponentType<LineMarkSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -45,5 +46,5 @@ export const LineMarkSeries = ({
     </g>
   );
 };
-(LineMarkSeries as any).displayName = 'LineMarkSeries';
-(LineMarkSeries as any).requiresSVG = true;
+LineMarkSeries.displayName = 'LineMarkSeries';
+LineMarkSeries.requiresSVG = true;

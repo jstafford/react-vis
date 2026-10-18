@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {BarSeries} from './bar-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
@@ -26,7 +27,7 @@ import {AbstractSeriesProps} from './abstract-series-hook';
 export interface VerticalBarSeriesProps extends AbstractSeriesProps<any> {
 }
 
-export const VerticalBarSeries = ({
+export const VerticalBarSeries: SeriesComponentType<VerticalBarSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -46,7 +47,7 @@ export const VerticalBarSeries = ({
   );
 };
 
-(VerticalBarSeries as any).getParentConfig = (attr?: string) => {
+VerticalBarSeries.getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = attr === 'x';
   const zeroBaseValue = attr === 'y';
   return {
@@ -54,5 +55,5 @@ export const VerticalBarSeries = ({
     zeroBaseValue
   };
 };
-(VerticalBarSeries as any).displayName = 'VerticalBarSeries';
-(VerticalBarSeries as any).requiresSVG = true;
+VerticalBarSeries.displayName = 'VerticalBarSeries';
+VerticalBarSeries.requiresSVG = true;

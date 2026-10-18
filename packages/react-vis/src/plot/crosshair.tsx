@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {transformValueToString} from 'utils/data-utils';
 import {getAttributeFunctor} from 'utils/scales-utils';
@@ -64,7 +65,7 @@ const getFirstNonEmptyValue = (values: any[]) => {
   return (values || []).find(v => Boolean(v));
 }
 
-export const Crosshair = ({
+export const Crosshair: SeriesComponentType<CrosshairProps> = ({
   children,
   className,
   values = [],
@@ -161,4 +162,4 @@ export const Crosshair = ({
       </div>
   );
 }
-(Crosshair as any).displayName = 'Crosshair';
+Crosshair.displayName = 'Crosshair';

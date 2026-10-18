@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -188,7 +189,7 @@ const renderWhiskerMark = (whiskerMarkProps: WhiskerMarkProps) => (
   );
 };
 
-export const WhiskerSeries = ({
+export const WhiskerSeries: SeriesComponentType<WhiskerSeriesProps> = ({
   className: defaultClassName = '',
   stack: defaultStack = false,
   style: defaultStyle = {},
@@ -248,6 +249,6 @@ export const WhiskerSeries = ({
     );
   };
 
-(WhiskerSeries as any).displayName = 'WhiskerSeries';
-(WhiskerSeries as any).requiresSVG = true;
-(WhiskerSeries as any).getParentConfig = defaultGetParentConfig;
+WhiskerSeries.displayName = 'WhiskerSeries';
+WhiskerSeries.requiresSVG = true;
+WhiskerSeries.getParentConfig = defaultGetParentConfig;

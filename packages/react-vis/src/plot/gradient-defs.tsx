@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {getCombinedClassName} from 'utils/styling-utils';
 
@@ -29,7 +30,7 @@ interface GradientDefsProps {
 
 const predefinedClassName = 'rv-gradient-defs';
 
-export const GradientDefs = (props: GradientDefsProps) => {
+export const GradientDefs: SeriesComponentType<GradientDefsProps> = (props: GradientDefsProps) => {
   const {
     className = '',
     children
@@ -40,5 +41,5 @@ export const GradientDefs = (props: GradientDefsProps) => {
     </defs>
   );
 }
-(GradientDefs as any).displayName = 'GradientDefs';
-(GradientDefs as any).requiresSVG = true;
+GradientDefs.displayName = 'GradientDefs';
+GradientDefs.requiresSVG = true;

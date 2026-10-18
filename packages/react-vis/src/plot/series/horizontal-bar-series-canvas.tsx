@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import {SeriesComponentType} from 'seriesComponentType';
 import {AbstractSeriesProps} from './abstract-series-hook';
 import {BarSeriesCanvas} from './bar-series-canvas';
 
@@ -28,16 +29,16 @@ interface HorizontalBarSeriesCanvasComponent {
   renderLayer: (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D) => void;
 }
 
-export const HorizontalBarSeriesCanvas = (({
+export const HorizontalBarSeriesCanvas: SeriesComponentType<HorizontalBarSeriesCanvasProps> = (({
   className = '',
   stack = false,
   style = {},
 }: HorizontalBarSeriesCanvasProps): null => null) as HorizontalBarSeriesCanvasComponent;
 
-(HorizontalBarSeriesCanvas as any).requiresSVG = false;
-(HorizontalBarSeriesCanvas as any).isCanvas = true;
-(HorizontalBarSeriesCanvas as any).displayName = 'HorizontalBarSeriesCanvas';
-(HorizontalBarSeriesCanvas as any).getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
+HorizontalBarSeriesCanvas.requiresSVG = false;
+HorizontalBarSeriesCanvas.isCanvas = true;
+HorizontalBarSeriesCanvas.displayName = 'HorizontalBarSeriesCanvas';
+HorizontalBarSeriesCanvas.getParentConfig = (attr?: string): {isDomainAdjustmentNeeded: boolean; zeroBaseValue: boolean} => {
     const isDomainAdjustmentNeeded = attr === 'y';
     const zeroBaseValue = attr === 'x';
     return {
@@ -45,8 +46,8 @@ export const HorizontalBarSeriesCanvas = (({
       zeroBaseValue
     };
 };
-(HorizontalBarSeriesCanvas as any).renderLayer = (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
-    BarSeriesCanvas.renderLayer(
+HorizontalBarSeriesCanvas.renderLayer = (props: HorizontalBarSeriesCanvasProps, ctx: CanvasRenderingContext2D): void => {
+    BarSeriesCanvas.renderLayer!(
       {
         ...props,
         linePosAttr: 'y',

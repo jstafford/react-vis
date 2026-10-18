@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import * as d3Shape from 'd3-shape';
 
 import {Animation} from 'animation';
@@ -63,7 +65,7 @@ const renderLine = (data: any[],
     return line(data);
   };
 
-export const LineSeries = ({
+export const LineSeries: SeriesComponentType<LineSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -132,5 +134,5 @@ export const LineSeries = ({
       />
     );
   };
-(LineSeries as any).displayName = 'LineSeries';
-(LineSeries as any).requiresSVG = true;
+LineSeries.displayName = 'LineSeries';
+LineSeries.requiresSVG = true;

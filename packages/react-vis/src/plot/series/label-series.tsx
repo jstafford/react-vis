@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import {Animation} from 'animation';
@@ -49,7 +50,7 @@ const getDominantBaseline = (labelAnchorY: string | undefined, aboveMiddle: bool
     : 'text-after-edge';
 };
 
-export const LabelSeries = ({
+export const LabelSeries: SeriesComponentType<LabelSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -136,5 +137,5 @@ export const LabelSeries = ({
       </g>
     );
   };
-(LabelSeries as any).displayName = 'LabelSeries';
-(LabelSeries as any).requiresSVG = true;
+LabelSeries.displayName = 'LabelSeries';
+LabelSeries.requiresSVG = true;

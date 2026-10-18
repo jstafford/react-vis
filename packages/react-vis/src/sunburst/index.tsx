@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {hierarchy, partition} from 'd3-hierarchy';
 import {scaleLinear, scaleSqrt} from 'd3-scale';
 
@@ -155,7 +157,7 @@ const buildLabels = (mappedData: SunburstDatum[], accessors: any): any[] => {
 
 const NOOP = () => {};
 
-export const Sunburst = (props: SunburstProps): JSX.Element => {
+export const Sunburst: SeriesComponentType<SunburstProps> = (props: SunburstProps): JSX.Element => {
   const {
     getAngle = (d: any) => d.angle,
     getAngle0 = (d: any) => d.angle0,
@@ -244,4 +246,4 @@ export const Sunburst = (props: SunburstProps): JSX.Element => {
     </XYPlot>
   );
 };
-(Sunburst as any).displayName = 'Sunburst';
+Sunburst.displayName = 'Sunburst';

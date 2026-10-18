@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation, AnimationParam} from 'animation';
 import {ORIENTATION, getTicksTotalFromSize} from 'utils/axis-utils';
@@ -129,7 +130,7 @@ const getDefaultAxisProps = (props: AxisProps) => {
     };
 };
 
-export const Axis: any = ({
+export const Axis: SeriesComponentType<AxisProps> = ({
   animation,
   className = '',
   on0 = false,
@@ -232,5 +233,5 @@ export const Axis: any = ({
     );
   };
 
-(Axis as any).displayName = 'Axis';
-(Axis as any).requiresSVG = true;
+Axis.displayName = 'Axis';
+Axis.requiresSVG = true;

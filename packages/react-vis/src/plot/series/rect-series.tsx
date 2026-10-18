@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {Animation} from 'animation';
 import {ANIMATED_SERIES_PROPS} from 'utils/series-utils';
@@ -35,7 +36,7 @@ export interface RectSeriesProps extends AbstractSeriesProps<any> {
   valueSizeAttr?: string;
 }
 
-export const RectSeries = ({
+export const RectSeries: SeriesComponentType<RectSeriesProps> = ({
   ...rest
 }: RectSeriesProps): JSX.Element | null => {
   const {
@@ -94,5 +95,5 @@ export const RectSeries = ({
       </g>
     );
   };
-(RectSeries as any).displayName = 'RectSeries';
-(RectSeries as any).requiresSVG = true;
+RectSeries.displayName = 'RectSeries';
+RectSeries.requiresSVG = true;

@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {XYPlot} from 'plot/xy-plot';
 import {PolygonSeries} from 'plot/series/polygon-series';
@@ -34,7 +35,7 @@ interface TreemapSVGProps extends TreemapProps {
   scales: TreemapScales;
 }
 
-export const TreemapSVG = ({
+export const TreemapSVG: SeriesComponentType<TreemapSVGProps> = ({
   animation,
   className,
   height,
@@ -209,4 +210,4 @@ export const TreemapSVG = ({
       </XYPlot>
     );
 };
-(TreemapSVG as any).displayName = 'TreemapSVG';
+TreemapSVG.displayName = 'TreemapSVG';

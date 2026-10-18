@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {getAttributeScale} from 'utils/scales-utils';
 import {getCombinedClassName} from 'utils/styling-utils';
@@ -71,7 +72,7 @@ const animatedProps = [
   'tickTotal'
 ];
 
-export const GridLines = (props: GridLinesProps): JSX.Element => {
+export const GridLines: SeriesComponentType<GridLinesProps> = (props: GridLinesProps): JSX.Element => {
   const {
     direction = VERTICAL,
     innerWidth = 0,
@@ -134,6 +135,6 @@ export const GridLines = (props: GridLinesProps): JSX.Element => {
   );
 }
 
-(GridLines as any).displayName = 'GridLines';
+GridLines.displayName = 'GridLines';
 (GridLines as any).defaultProps = defaultProps;
-(GridLines as any).requiresSVG = true;
+GridLines.requiresSVG = true;

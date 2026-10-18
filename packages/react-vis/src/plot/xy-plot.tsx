@@ -48,6 +48,7 @@ import {
   SIZE_RANGE,
   OPACITY_TYPE
 } from 'theme';
+import type {ParentConfig, SeriesComponentType} from 'seriesComponentType';
 
 const ATTRIBUTES = [
   'x',
@@ -67,11 +68,6 @@ type SeriesPropsInfo = Array<{[key: string]: any} | undefined>;
 type PlotEvent = React.SyntheticEvent<SVGSVGElement>;
 type PlotEventHandler = (event: PlotEvent) => void;
 
-interface ParentConfig {
-  isDomainAdjustmentNeeded?: boolean;
-  zeroBaseValue?: boolean;
-}
-
 interface ParentSeriesComponent {
   onParentMouseDown?: PlotEventHandler;
   onParentMouseEnter?: PlotEventHandler;
@@ -81,13 +77,6 @@ interface ParentSeriesComponent {
   onParentTouchMove?: PlotEventHandler;
   onParentTouchStart?: PlotEventHandler;
 }
-
-type SeriesComponentType = React.JSXElementConstructor<any> & {
-  requiresSVG?: boolean;
-  isCanvas?: boolean;
-  getParentConfig?: (attr?: string, props?: {[key: string]: any}) => ParentConfig;
-  prototype?: {render?: unknown};
-};
 
 interface ScaleMixins {
   _allData: PlotData;
@@ -122,6 +111,12 @@ interface XYPlotProps {
   width: number;
   [key: string]: any;
 }
+
+type XYPlotComponent = SeriesComponentType<XYPlotProps> & {
+  defaultProps?: Partial<XYPlotProps>;
+  _getDefaultScaleProps: typeof getDefaultScaleProps;
+  _getScaleMixins: typeof getScaleMixins;
+};
 
 interface XYPlotState {
   data: PlotData;
@@ -254,7 +249,7 @@ const isPlotEmpty = (data: PlotData): boolean => {
   return !data || !data.length || !data.some(series => series && series.some(d => d));
 };
 
-export const XYPlotImplementation = (props: XYPlotProps): React.ReactElement => {
+export const XYPlotImplementation: XYPlotComponent = (props: XYPlotProps): React.ReactElement => {
   const seriesRefs = React.useRef<Record<number, ParentSeriesComponent | null>>({});
   const stateRef = React.useRef<XYPlotState | null>(null);
   const children = getSeriesChildren(props.children);
@@ -417,13 +412,13 @@ export const XYPlotImplementation = (props: XYPlotProps): React.ReactElement => 
   );
 };
 
-(XYPlotImplementation as any).displayName = 'XYPlot';
-(XYPlotImplementation as any).defaultProps = {className: ''};
-(XYPlotImplementation as any)._getDefaultScaleProps = getDefaultScaleProps;
-(XYPlotImplementation as any)._getScaleMixins = getScaleMixins;
+XYPlotImplementation.displayName = 'XYPlot';
+XYPlotImplementation.defaultProps = {className: ''};
+XYPlotImplementation._getDefaultScaleProps = getDefaultScaleProps;
+XYPlotImplementation._getScaleMixins = getScaleMixins;
 
-export const XYPlot: any = XYPlotImplementation;
+export const XYPlot: XYPlotComponent = XYPlotImplementation as XYPlotComponent;
 XYPlot.displayName = 'XYPlot';
-XYPlot.defaultProps = (XYPlotImplementation as any).defaultProps;
+XYPlot.defaultProps = XYPlotImplementation.defaultProps;
 XYPlot._getDefaultScaleProps = getDefaultScaleProps;
 XYPlot._getScaleMixins = getScaleMixins;

@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {RectSeries} from './rect-series';
 import {AbstractSeriesProps} from './abstract-series-hook';
@@ -27,7 +28,7 @@ export interface HorizontalRectSeriesProps extends AbstractSeriesProps<any> {
   
 }
 
-export const HorizontalRectSeries = ({
+export const HorizontalRectSeries: SeriesComponentType<HorizontalRectSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -47,8 +48,8 @@ export const HorizontalRectSeries = ({
   );
 };
 
-(HorizontalRectSeries as any).requiresSVG = true;
-(HorizontalRectSeries as any).getParentConfig = (attr?: string) => {
+HorizontalRectSeries.requiresSVG = true;
+HorizontalRectSeries.getParentConfig = (attr?: string) => {
   const isDomainAdjustmentNeeded = false;
   const zeroBaseValue = attr === 'x';
   return {
@@ -56,4 +57,4 @@ export const HorizontalRectSeries = ({
     zeroBaseValue
   };
 };
-(HorizontalRectSeries as any).displayName = 'HorizontalRectSeries';
+HorizontalRectSeries.displayName = 'HorizontalRectSeries';

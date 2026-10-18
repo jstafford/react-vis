@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {DISCRETE_COLOR_RANGE} from 'theme';
 import {Animation, AnimationParam} from 'animation';
@@ -41,7 +42,7 @@ export interface SankeyLinkProps {
   [key: string]: any;
 }
 
-export const SankeyLink = ({
+export const SankeyLink: SeriesComponentType<SankeyLinkProps> = ({
   animation,
   data,
   node,
@@ -89,5 +90,5 @@ export const SankeyLink = ({
     />
   );
 };
-(SankeyLink as any).displayName = 'SankeyLink';
-(SankeyLink as any).requiresSVG = true;
+SankeyLink.displayName = 'SankeyLink';
+SankeyLink.requiresSVG = true;

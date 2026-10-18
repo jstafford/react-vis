@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {ORIENTATION, getTickValues} from 'utils/axis-utils';
 import {getAttributeScale} from 'utils/scales-utils';
@@ -58,7 +59,7 @@ const _getTickFormatFn = (scale: any,
     : tickFormat;
 };
 
-export const AxisTicks = ({
+export const AxisTicks: SeriesComponentType<AxisTicksProps> = ({
   style = {},
   ...restProps
 }: AxisTicksProps) => {
@@ -247,5 +248,5 @@ export const AxisTicks = ({
       </g>
   );
 };
-(AxisTicks as any).displayName = 'AxisTicks';
-(AxisTicks as any).requiresSVG = true;
+AxisTicks.displayName = 'AxisTicks';
+AxisTicks.requiresSVG = true;

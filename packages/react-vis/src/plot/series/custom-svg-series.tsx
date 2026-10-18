@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {AbstractSeriesProps, useAbstractSeries} from './abstract-series-hook';
 import {Animation} from 'animation';
@@ -134,7 +135,7 @@ const getInnerComponent = ({
   );
 };
 
-export const CustomSVGSeries = ({
+export const CustomSVGSeries: SeriesComponentType<CustomSVGSeriesProps> = ({
   className = '',
   stack = false,
   style = {},
@@ -206,5 +207,5 @@ export const CustomSVGSeries = ({
       </g>
     );
   };
-(CustomSVGSeries as any).displayName = 'CustomSVGSeries';
-(CustomSVGSeries as any).requiresSVG = true;
+CustomSVGSeries.displayName = 'CustomSVGSeries';
+CustomSVGSeries.requiresSVG = true;

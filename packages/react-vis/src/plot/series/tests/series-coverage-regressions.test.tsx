@@ -53,7 +53,7 @@ describe('series coverage regressions', () => {
   });
 
   test('renders heatmap and exposes domain config', () => {
-    expect(HeatmapSeries.getParentConfig('x')).toEqual({isDomainAdjustmentNeeded: true});
+    expect(HeatmapSeries.getParentConfig!('x')).toEqual({isDomainAdjustmentNeeded: true});
 
     const markup = renderToStaticMarkup(
       <svg>
@@ -192,17 +192,17 @@ describe('series coverage regressions', () => {
       valueSizeAttr: 'width'
     };
 
-    HorizontalBarSeriesCanvas.renderLayer(barProps, ctx);
-    VerticalBarSeriesCanvas.renderLayer(
+    HorizontalBarSeriesCanvas.renderLayer!(barProps, ctx);
+    VerticalBarSeriesCanvas.renderLayer!(
       {...barProps, linePosAttr: 'x', valuePosAttr: 'y', lineSizeAttr: 'width', valueSizeAttr: 'height'},
       ctx
     );
-    HorizontalRectSeriesCanvas.renderLayer(rectProps, ctx);
-    VerticalRectSeriesCanvas.renderLayer(
+    HorizontalRectSeriesCanvas.renderLayer!(rectProps, ctx);
+    VerticalRectSeriesCanvas.renderLayer!(
       {...rectProps, linePosAttr: 'x', valuePosAttr: 'y', lineSizeAttr: 'width', valueSizeAttr: 'height'},
       ctx
     );
-    LineMarkSeriesCanvas.renderLayer(
+    LineMarkSeriesCanvas.renderLayer!(
       {...scaleProps, data: [{x: 0, y: 0}, {x: 1, y: 10}], opacity: () => 1, size: 3},
       ctx
     );

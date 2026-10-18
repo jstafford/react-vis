@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {
   hierarchy,
   pack,
@@ -162,7 +164,7 @@ const _getScaleFns = (props: TreemapProps): TreemapScales => {
   };
 };
 
-export const Treemap = ({
+export const Treemap: SeriesComponentType<TreemapProps> = ({
   className = '',
   colorRange = CONTINUOUS_COLOR_RANGE,
   _colorValue = DEFAULT_COLOR,
@@ -266,4 +268,4 @@ export const Treemap = ({
 
   return <TreemapElement {...props} nodes={nodes} scales={scales} />;
 };
-(Treemap as any).displayName = 'Treemap';
+Treemap.displayName = 'Treemap';

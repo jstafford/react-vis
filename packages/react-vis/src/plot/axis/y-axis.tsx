@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {ORIENTATION} from 'utils/axis-utils';
 
@@ -26,7 +27,7 @@ import {Axis, AxisProps} from './axis';
 
 const {LEFT, RIGHT} = ORIENTATION;
 
-export const YAxis = ({
+export const YAxis: SeriesComponentType<AxisProps> = ({
   orientation = LEFT,
   attr = 'y',
   attrAxis = 'x',
@@ -34,5 +35,5 @@ export const YAxis = ({
 }: AxisProps) => {
   return <Axis {...restProps} orientation={orientation} attr={attr} attrAxis={attrAxis} />;
 };
-(YAxis as any).displayName = 'YAxis';
-(YAxis as any).requiresSVG = true;
+YAxis.displayName = 'YAxis';
+YAxis.requiresSVG = true;

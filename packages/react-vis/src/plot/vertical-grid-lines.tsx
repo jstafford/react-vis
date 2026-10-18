@@ -19,13 +19,14 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
 
 import {GridLines} from 'plot/grid-lines';
 import {DIRECTION} from 'utils/axis-utils';
 
 const {VERTICAL} = DIRECTION;
 
-export const VerticalGridLines = ({
+export const VerticalGridLines: SeriesComponentType<React.ComponentProps<typeof GridLines>> = ({
   direction = VERTICAL,
   attr = 'x',
   ...restProps
@@ -33,5 +34,5 @@ export const VerticalGridLines = ({
   return <GridLines {...restProps} direction={direction} attr={attr} />;
 };
 
-(VerticalGridLines as any).displayName = 'VerticalGridLines';
-(VerticalGridLines as any).requiresSVG = true;
+VerticalGridLines.displayName = 'VerticalGridLines';
+VerticalGridLines.requiresSVG = true;

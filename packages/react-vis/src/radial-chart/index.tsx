@@ -19,6 +19,8 @@
 // THE SOFTWARE.
 
 import React from 'react';
+import {SeriesComponentType} from 'seriesComponentType';
+
 import {pie as pieBuilder} from 'd3-shape';
 
 import {ArcSeries} from 'plot/series/arc-series';
@@ -138,7 +140,7 @@ const getMaxRadius = (width: number, height: number): number => {
   return Math.min(width, height) / 2 - DEFAULT_RADIUS_MARGIN;
 };
 
-export const RadialChart = ({
+export const RadialChart: SeriesComponentType<RadialChartProps> = ({
   animation,
   className = '',
   children,
@@ -248,4 +250,4 @@ export const RadialChart = ({
     </XYPlot>
   );
 };
-(RadialChart as any).displayName = 'RadialChart';
+RadialChart.displayName = 'RadialChart';
